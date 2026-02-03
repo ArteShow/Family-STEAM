@@ -1,18 +1,19 @@
 services:
   api-gateway:
-      build: ./services/api-gateway
-      container_name: api-gateway
-      env_file:
-        - ./config/docker.env
-      ports:
-        - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
-      depends_on:
-        migrate:
-          condition: service_completed_successfully
-      healthcheck:
-        test: ["CMD", "wget", "-qO-", "http://localhost:${API_GATEWAY_PORT}/health"]
-        interval: 10s
-        timeout: 3s
-        retries: 5
-      networks:
-        - disknet
+    build: ./services/api-gateway
+    container_name: api-gateway
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${API_GATEWAY_PORT}/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - disknet
+
+networks:
+  disknet:
+    driver: bridge
