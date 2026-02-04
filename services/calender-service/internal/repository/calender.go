@@ -2,8 +2,9 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
+
+	"github.com/ArteShow/Family-STEAM/services/calender-service/internal/db"
 )
 
 type Event struct {
@@ -16,24 +17,14 @@ type Event struct {
 	CreatedAt   string
 }
 
-type CalendarRepo struct {
-	db *sql.DB
-}
+func Create(ctx context.Context, id, title, description, eventType, startsAt, endsAt string) error {
+	conn, err := db.Connect()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
 
-func NewCalendarRepo(db *sql.DB) *CalendarRepo {
-	return &CalendarRepo{db: db}
-}
-
-func (r *CalendarRepo) Create(
-	ctx context.Context,
-	id string,
-	title string,
-	description string,
-	eventType string,
-	startsAt string,
-	endsAt string,
-) error {
-	_, err := r.db.ExecContext(
+	_, err = conn.ExecContext(
 		ctx,
 		`INSERT INTO calendar (id, title, description, event_type, starts_at, ends_at)
 		 VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -42,38 +33,45 @@ func (r *CalendarRepo) Create(
 	return err
 }
 
-func (r *CalendarRepo) GetByID(
-	ctx context.Context,
-	id string,
-) (*Event, error) {
-	row := r.db.QueryRowContext(
+func GetByID(ctx context.Context, id string) (*Event, error) {
+	conn, err := db.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	row := conn.QueryRowContext(
 		ctx,
 		`SELECT id, title, description, event_type, starts_at, ends_at, created_at
 		 FROM calendar WHERE id = $1`,
 		id,
 	)
 
-	var c Event
-	err := row.Scan(
-		&c.ID,
-		&c.Title,
-		&c.Description,
-		&c.EventType,
-		&c.StartsAt,
-		&c.EndsAt,
-		&c.CreatedAt,
+	var e Event
+	err = row.Scan(
+		&e.ID,
+		&e.Title,
+		&e.Description,
+		&e.EventType,
+		&e.StartsAt,
+		&e.EndsAt,
+		&e.CreatedAt,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	return &c, nil
+	return &e, nil
 }
 
-func (r *CalendarRepo) GetAll(
-	ctx context.Context,
-) ([]Event, error) {
-	rows, err := r.db.QueryContext(
+func GetAll(ctx context.Context) ([]Event, error) {
+	conn, err := db.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	rows, err := conn.QueryContext(
 		ctx,
 		`SELECT id, title, description, event_type, starts_at, ends_at, created_at
 		 FROM calendar`,
@@ -83,51 +81,46 @@ func (r *CalendarRepo) GetAll(
 	}
 	defer rows.Close()
 
-	var result []Event
-
+	var events []Event
 	for rows.Next() {
-		var c Event
+		var e Event
 		err := rows.Scan(
-			&c.ID,
-			&c.Title,
-			&c.Description,
-			&c.EventType,
-			&c.StartsAt,
-			&c.EndsAt,
-			&c.CreatedAt,
+			&e.ID,
+			&e.Title,
+			&e.Description,
+			&e.EventType,
+			&e.StartsAt,
+			&e.EndsAt,
+			&e.CreatedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, c)
+		events = append(events, e)
 	}
 
-	return result, nil
+	return events, nil
 }
 
-func (r *CalendarRepo) UpdateColumn(
-	ctx context.Context,
-	id string,
-	column string,
-	value any,
-) error {
-	query := fmt.Sprintf(
-		`UPDATE calendar SET %s = $1 WHERE id = $2`,
-		column,
-	)
+func UpdateColumn(ctx context.Context, id, column string, value any) error {
+	conn, err := db.Connect()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
 
-	_, err := r.db.ExecContext(ctx, query, value, id)
+	query := fmt.Sprintf(`UPDATE calendar SET %s = $1 WHERE id = $2`, column)
+	_, err = conn.ExecContext(ctx, query, value, id)
 	return err
 }
 
-func (r *CalendarRepo) Delete(
-	ctx context.Context,
-	id string,
-) error {
-	_, err := r.db.ExecContext(
-		ctx,
-		`DELETE FROM calendar WHERE id = $1`,
-		id,
-	)
+func Delete(ctx context.Context, id string) error {
+	conn, err := db.Connect()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.ExecContext(ctx, `DELETE FROM calendar WHERE id = $1`, id)
 	return err
 }
