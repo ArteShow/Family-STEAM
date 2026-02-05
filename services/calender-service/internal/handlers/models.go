@@ -33,3 +33,9 @@ type GetByIDResponse struct {
 type GetAllResponse struct {
 	Events []repository.Event `json:"events"`
 }
+
+type UpdateColumnRequest struct {
+	Column string `json:"column"`
+	Value string `json:"value"`
+	EventID string `json:"event_ID"`
+}
