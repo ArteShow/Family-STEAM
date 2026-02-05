@@ -45,10 +45,10 @@ func (u *UserClient) SaveUser(req *pb.SaveUserRequest) (*pb.SaveUserResponse, er
 	return res, nil
 }
 
-func (u *UserClient) GetUserPassword(req *pb.GetUserPasswordRequest) (*pb.GetUserPasswordResponse, error) {
+func (u *UserClient) GetUserPassword(req *pb.GetUsersIDRequest) (*pb.GetUsersIDResponse, error) {
 	res, err := u.Client.GetUserPassword(context.Background(), req)
 	if err != nil {
-		return &pb.GetUserPasswordResponse{}, err
+		return &pb.GetUsersIDResponse{}, err
 	}
 
 	return res, nil

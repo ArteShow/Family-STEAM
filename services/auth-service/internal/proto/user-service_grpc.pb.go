@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	SaveUser(ctx context.Context, in *SaveUserRequest, opts ...grpc.CallOption) (*SaveUserResponse, error)
-	GetUserPassword(ctx context.Context, in *GetUserPasswordRequest, opts ...grpc.CallOption) (*GetUserPasswordResponse, error)
+	GetUserPassword(ctx context.Context, in *GetUsersIDRequest, opts ...grpc.CallOption) (*GetUsersIDResponse, error)
 }
 
 type userServiceClient struct {
@@ -49,9 +49,9 @@ func (c *userServiceClient) SaveUser(ctx context.Context, in *SaveUserRequest, o
 	return out, nil
 }
 
-func (c *userServiceClient) GetUserPassword(ctx context.Context, in *GetUserPasswordRequest, opts ...grpc.CallOption) (*GetUserPasswordResponse, error) {
+func (c *userServiceClient) GetUserPassword(ctx context.Context, in *GetUsersIDRequest, opts ...grpc.CallOption) (*GetUsersIDResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetUserPasswordResponse)
+	out := new(GetUsersIDResponse)
 	err := c.cc.Invoke(ctx, UserService_GetUserPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (c *userServiceClient) GetUserPassword(ctx context.Context, in *GetUserPass
 // for forward compatibility.
 type UserServiceServer interface {
 	SaveUser(context.Context, *SaveUserRequest) (*SaveUserResponse, error)
-	GetUserPassword(context.Context, *GetUserPasswordRequest) (*GetUserPasswordResponse, error)
+	GetUserPassword(context.Context, *GetUsersIDRequest) (*GetUsersIDResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -78,7 +78,7 @@ type UnimplementedUserServiceServer struct{}
 func (UnimplementedUserServiceServer) SaveUser(context.Context, *SaveUserRequest) (*SaveUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SaveUser not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserPassword(context.Context, *GetUserPasswordRequest) (*GetUserPasswordResponse, error) {
+func (UnimplementedUserServiceServer) GetUserPassword(context.Context, *GetUsersIDRequest) (*GetUsersIDResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserPassword not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
@@ -121,7 +121,7 @@ func _UserService_SaveUser_Handler(srv interface{}, ctx context.Context, dec fun
 }
 
 func _UserService_GetUserPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserPasswordRequest)
+	in := new(GetUsersIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func _UserService_GetUserPassword_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: UserService_GetUserPassword_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetUserPassword(ctx, req.(*GetUserPasswordRequest))
+		return srv.(UserServiceServer).GetUserPassword(ctx, req.(*GetUsersIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

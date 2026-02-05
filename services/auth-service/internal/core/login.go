@@ -9,7 +9,7 @@ import (
 	"github.com/ArteShow/Family-STEAM/services/auth-service/pkg/hashing"
 )
 
-func Login(username, password, id string) (string, error) {
+func Login(username, password string) (string, error) {
 	client, err := client.NewUserClient()
 	if err != nil {
 		return "", err
@@ -21,7 +21,7 @@ func Login(username, password, id string) (string, error) {
 		return "", err
 	}
 
-	_, err = client.GetUserPassword(&proto.GetUserPasswordRequest{
+	res, err := client.GetUserPassword(&proto.GetUsersIDRequest{
 		Username: username,
 		Password: string(hash),
 	})
@@ -30,7 +30,7 @@ func Login(username, password, id string) (string, error) {
 		return "", err
 	}
 
-	token, err := jwtutile.GenerateToken(id, time.Hour*1)
+	token, err := jwtutile.GenerateToken(res.GetId(), time.Hour*1)
 	if err != nil {
 		return "", err
 	}
