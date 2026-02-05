@@ -9,8 +9,8 @@ import (
 	"github.com/ArteShow/Family-STEAM/services/calender-service/internal/repository"
 )
 
-func DeleteHandler(w http.ResponseWriter, r *http.Request) {
-	var req DeleteRequest
+func GetByIDHandler(w http.ResponseWriter, r *http.Request) {
+	var req GetByIDRequest
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -23,10 +23,28 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = repository.Delete(context.Background(), req.EventID); err != nil {
+	event, err := repository.GetByID(
+		context.Background(),
+		req.EventID,
+	)
+
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	res := GetByIDResponse{
+		Title: event.Title,
+		Description: event.Description,
+		Type: event.EventType,
+		StartsAt: event.StartsAt,
+		EndsAt: event.EndsAt,
+	}
+	
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	if err = json.NewEncoder(w).Encode(res); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
