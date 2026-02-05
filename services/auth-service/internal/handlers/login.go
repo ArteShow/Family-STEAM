@@ -14,6 +14,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer r.Body.Close()
 
 	var req LoginRequest
 	err = json.Unmarshal(bytes, &req)
