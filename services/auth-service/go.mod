@@ -5,7 +5,6 @@ go 1.24.4
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/ilyakaznacheev/cleanenv v1.5.0
-	golang.org/x/crypto v0.44.0
 	google.golang.org/grpc v1.78.0
 	google.golang.org/protobuf v1.36.11
 )
