@@ -3,6 +3,7 @@ module github.com/ArteShow/Family-STEAM/services/calender-service
 go 1.24.4
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/lib/pq v1.11.1
 	google.golang.org/grpc v1.78.0

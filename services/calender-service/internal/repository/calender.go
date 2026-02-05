@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ArteShow/Family-STEAM/services/calender-service/internal/db"
+	"github.com/ArteShow/Family-STEAM/services/calender-service/pkg/uuid"
 )
 
 type Event struct {
@@ -17,12 +18,14 @@ type Event struct {
 	CreatedAt   string
 }
 
-func Create(ctx context.Context, id, title, description, eventType, startsAt, endsAt string) error {
+func Create(ctx context.Context, title, description, eventType, startsAt, endsAt string) (string, error) {
 	conn, err := db.Connect()
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer conn.Close()
+
+	id := uuid.CreateUUID()
 
 	_, err = conn.ExecContext(
 		ctx,
@@ -30,7 +33,7 @@ func Create(ctx context.Context, id, title, description, eventType, startsAt, en
 		 VALUES ($1, $2, $3, $4, $5, $6)`,
 		id, title, description, eventType, startsAt, endsAt,
 	)
-	return err
+	return id, err
 }
 
 func GetByID(ctx context.Context, id string) (*Event, error) {
