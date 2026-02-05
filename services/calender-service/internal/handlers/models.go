@@ -1,5 +1,7 @@
 package handlers
 
+import "github.com/ArteShow/Family-STEAM/services/calender-service/internal/repository"
+
 type CreateRequest struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -26,4 +28,8 @@ type GetByIDResponse struct {
 	Type        string `json:"type"`
 	StartsAt    string `json:"starts_at"`
 	EndsAt      string `json:"ends_at"`
+}
+
+type GetAllResponse struct {
+	Events []repository.Event `json:"events"`
 }
