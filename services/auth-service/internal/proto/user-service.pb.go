@@ -25,7 +25,6 @@ type SaveUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -74,17 +73,9 @@ func (x *SaveUserRequest) GetPassword() string {
 	return ""
 }
 
-func (x *SaveUserRequest) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
 type SaveUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Success       bool                   `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -126,16 +117,9 @@ func (x *SaveUserResponse) GetId() string {
 	return ""
 }
 
-func (x *SaveUserResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
-}
-
 type GetUserPasswordRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Password      string                 `protobuf:"bytes,1,opt,name=password,proto3" json:"password,omitempty"`
 	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -171,9 +155,9 @@ func (*GetUserPasswordRequest) Descriptor() ([]byte, []int) {
 	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetUserPasswordRequest) GetId() string {
+func (x *GetUserPasswordRequest) GetPassword() string {
 	if x != nil {
-		return x.Id
+		return x.Password
 	}
 	return ""
 }
@@ -187,7 +171,7 @@ func (x *GetUserPasswordRequest) GetUsername() string {
 
 type GetUserPasswordResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Password      string                 `protobuf:"bytes,1,opt,name=password,proto3" json:"password,omitempty"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -222,30 +206,28 @@ func (*GetUserPasswordResponse) Descriptor() ([]byte, []int) {
 	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetUserPasswordResponse) GetPassword() string {
+func (x *GetUserPasswordResponse) GetSuccess() bool {
 	if x != nil {
-		return x.Password
+		return x.Success
 	}
-	return ""
+	return false
 }
 
 var File_internal_proto_user_service_proto protoreflect.FileDescriptor
 
 const file_internal_proto_user_service_proto_rawDesc = "" +
 	"\n" +
-	"!internal/proto/user-service.proto\x12\fuser_service\"_\n" +
+	"!internal/proto/user-service.proto\x12\fuser_service\"I\n" +
 	"\x0fSaveUserRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\"<\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\"\n" +
 	"\x10SaveUserResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\"D\n" +
-	"\x16GetUserPasswordRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\"5\n" +
-	"\x17GetUserPasswordResponse\x12\x1a\n" +
-	"\bpassword\x18\x01 \x01(\tR\bpassword2\xb8\x01\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"P\n" +
+	"\x16GetUserPasswordRequest\x12\x1a\n" +
+	"\bpassword\x18\x01 \x01(\tR\bpassword\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\"3\n" +
+	"\x17GetUserPasswordResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\xb8\x01\n" +
 	"\vUserService\x12I\n" +
 	"\bSaveUser\x12\x1d.user_service.SaveUserRequest\x1a\x1e.user_service.SaveUserResponse\x12^\n" +
 	"\x0fGetUserPassword\x12$.user_service.GetUserPasswordRequest\x1a%.user_service.GetUserPasswordResponseB\x17Z\x15/internal/proto;protob\x06proto3"

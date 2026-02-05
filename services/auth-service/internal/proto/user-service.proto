@@ -7,21 +7,19 @@ option go_package = "/internal/proto;proto";
 message SaveUserRequest {
   string username = 1;
   string password = 2;
-  string email = 3;
 }
 
 message SaveUserResponse {
   string id = 1;
-  bool success = 2;
 }
 
 message GetUserPasswordRequest {
-  string id = 1;
+  string password = 1;
   string username = 2;
 }
 
 message GetUserPasswordResponse {
-  string password = 1;
+  bool success = 1;
 }
 
 service UserService {
