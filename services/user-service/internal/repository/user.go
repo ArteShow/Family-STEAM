@@ -75,29 +75,31 @@ func GetUserByID(ctx context.Context, id string) (User, error) {
 }
 
 func GetUserByPasswordAndUsername(ctx context.Context, username, password string) (User, error) {
-	var u User
+    var u User
 
-	hash, err := hashing.HashPassword(password)
-	if err != nil {
+    db, err := db.Connect()
+    if err != nil {
+        return User{}, err
+    }
+
+    err = db.QueryRowContext(
+        ctx,
+        `SELECT id, username, password, created_at FROM users WHERE username = $1`,
+        username,
+    ).Scan(
+        &u.ID,
+        &u.Username,
+        &u.Password,
+        &u.CreatedAt,
+    )
+    if err != nil {
+        return User{}, err
+    }
+
+    if ok := hashing.ComparePasswords(password, []byte(u.Password)); !ok {
 		return User{}, err
 	}
 
-	db, err := db.Connect()
-	if err != nil {
-		return User{}, err
-	}
-
-	err = db.QueryRowContext(
-		ctx,
-		`SELECT id, username, password, created_at FROM users WHERE username = $1 AND password = $2`,
-		username,
-		hash,
-	).Scan(
-		&u.ID,
-		&u.Username,
-		&u.Password,
-		&u.CreatedAt,
-	)
-
-	return u, err
+    return u, nil
 }
+
