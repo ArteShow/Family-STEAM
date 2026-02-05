@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ArteShow/Family-STEAM/services/user-service/internal/db"
+	"github.com/ArteShow/Family-STEAM/services/user-service/pkg/uuid"
 )
 
 type User struct {
@@ -13,20 +14,22 @@ type User struct {
 	CreatedAt string
 }
 
-func CreateUser(ctx context.Context, u User) error {
+func CreateUser(ctx context.Context, u User) (string, error) {
 	db, err := db.Connect()
 	if err != nil {
-		return err
+		return "", err
 	}
+
+	id := uuid.CreateUUID()
 
 	_, err = db.ExecContext(
 		ctx,
 		`INSERT INTO users (id, username, password) VALUES ($1, $2, $3)`,
-		u.ID,
+		id,
 		u.Username,
 		u.Password,
 	)
-	return err
+	return "", err
 }
 
 func DeleteUser(ctx context.Context, id string) error {
