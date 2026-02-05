@@ -29,7 +29,7 @@ func CreateUser(ctx context.Context, u User) (string, error) {
 		u.Username,
 		u.Password,
 	)
-	return "", err
+	return id, err
 }
 
 func DeleteUser(ctx context.Context, id string) error {
