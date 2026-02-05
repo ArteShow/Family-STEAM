@@ -49,11 +49,11 @@ func main() {
 			}),
 		),
 	)
-	handler.Handle("/api/v1/calender/create", middleware.LogMiddleware(createProxy))
-	handler.Handle("/api/v1/calender/delete", middleware.LogMiddleware(deleteProxy))
-	handler.Handle("/api/v1/calender/get_all", middleware.LogMiddleware(getAllProxy))
-	handler.Handle("/api/v1/calender/get_by_id", middleware.LogMiddleware(getByIDProxy))
-	handler.Handle("/api/v1/calender/update", middleware.LogMiddleware(updateProxy))
+	handler.Handle("/api/v1/calender/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createProxy)))
+	handler.Handle("/api/v1/calender/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteProxy)))
+	handler.Handle("/api/v1/calender/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllProxy)))
+	handler.Handle("/api/v1/calender/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDProxy)))
+	handler.Handle("/api/v1/calender/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
