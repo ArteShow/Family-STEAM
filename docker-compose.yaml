@@ -76,6 +76,23 @@ services:
       retries: 5
     networks:
       - disknet
+  user-service:
+    build: ./services/user-service
+    container_name: user-service
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "wget", "-qO-"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - disknet
 
 volumes:
   postgres_data:
