@@ -3,6 +3,7 @@ package config
 import "github.com/ilyakaznacheev/cleanenv"
 
 type Config struct {
+	Port 			string `env:"CALENDER_SERVICE_PORT" env-default:"8001"`
 	DBHost          string `env:"POSTGRES_HOST" env-default:"postgres"`
 	DBPort          string `env:"POSTGRES_PORT" env-default:"5432"`
 	DBUser          string `env:"POSTGRES_USER" env-default:"postgres"`
