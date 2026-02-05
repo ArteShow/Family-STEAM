@@ -30,11 +30,11 @@ func main() {
 		cfg.Port = ":" + cfg.Port
 	}
 
-	createProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/create")
-	deleteProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/delete")
-	getAllProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/get_all")
-	getByIDProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/get_by_id")
-	updateProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/update")
+	createProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/create")
+	deleteProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/delete")
+	getAllProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/get_all")
+	getByIDProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/get_by_id")
+	updateProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/update")
 
 
 	handler := http.NewServeMux()
