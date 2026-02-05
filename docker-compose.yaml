@@ -59,6 +59,23 @@ services:
       retries: 5
     networks:
       - disknet
+  auth-service:
+    build: ./services/auth-service
+    container_name: auth-service
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${AUTH_SERVICE_PORT}/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - disknet
 
 volumes:
   postgres_data:
