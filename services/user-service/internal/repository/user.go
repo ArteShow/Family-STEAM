@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ArteShow/Family-STEAM/services/user-service/internal/db"
+	"github.com/ArteShow/Family-STEAM/services/user-service/pkg/hashing"
 	"github.com/ArteShow/Family-STEAM/services/user-service/pkg/uuid"
 )
 
@@ -20,6 +21,11 @@ func CreateUser(ctx context.Context, u User) (string, error) {
 		return "", err
 	}
 
+	hash, err := hashing.HashPassword(u.Password)
+	if err != nil {
+		return "", err
+	}
+
 	id := uuid.CreateUUID()
 
 	_, err = db.ExecContext(
@@ -27,7 +33,7 @@ func CreateUser(ctx context.Context, u User) (string, error) {
 		`INSERT INTO users (id, username, password) VALUES ($1, $2, $3)`,
 		id,
 		u.Username,
-		u.Password,
+		hash,
 	)
 	return id, err
 }
@@ -71,6 +77,11 @@ func GetUserByID(ctx context.Context, id string) (User, error) {
 func GetUserByPasswordAndUsername(ctx context.Context, username, password string) (User, error) {
 	var u User
 
+	hash, err := hashing.HashPassword(password)
+	if err != nil {
+		return User{}, err
+	}
+
 	db, err := db.Connect()
 	if err != nil {
 		return User{}, err
@@ -80,7 +91,7 @@ func GetUserByPasswordAndUsername(ctx context.Context, username, password string
 		ctx,
 		`SELECT id, username, password, created_at FROM users WHERE username = $1 AND password = $2`,
 		username,
-		password,
+		hash,
 	).Scan(
 		&u.ID,
 		&u.Username,
