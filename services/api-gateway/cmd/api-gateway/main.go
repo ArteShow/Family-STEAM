@@ -11,6 +11,7 @@ import (
 
 	"github.com/ArteShow/Family-STEAM/services/api-gateway/internal/config"
 	"github.com/ArteShow/Family-STEAM/services/api-gateway/internal/middleware"
+	"github.com/ArteShow/Family-STEAM/services/api-gateway/internal/proxy"
 )
 
 const (
@@ -29,6 +30,13 @@ func main() {
 		cfg.Port = ":" + cfg.Port
 	}
 
+	createProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/create")
+	deleteProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/delete")
+	getAllProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/get_all")
+	getByIDProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/get_by_id")
+	updateProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/update")
+
+
 	handler := http.NewServeMux()
 	handler.Handle(
 		"/api/v1/api-gateway/health",
@@ -41,6 +49,11 @@ func main() {
 			}),
 		),
 	)
+	handler.Handle("/api/v1/calender/create", middleware.LogMiddleware(createProxy))
+	handler.Handle("/api/v1/calender/delete", middleware.LogMiddleware(deleteProxy))
+	handler.Handle("/api/v1/calender/get_all", middleware.LogMiddleware(getAllProxy))
+	handler.Handle("/api/v1/calender/get_by_id", middleware.LogMiddleware(getByIDProxy))
+	handler.Handle("/api/v1/calender/update", middleware.LogMiddleware(updateProxy))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
