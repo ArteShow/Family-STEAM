@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.30.2
-// source: user-service.proto
+// source: internal/proto/user-service.proto
 
-package __
+package proto
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -30,7 +30,7 @@ type IsUserTheAdminRequest struct {
 
 func (x *IsUserTheAdminRequest) Reset() {
 	*x = IsUserTheAdminRequest{}
-	mi := &file_user_service_proto_msgTypes[0]
+	mi := &file_internal_proto_user_service_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +42,7 @@ func (x *IsUserTheAdminRequest) String() string {
 func (*IsUserTheAdminRequest) ProtoMessage() {}
 
 func (x *IsUserTheAdminRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_service_proto_msgTypes[0]
+	mi := &file_internal_proto_user_service_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +55,7 @@ func (x *IsUserTheAdminRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsUserTheAdminRequest.ProtoReflect.Descriptor instead.
 func (*IsUserTheAdminRequest) Descriptor() ([]byte, []int) {
-	return file_user_service_proto_rawDescGZIP(), []int{0}
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *IsUserTheAdminRequest) GetUserID() string {
@@ -74,7 +74,7 @@ type IsUserTheAdminResponse struct {
 
 func (x *IsUserTheAdminResponse) Reset() {
 	*x = IsUserTheAdminResponse{}
-	mi := &file_user_service_proto_msgTypes[1]
+	mi := &file_internal_proto_user_service_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -86,7 +86,7 @@ func (x *IsUserTheAdminResponse) String() string {
 func (*IsUserTheAdminResponse) ProtoMessage() {}
 
 func (x *IsUserTheAdminResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_service_proto_msgTypes[1]
+	mi := &file_internal_proto_user_service_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -99,7 +99,7 @@ func (x *IsUserTheAdminResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsUserTheAdminResponse.ProtoReflect.Descriptor instead.
 func (*IsUserTheAdminResponse) Descriptor() ([]byte, []int) {
-	return file_user_service_proto_rawDescGZIP(), []int{1}
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *IsUserTheAdminResponse) GetOk() bool {
@@ -109,38 +109,38 @@ func (x *IsUserTheAdminResponse) GetOk() bool {
 	return false
 }
 
-var File_user_service_proto protoreflect.FileDescriptor
+var File_internal_proto_user_service_proto protoreflect.FileDescriptor
 
-const file_user_service_proto_rawDesc = "" +
+const file_internal_proto_user_service_proto_rawDesc = "" +
 	"\n" +
-	"\x12user-service.proto\x12\x05proto\"/\n" +
+	"!internal/proto/user-service.proto\x12\fuser_service\"/\n" +
 	"\x15IsUserTheAdminRequest\x12\x16\n" +
 	"\x06userID\x18\x01 \x01(\tR\x06userID\"(\n" +
 	"\x16IsUserTheAdminResponse\x12\x0e\n" +
-	"\x02ok\x18\x01 \x01(\bR\x02ok2\\\n" +
-	"\vUserService\x12M\n" +
-	"\x0eIsUserTheAdmin\x12\x1c.proto.IsUserTheAdminRequest\x1a\x1d.proto.IsUserTheAdminResponseB\x04Z\x02./b\x06proto3"
+	"\x02ok\x18\x01 \x01(\bR\x02ok2j\n" +
+	"\vUserService\x12[\n" +
+	"\x0eIsUserTheAdmin\x12#.user_service.IsUserTheAdminRequest\x1a$.user_service.IsUserTheAdminResponseB\x17Z\x15/internal/proto;protob\x06proto3"
 
 var (
-	file_user_service_proto_rawDescOnce sync.Once
-	file_user_service_proto_rawDescData []byte
+	file_internal_proto_user_service_proto_rawDescOnce sync.Once
+	file_internal_proto_user_service_proto_rawDescData []byte
 )
 
-func file_user_service_proto_rawDescGZIP() []byte {
-	file_user_service_proto_rawDescOnce.Do(func() {
-		file_user_service_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_user_service_proto_rawDesc), len(file_user_service_proto_rawDesc)))
+func file_internal_proto_user_service_proto_rawDescGZIP() []byte {
+	file_internal_proto_user_service_proto_rawDescOnce.Do(func() {
+		file_internal_proto_user_service_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_internal_proto_user_service_proto_rawDesc), len(file_internal_proto_user_service_proto_rawDesc)))
 	})
-	return file_user_service_proto_rawDescData
+	return file_internal_proto_user_service_proto_rawDescData
 }
 
-var file_user_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_user_service_proto_goTypes = []any{
-	(*IsUserTheAdminRequest)(nil),  // 0: proto.IsUserTheAdminRequest
-	(*IsUserTheAdminResponse)(nil), // 1: proto.IsUserTheAdminResponse
+var file_internal_proto_user_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_internal_proto_user_service_proto_goTypes = []any{
+	(*IsUserTheAdminRequest)(nil),  // 0: user_service.IsUserTheAdminRequest
+	(*IsUserTheAdminResponse)(nil), // 1: user_service.IsUserTheAdminResponse
 }
-var file_user_service_proto_depIdxs = []int32{
-	0, // 0: proto.UserService.IsUserTheAdmin:input_type -> proto.IsUserTheAdminRequest
-	1, // 1: proto.UserService.IsUserTheAdmin:output_type -> proto.IsUserTheAdminResponse
+var file_internal_proto_user_service_proto_depIdxs = []int32{
+	0, // 0: user_service.UserService.IsUserTheAdmin:input_type -> user_service.IsUserTheAdminRequest
+	1, // 1: user_service.UserService.IsUserTheAdmin:output_type -> user_service.IsUserTheAdminResponse
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -148,26 +148,26 @@ var file_user_service_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_user_service_proto_init() }
-func file_user_service_proto_init() {
-	if File_user_service_proto != nil {
+func init() { file_internal_proto_user_service_proto_init() }
+func file_internal_proto_user_service_proto_init() {
+	if File_internal_proto_user_service_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_service_proto_rawDesc), len(file_user_service_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_internal_proto_user_service_proto_rawDesc), len(file_internal_proto_user_service_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_user_service_proto_goTypes,
-		DependencyIndexes: file_user_service_proto_depIdxs,
-		MessageInfos:      file_user_service_proto_msgTypes,
+		GoTypes:           file_internal_proto_user_service_proto_goTypes,
+		DependencyIndexes: file_internal_proto_user_service_proto_depIdxs,
+		MessageInfos:      file_internal_proto_user_service_proto_msgTypes,
 	}.Build()
-	File_user_service_proto = out.File
-	file_user_service_proto_goTypes = nil
-	file_user_service_proto_depIdxs = nil
+	File_internal_proto_user_service_proto = out.File
+	file_internal_proto_user_service_proto_goTypes = nil
+	file_internal_proto_user_service_proto_depIdxs = nil
 }
