@@ -8,14 +8,14 @@ import (
 )
 
 type Client struct {
-	ID         string
-	Name       string
-	FamilyName string
-	BirthDate  string
-	Email      string
-	Number     string
-	Type       string
-	CreatedAt  string
+	ID         string `json:"client_id"`
+	Name       string `json:"name"`
+	FamilyName string `json:"family_name"`
+	BirthDate  string `json:"birth_date"`
+	Email      string `json:"email"`
+	Number     string `json:"number"`
+	Type       string `json:"type"`
+	CreatedAt  string `json:"created_at"`
 }
 
 func CreateClient(ctx context.Context, c Client) (string, error) {
