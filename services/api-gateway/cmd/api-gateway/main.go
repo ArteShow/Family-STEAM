@@ -33,11 +33,16 @@ func main() {
 	registerProxy := proxy.NewProxy("http://auth-service:8003", "/auth-service/register")
 	loginProxy := proxy.NewProxy("http://auth-service:8003", "/auth-service/login")
 
-	createProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/create")
-	deleteProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/delete")
-	getAllProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/get_all")
-	getByIDProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/get_by_id")
-	updateProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/update")
+	createCalenderProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/create")
+	deleteCalenderProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/delete")
+	getAllCalenderProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/get_all")
+	getByIDCalenderProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/get_by_id")
+	updateCalenderProxy := proxy.NewProxy("http://calender-service:8001", "/calender-service/update")
+
+	createCampProxy := proxy.NewProxy("http://camp-service:8004", "/camp-service/create")
+	deleteCampProxy := proxy.NewProxy("http://camp-service:8004", "/camp-service/delete")
+	getAllCampProxy := proxy.NewProxy("http://camp-service:8004", "/camp-service/get_all")
+	getByIDCampProxy := proxy.NewProxy("http://camp-service:8004", "/camp-service/get_by_id")
 
 	handler := http.NewServeMux()
 	handler.Handle(
@@ -54,11 +59,16 @@ func main() {
 	handler.Handle("/api/v1/auth/register", middleware.LogMiddleware(registerProxy))
 	handler.Handle("/api/v1/auth/login", middleware.LogMiddleware(loginProxy))
 
-	handler.Handle("/api/v1/calender/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createProxy)))
-	handler.Handle("/api/v1/calender/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteProxy)))
-	handler.Handle("/api/v1/calender/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllProxy)))
-	handler.Handle("/api/v1/calender/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDProxy)))
-	handler.Handle("/api/v1/calender/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateProxy)))
+	handler.Handle("/api/v1/calender/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createCalenderProxy)))
+	handler.Handle("/api/v1/calender/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteCalenderProxy)))
+	handler.Handle("/api/v1/calender/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllCalenderProxy)))
+	handler.Handle("/api/v1/calender/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDCalenderProxy)))
+	handler.Handle("/api/v1/calender/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateCalenderProxy)))
+
+	handler.Handle("/api/v1/camp/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createCampProxy)))
+	handler.Handle("/api/v1/camp/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteCampProxy)))
+	handler.Handle("/api/v1/camp/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllCampProxy)))
+	handler.Handle("/api/v1/camp/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDCampProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
