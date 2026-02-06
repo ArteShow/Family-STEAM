@@ -37,5 +37,5 @@ type GetAllResponse struct {
 type UpdateColumnRequest struct {
 	Column string `json:"column"`
 	Value string `json:"value"`
-	EventID string `json:"event_ID"`
+	EventID string `json:"event_id"`
 }
