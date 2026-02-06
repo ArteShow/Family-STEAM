@@ -12,56 +12,6 @@ message IsUserTheAdminResponse {
   bool ok = 1;
 }
 
-message Client {
-  string id = 1;
-  string name = 2;
-  string family_name = 3;
-  string birth_date = 4;
-  string email = 5;
-  string number = 6;
-  string type = 7;
-  string created_at = 8;
-}
-
-message CreateClientRequest {
-  string name = 1;
-  string family_name = 2;
-  string birth_date = 3;
-  string email = 4;
-  string number = 5;
-  string type = 6;
-}
-
-message CreateClientResponse {
-  string id = 1;
-}
-
-message GetClientByIDRequest {
-  string id = 1;
-}
-
-message GetClientByIDResponse {
-  Client client = 1;
-}
-
-message GetAllClientsRequest {}
-
-message GetAllClientsResponse {
-  repeated Client clients = 1;
-}
-
-message DeleteClientRequest {
-  string id = 1;
-}
-
-message DeleteClientResponse {
-  bool success = 1;
-}
-
 service UserService {
   rpc IsUserTheAdmin(IsUserTheAdminRequest) returns (IsUserTheAdminResponse);
-  rpc CreateClient(CreateClientRequest) returns (CreateClientResponse);
-  rpc GetClientByID(GetClientByIDRequest) returns (GetClientByIDResponse);
-  rpc GetAllClients(GetAllClientsRequest) returns (GetAllClientsResponse);
-  rpc DeleteClient(DeleteClientRequest) returns (DeleteClientResponse);
 }
