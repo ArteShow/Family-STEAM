@@ -109,6 +109,490 @@ func (x *IsUserTheAdminResponse) GetOk() bool {
 	return false
 }
 
+type Client struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	FamilyName    string                 `protobuf:"bytes,3,opt,name=family_name,json=familyName,proto3" json:"family_name,omitempty"`
+	BirthDate     string                 `protobuf:"bytes,4,opt,name=birth_date,json=birthDate,proto3" json:"birth_date,omitempty"`
+	Email         string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
+	Number        string                 `protobuf:"bytes,6,opt,name=number,proto3" json:"number,omitempty"`
+	Type          string                 `protobuf:"bytes,7,opt,name=type,proto3" json:"type,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Client) Reset() {
+	*x = Client{}
+	mi := &file_internal_proto_user_service_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Client) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Client) ProtoMessage() {}
+
+func (x *Client) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_user_service_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Client.ProtoReflect.Descriptor instead.
+func (*Client) Descriptor() ([]byte, []int) {
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Client) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Client) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Client) GetFamilyName() string {
+	if x != nil {
+		return x.FamilyName
+	}
+	return ""
+}
+
+func (x *Client) GetBirthDate() string {
+	if x != nil {
+		return x.BirthDate
+	}
+	return ""
+}
+
+func (x *Client) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *Client) GetNumber() string {
+	if x != nil {
+		return x.Number
+	}
+	return ""
+}
+
+func (x *Client) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *Client) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+type CreateClientRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	FamilyName    string                 `protobuf:"bytes,2,opt,name=family_name,json=familyName,proto3" json:"family_name,omitempty"`
+	BirthDate     string                 `protobuf:"bytes,3,opt,name=birth_date,json=birthDate,proto3" json:"birth_date,omitempty"`
+	Email         string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
+	Number        string                 `protobuf:"bytes,5,opt,name=number,proto3" json:"number,omitempty"`
+	Type          string                 `protobuf:"bytes,6,opt,name=type,proto3" json:"type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateClientRequest) Reset() {
+	*x = CreateClientRequest{}
+	mi := &file_internal_proto_user_service_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateClientRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateClientRequest) ProtoMessage() {}
+
+func (x *CreateClientRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_user_service_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateClientRequest.ProtoReflect.Descriptor instead.
+func (*CreateClientRequest) Descriptor() ([]byte, []int) {
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateClientRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateClientRequest) GetFamilyName() string {
+	if x != nil {
+		return x.FamilyName
+	}
+	return ""
+}
+
+func (x *CreateClientRequest) GetBirthDate() string {
+	if x != nil {
+		return x.BirthDate
+	}
+	return ""
+}
+
+func (x *CreateClientRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *CreateClientRequest) GetNumber() string {
+	if x != nil {
+		return x.Number
+	}
+	return ""
+}
+
+func (x *CreateClientRequest) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+type CreateClientResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateClientResponse) Reset() {
+	*x = CreateClientResponse{}
+	mi := &file_internal_proto_user_service_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateClientResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateClientResponse) ProtoMessage() {}
+
+func (x *CreateClientResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_user_service_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateClientResponse.ProtoReflect.Descriptor instead.
+func (*CreateClientResponse) Descriptor() ([]byte, []int) {
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreateClientResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetClientByIDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetClientByIDRequest) Reset() {
+	*x = GetClientByIDRequest{}
+	mi := &file_internal_proto_user_service_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetClientByIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetClientByIDRequest) ProtoMessage() {}
+
+func (x *GetClientByIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_user_service_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetClientByIDRequest.ProtoReflect.Descriptor instead.
+func (*GetClientByIDRequest) Descriptor() ([]byte, []int) {
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetClientByIDRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetClientByIDResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Client        *Client                `protobuf:"bytes,1,opt,name=client,proto3" json:"client,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetClientByIDResponse) Reset() {
+	*x = GetClientByIDResponse{}
+	mi := &file_internal_proto_user_service_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetClientByIDResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetClientByIDResponse) ProtoMessage() {}
+
+func (x *GetClientByIDResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_user_service_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetClientByIDResponse.ProtoReflect.Descriptor instead.
+func (*GetClientByIDResponse) Descriptor() ([]byte, []int) {
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetClientByIDResponse) GetClient() *Client {
+	if x != nil {
+		return x.Client
+	}
+	return nil
+}
+
+type GetAllClientsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAllClientsRequest) Reset() {
+	*x = GetAllClientsRequest{}
+	mi := &file_internal_proto_user_service_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAllClientsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllClientsRequest) ProtoMessage() {}
+
+func (x *GetAllClientsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_user_service_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllClientsRequest.ProtoReflect.Descriptor instead.
+func (*GetAllClientsRequest) Descriptor() ([]byte, []int) {
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{7}
+}
+
+type GetAllClientsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Clients       []*Client              `protobuf:"bytes,1,rep,name=clients,proto3" json:"clients,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAllClientsResponse) Reset() {
+	*x = GetAllClientsResponse{}
+	mi := &file_internal_proto_user_service_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAllClientsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllClientsResponse) ProtoMessage() {}
+
+func (x *GetAllClientsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_user_service_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllClientsResponse.ProtoReflect.Descriptor instead.
+func (*GetAllClientsResponse) Descriptor() ([]byte, []int) {
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetAllClientsResponse) GetClients() []*Client {
+	if x != nil {
+		return x.Clients
+	}
+	return nil
+}
+
+type DeleteClientRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteClientRequest) Reset() {
+	*x = DeleteClientRequest{}
+	mi := &file_internal_proto_user_service_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteClientRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteClientRequest) ProtoMessage() {}
+
+func (x *DeleteClientRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_user_service_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteClientRequest.ProtoReflect.Descriptor instead.
+func (*DeleteClientRequest) Descriptor() ([]byte, []int) {
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteClientRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type DeleteClientResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteClientResponse) Reset() {
+	*x = DeleteClientResponse{}
+	mi := &file_internal_proto_user_service_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteClientResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteClientResponse) ProtoMessage() {}
+
+func (x *DeleteClientResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_user_service_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteClientResponse.ProtoReflect.Descriptor instead.
+func (*DeleteClientResponse) Descriptor() ([]byte, []int) {
+	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *DeleteClientResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 var File_internal_proto_user_service_proto protoreflect.FileDescriptor
 
 const file_internal_proto_user_service_proto_rawDesc = "" +
@@ -117,9 +601,47 @@ const file_internal_proto_user_service_proto_rawDesc = "" +
 	"\x15IsUserTheAdminRequest\x12\x16\n" +
 	"\x06userID\x18\x01 \x01(\tR\x06userID\"(\n" +
 	"\x16IsUserTheAdminResponse\x12\x0e\n" +
-	"\x02ok\x18\x01 \x01(\bR\x02ok2j\n" +
+	"\x02ok\x18\x01 \x01(\bR\x02ok\"\xcd\x01\n" +
+	"\x06Client\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1f\n" +
+	"\vfamily_name\x18\x03 \x01(\tR\n" +
+	"familyName\x12\x1d\n" +
+	"\n" +
+	"birth_date\x18\x04 \x01(\tR\tbirthDate\x12\x14\n" +
+	"\x05email\x18\x05 \x01(\tR\x05email\x12\x16\n" +
+	"\x06number\x18\x06 \x01(\tR\x06number\x12\x12\n" +
+	"\x04type\x18\a \x01(\tR\x04type\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\b \x01(\tR\tcreatedAt\"\xab\x01\n" +
+	"\x13CreateClientRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
+	"\vfamily_name\x18\x02 \x01(\tR\n" +
+	"familyName\x12\x1d\n" +
+	"\n" +
+	"birth_date\x18\x03 \x01(\tR\tbirthDate\x12\x14\n" +
+	"\x05email\x18\x04 \x01(\tR\x05email\x12\x16\n" +
+	"\x06number\x18\x05 \x01(\tR\x06number\x12\x12\n" +
+	"\x04type\x18\x06 \x01(\tR\x04type\"&\n" +
+	"\x14CreateClientResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"&\n" +
+	"\x14GetClientByIDRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"E\n" +
+	"\x15GetClientByIDResponse\x12,\n" +
+	"\x06client\x18\x01 \x01(\v2\x14.user_service.ClientR\x06client\"\x16\n" +
+	"\x14GetAllClientsRequest\"G\n" +
+	"\x15GetAllClientsResponse\x12.\n" +
+	"\aclients\x18\x01 \x03(\v2\x14.user_service.ClientR\aclients\"%\n" +
+	"\x13DeleteClientRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"0\n" +
+	"\x14DeleteClientResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\xcc\x03\n" +
 	"\vUserService\x12[\n" +
-	"\x0eIsUserTheAdmin\x12#.user_service.IsUserTheAdminRequest\x1a$.user_service.IsUserTheAdminResponseB\x17Z\x15/internal/proto;protob\x06proto3"
+	"\x0eIsUserTheAdmin\x12#.user_service.IsUserTheAdminRequest\x1a$.user_service.IsUserTheAdminResponse\x12U\n" +
+	"\fCreateClient\x12!.user_service.CreateClientRequest\x1a\".user_service.CreateClientResponse\x12X\n" +
+	"\rGetClientByID\x12\".user_service.GetClientByIDRequest\x1a#.user_service.GetClientByIDResponse\x12X\n" +
+	"\rGetAllClients\x12\".user_service.GetAllClientsRequest\x1a#.user_service.GetAllClientsResponse\x12U\n" +
+	"\fDeleteClient\x12!.user_service.DeleteClientRequest\x1a\".user_service.DeleteClientResponseB\x17Z\x15/internal/proto;protob\x06proto3"
 
 var (
 	file_internal_proto_user_service_proto_rawDescOnce sync.Once
@@ -133,19 +655,38 @@ func file_internal_proto_user_service_proto_rawDescGZIP() []byte {
 	return file_internal_proto_user_service_proto_rawDescData
 }
 
-var file_internal_proto_user_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_internal_proto_user_service_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_internal_proto_user_service_proto_goTypes = []any{
 	(*IsUserTheAdminRequest)(nil),  // 0: user_service.IsUserTheAdminRequest
 	(*IsUserTheAdminResponse)(nil), // 1: user_service.IsUserTheAdminResponse
+	(*Client)(nil),                 // 2: user_service.Client
+	(*CreateClientRequest)(nil),    // 3: user_service.CreateClientRequest
+	(*CreateClientResponse)(nil),   // 4: user_service.CreateClientResponse
+	(*GetClientByIDRequest)(nil),   // 5: user_service.GetClientByIDRequest
+	(*GetClientByIDResponse)(nil),  // 6: user_service.GetClientByIDResponse
+	(*GetAllClientsRequest)(nil),   // 7: user_service.GetAllClientsRequest
+	(*GetAllClientsResponse)(nil),  // 8: user_service.GetAllClientsResponse
+	(*DeleteClientRequest)(nil),    // 9: user_service.DeleteClientRequest
+	(*DeleteClientResponse)(nil),   // 10: user_service.DeleteClientResponse
 }
 var file_internal_proto_user_service_proto_depIdxs = []int32{
-	0, // 0: user_service.UserService.IsUserTheAdmin:input_type -> user_service.IsUserTheAdminRequest
-	1, // 1: user_service.UserService.IsUserTheAdmin:output_type -> user_service.IsUserTheAdminResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2,  // 0: user_service.GetClientByIDResponse.client:type_name -> user_service.Client
+	2,  // 1: user_service.GetAllClientsResponse.clients:type_name -> user_service.Client
+	0,  // 2: user_service.UserService.IsUserTheAdmin:input_type -> user_service.IsUserTheAdminRequest
+	3,  // 3: user_service.UserService.CreateClient:input_type -> user_service.CreateClientRequest
+	5,  // 4: user_service.UserService.GetClientByID:input_type -> user_service.GetClientByIDRequest
+	7,  // 5: user_service.UserService.GetAllClients:input_type -> user_service.GetAllClientsRequest
+	9,  // 6: user_service.UserService.DeleteClient:input_type -> user_service.DeleteClientRequest
+	1,  // 7: user_service.UserService.IsUserTheAdmin:output_type -> user_service.IsUserTheAdminResponse
+	4,  // 8: user_service.UserService.CreateClient:output_type -> user_service.CreateClientResponse
+	6,  // 9: user_service.UserService.GetClientByID:output_type -> user_service.GetClientByIDResponse
+	8,  // 10: user_service.UserService.GetAllClients:output_type -> user_service.GetAllClientsResponse
+	10, // 11: user_service.UserService.DeleteClient:output_type -> user_service.DeleteClientResponse
+	7,  // [7:12] is the sub-list for method output_type
+	2,  // [2:7] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_internal_proto_user_service_proto_init() }
@@ -159,7 +700,7 @@ func file_internal_proto_user_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_internal_proto_user_service_proto_rawDesc), len(file_internal_proto_user_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
