@@ -4,21 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"time"
 
 	"github.com/ArteShow/Family-STEAM/services/camp-service/internal/db"
 	"github.com/google/uuid"
 )
 
 type Camp struct {
-	ID          string
-	Name        string
-	StartsAt    string
-	EndsAt      string
-	Place       string
-	Price       string
-	Description string
-	CreatedAt   time.Time
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	StartsAt    string `json:"starts_at"`
+	EndsAt      string `json:"ends_at"`
+	Place       string `json:"place"`
+	Price       string `json:"price"`
+	Description string `json:"description"`
+	CreatedAt   string `json:"created_at"`
 }
 
 func CreateCamp(ctx context.Context, c Camp) (string, error) {
