@@ -10,8 +10,7 @@ import (
 	"time"
 
 	"github.com/ArteShow/Family-STEAM/services/camp-service/internal/config"
-	camp "github.com/ArteShow/Family-STEAM/services/camp-service/internal/handlers/camp"
-	client "github.com/ArteShow/Family-STEAM/services/camp-service/internal/handlers/client"
+	"github.com/ArteShow/Family-STEAM/services/camp-service/internal/handlers"
 	"github.com/ArteShow/Family-STEAM/services/camp-service/internal/middleware"
 )
 
@@ -39,15 +38,10 @@ func main() {
 			return
 		}
 	})
-	mux.Handle("/camp-service/camp/create", middleware.AdminCheckMiddleware(camp.CreatCamp))
-	mux.Handle("/camp-service/camp/delete", middleware.AdminCheckMiddleware(camp.DeleteCamp))
-	mux.Handle("/camp-service/camp/get_all", middleware.AdminCheckMiddleware(camp.GetAllCamps))
-	mux.Handle("/camp-service/camp/get_by_id", middleware.AdminCheckMiddleware(camp.GetCampByID))
-
-	mux.Handle("/camp-service/client/create", middleware.AdminCheckMiddleware(client.CreatClient))
-	mux.Handle("/camp-service/client/delete", middleware.AdminCheckMiddleware(client.DeleteClient))
-	mux.Handle("/camp-service/client/get_all", middleware.AdminCheckMiddleware(client.GetAllClients))
-	mux.Handle("/camp-service/client/get_by_id", middleware.AdminCheckMiddleware(client.GetClientById))
+	mux.Handle("/camp-service/create", middleware.AdminCheckMiddleware(handlers.CreatCamp))
+	mux.Handle("/camp-service/delete", middleware.AdminCheckMiddleware(handlers.DeleteCamp))
+	mux.Handle("/camp-service/get_all", middleware.AdminCheckMiddleware(handlers.GetAllCamps))
+	mux.Handle("/camp-service/get_by_id", middleware.AdminCheckMiddleware(handlers.GetCampByID))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
