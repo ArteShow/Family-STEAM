@@ -1,5 +1,7 @@
 package handlers
 
+import pb "github.com/ArteShow/Family-STEAM/services/camp-service/internal/proto"
+
 type CreateClientRequest struct {
 	Name       string `json:"name"`
 	FamilyName string `json:"family_name"`
@@ -18,16 +20,7 @@ type DeleteClientRequest struct {
 }
 
 type GetAllClientResponse struct {
-	Clients []struct {
-		ID         string `json:"client_id"`
-		Name       string `json:"name"`
-		FamilyName string `json:"family_name"`
-		BirthDate  string `json:"birth_date"`
-		Email      string `json:"email"`
-		Number     string `json:"number"`
-		Type       string `json:"type"`
-		CreatedAt  string `json:"created_at"`
-	} `json:"clients"`
+	Clients []*pb.Client `json:"clients"`
 }
 
 type GetCampByIdRequest struct {
@@ -35,14 +28,5 @@ type GetCampByIdRequest struct {
 }
 
 type GetCampByIdResponse struct {
-	Client struct {
-		ID         string `json:"client_id"`
-		Name       string `json:"name"`
-		FamilyName string `json:"family_name"`
-		BirthDate  string `json:"birth_date"`
-		Email      string `json:"email"`
-		Number     string `json:"number"`
-		Type       string `json:"type"`
-		CreatedAt  string `json:"created_at"`
-	} `json:"client"`
+	Client *pb.Client`json:"client"`
 }

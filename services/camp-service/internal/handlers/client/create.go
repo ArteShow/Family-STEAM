@@ -8,7 +8,7 @@ import (
 	"github.com/ArteShow/Family-STEAM/services/camp-service/internal/client"
 )
 
-func CreatCamp(w http.ResponseWriter, r *http.Request) {
+func CreatClient(w http.ResponseWriter, r *http.Request) {
 	var req CreateClientRequest
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
