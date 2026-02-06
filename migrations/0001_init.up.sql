@@ -14,3 +14,14 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS clients (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    family_name TEXT NOT NULL,
+    birth_date TEXT NOT NULL,
+    email TEXT NOT NULL,
+    number TEXT NOT NULL UNIQUE,
+    type TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
