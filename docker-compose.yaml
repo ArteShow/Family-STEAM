@@ -79,7 +79,7 @@ services:
     env_file:
       - ./config/docker.env
     ports:
-      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+      - "${USER_SERVICE_HTTP_PORT}:${USER_SERVICE_HTTP_PORT}"
     depends_on:
       migrate:
         condition: service_completed_successfully
