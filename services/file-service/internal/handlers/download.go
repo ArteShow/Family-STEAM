@@ -19,13 +19,13 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	meta, err := repository.GetFileByID(context.Background(), req.FileID)
-	if err != nil {
+	if err = json.Unmarshal(body, &req); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if err = json.Unmarshal(body, &req); err != nil {
+	meta, err := repository.GetFileByID(context.Background(), req.FileID)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
