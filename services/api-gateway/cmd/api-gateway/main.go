@@ -43,6 +43,7 @@ func main() {
 	deleteCampProxy := proxy.NewProxy("http://camp-service:8004", "/camp-service/delete")
 	getAllCampProxy := proxy.NewProxy("http://camp-service:8004", "/camp-service/get_all")
 	getByIDCampProxy := proxy.NewProxy("http://camp-service:8004", "/camp-service/get_by_id")
+	updateCampProxy := proxy.NewProxy("http://camp-service:8004", "/camp-service/update")
 
 	handler := http.NewServeMux()
 	handler.Handle(
@@ -69,6 +70,7 @@ func main() {
 	handler.Handle("/api/v1/camp/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteCampProxy)))
 	handler.Handle("/api/v1/camp/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllCampProxy)))
 	handler.Handle("/api/v1/camp/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDCampProxy)))
+	handler.Handle("/api/v1/camp/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateCampProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,

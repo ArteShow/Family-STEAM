@@ -42,6 +42,7 @@ func main() {
 	mux.Handle("/camp-service/delete", middleware.AdminCheckMiddleware(handlers.DeleteCamp))
 	mux.Handle("/camp-service/get_all", middleware.AdminCheckMiddleware(handlers.GetAllCamps))
 	mux.Handle("/camp-service/get_by_id", middleware.AdminCheckMiddleware(handlers.GetCampByID))
+	mux.Handle("/camp-service/update", middleware.AdminCheckMiddleware(handlers.UpdateColumn))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,

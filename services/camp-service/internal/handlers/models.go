@@ -30,3 +30,9 @@ type GetCampByIdRequest struct {
 type GetCampByIdResponse struct{
 	Camp repository.Camp `json:"camp"`
 }
+
+type UpdateColumnRequest struct {
+	CampID string `json:"camp_id"`
+	Column string `json:"column"`
+	Value string `json:"value"`
+}
