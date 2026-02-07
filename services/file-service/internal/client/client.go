@@ -9,7 +9,7 @@ import (
 )
 
 func IsUserTheAdmin(userID string) (bool, error) {
-	conn, err := grpc.Dial("user-service:8002", grpc.WithInsecure())
+	conn, err := grpc.Dial("user-service:50001", grpc.WithInsecure())
 	if err != nil {
 		return false, err
 	}
