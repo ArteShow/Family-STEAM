@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -37,5 +38,8 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", meta.MimeType)
+	w.Header().Set("Content-Disposition", `attachment; filename="`+meta.Name+`"`)
+	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(data)))
+	
 	w.Write(data)
 }
