@@ -30,7 +30,7 @@ func UploadFile(data []byte, fileName string) (string, error) {
 	ctx := context.Background()
 
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "alpine",
+		Image: "alpine:3.19",
 		Cmd:   []string{"sleep", "5"},
 	}, &container.HostConfig{
 		Binds: []string{volumeName + ":/data"},
@@ -77,7 +77,7 @@ func DownloadFile(id string, fileName string) ([]byte, error) {
 	ctx := context.Background()
 
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "alpine",
+		Image: "alpine:3.19",
 		Cmd:   []string{"sleep", "5"},
 	}, &container.HostConfig{
 		Binds: []string{volumeName + ":/data"},
@@ -120,7 +120,7 @@ func DeleteFile(id string) error {
 	ctx := context.Background()
 
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "alpine",
+		Image: "alpine:3.19",
 		Cmd:   []string{"rm", "-rf", "/data/" + id},
 	}, &container.HostConfig{
 		Binds: []string{volumeName + ":/data"},
