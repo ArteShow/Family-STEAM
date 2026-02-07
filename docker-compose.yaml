@@ -106,8 +106,26 @@ services:
     networks:
       - disknet
 
+  file-service:
+    build: ./services/file-service
+    container_name: file-service
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${FILE_SERVICE_PORT}:${FILE_SERVICE_PORT}"
+    volumes:
+      - "family-steam:/data"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - disknet
+
 volumes:
   postgres_data:
+  family-steam:
 
 networks:
   disknet:
