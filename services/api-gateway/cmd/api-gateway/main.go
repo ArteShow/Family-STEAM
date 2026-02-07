@@ -55,6 +55,12 @@ func main() {
 	getAllClientsProxy := proxy.NewProxy("http://user-service:8002", "/user-service/get_all")
 	getClientByIDProxy := proxy.NewProxy("http://user-service:8002", "/user-service/get_by_id")
 
+	creatEventProxy := proxy.NewProxy("http://event-service:8006", "/event-service/create")
+	deleteEventProxy := proxy.NewProxy("http://event-service:8006", "/event-service/delete")
+	getAllEventProxy := proxy.NewProxy("http://event-service:8006", "/event-service/get_all")
+	getByIDEventProxy := proxy.NewProxy("http://event-service:8006", "/event-service/get_by_id")
+	updateEventProxy := proxy.NewProxy("http://event-service:8006", "/event-service/update")
+
 	handler := http.NewServeMux()
 	handler.Handle(
 		"/api/v1/api-gateway/health",
@@ -91,6 +97,12 @@ func main() {
 	handler.Handle("/api/v1/client/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteClientProxy)))
 	handler.Handle("/api/v1/client/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllClientsProxy)))
 	handler.Handle("/api/v1/client/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getClientByIDProxy)))
+
+	handler.Handle("/api/v1/event/create", middleware.LogMiddleware(middleware.AuthMiddleware()(creatEventProxy)))
+	handler.Handle("/api/v1/event/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteEventProxy)))
+	handler.Handle("/api/v1/event/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllEventProxy)))
+	handler.Handle("/api/v1/event/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDEventProxy)))
+	handler.Handle("/api/v1/event/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateEventProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
