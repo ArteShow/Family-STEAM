@@ -139,6 +139,21 @@ services:
     networks:
       - disknet
 
+  news-service:
+    build: ./services/news-service
+    container_name: news-service
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${NEWS_SERVICE_PORT}:${NEWS_SERVICE_PORT}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - disknet
+
 volumes:
   postgres_data:
   family-steam:
