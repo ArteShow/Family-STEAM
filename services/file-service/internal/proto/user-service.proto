@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package user_service;
+
+option go_package = "/internal/proto;proto";
+
+message IsUserTheAdminRequest {
+  string userID = 1;
+}
+
+message IsUserTheAdminResponse {
+  bool ok = 1;
+}
+
+service UserService {
+  rpc IsUserTheAdmin(IsUserTheAdminRequest) returns (IsUserTheAdminResponse);
+}
