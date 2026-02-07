@@ -49,6 +49,11 @@ func main() {
 	downloadFileProxy := proxy.NewProxy("http://file-service:8005", "/file-service/download")
 	getAllFilesProxy := proxy.NewProxy("http://file-service:8005", "/file-service/get_all")
 	getFileByIDProxy := proxy.NewProxy("http://file-service:8005", "/file-service/get_by_id")
+	
+	createClientProxy := proxy.NewProxy("http://user-service:8002", "user-service/create")
+	deleteClientProxy := proxy.NewProxy("http://user-service:8002", "user-service/delete")
+	getAllClientsProxy := proxy.NewProxy("http://user-service:8002", "user-service/get_all")
+	getClientByIDProxy := proxy.NewProxy("http://user-service:8002", "user-service/get_by_id")
 
 	handler := http.NewServeMux()
 	handler.Handle(
@@ -81,6 +86,11 @@ func main() {
 	handler.Handle("/api/v1/file/download", middleware.LogMiddleware(middleware.AuthMiddleware()(downloadFileProxy)))
 	handler.Handle("/api/v1/file/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllFilesProxy)))
 	handler.Handle("/api/v1/file/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getFileByIDProxy)))
+	
+	handler.Handle("/api/v1/client/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createClientProxy)))
+	handler.Handle("/api/v1/client/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteClientProxy)))
+	handler.Handle("/api/v1/client/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllClientsProxy)))
+	handler.Handle("/api/v1/client/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getClientByIDProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,

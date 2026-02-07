@@ -4,14 +4,16 @@ import (
 	"context"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/ArteShow/Family-STEAM/services/user-service/internal/config"
-	userpb "github.com/ArteShow/Family-STEAM/services/user-service/internal/proto"
-	"github.com/ArteShow/Family-STEAM/services/user-service/internal/server"
+	"github.com/ArteShow/Family-STEAM/services/user-service/internal/handlers"
+	"github.com/ArteShow/Family-STEAM/services/user-service/internal/middleware"
+	pb "github.com/ArteShow/Family-STEAM/services/user-service/internal/proto"
+	server "github.com/ArteShow/Family-STEAM/services/user-service/internal/server"
 	"google.golang.org/grpc"
 )
 
@@ -21,43 +23,56 @@ func main() {
 		log.Fatal(err)
 	}
 
-	lis, err := net.Listen("tcp", ":"+cfg.Port)
+	grpcLis, err := net.Listen("tcp", ":"+cfg.GRPCPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
-	userpb.RegisterUserServiceServer(grpcServer, server.NewServer())
+	pb.RegisterUserServiceServer(grpcServer, server.NewServer())
+
+	httpMux := http.NewServeMux()
+	httpMux.HandleFunc("/user-service/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+
+	httpMux.Handle("/user-service/create", middleware.AdminCheckMiddleware(handlers.CreateClient))
+	httpMux.Handle("/user-service/delete", middleware.AdminCheckMiddleware(handlers.DeleteClient))
+	httpMux.Handle("/user-service/get_all", middleware.AdminCheckMiddleware(handlers.GetAllClients))
+	httpMux.Handle("/user-service/get_by_id", middleware.AdminCheckMiddleware(handlers.GetClientByID))
+
+	httpServer := &http.Server{
+		Addr:    ":" + cfg.HTTPPort,
+		Handler: httpMux,
+	}
 
 	go func() {
-		log.Println("gRPC server running on :" + cfg.Port)
-		if err := grpcServer.Serve(lis); err != nil {
+		log.Println("gRPC server running on :" + cfg.GRPCPort)
+		if err := grpcServer.Serve(grpcLis); err != nil {
 			log.Printf("gRPC server stopped: %v", err)
 		}
 	}()
 
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		log.Println("HTTP server running on :" + cfg.HTTPPort)
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Printf("HTTP server stopped: %v", err)
+		}
+	}()
 
-	sig := <-stop
-	log.Printf("Received signal %s, shutting down...", sig)
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Println("Shutting down servers...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
-	done := make(chan struct{})
-	go func() {
-		grpcServer.GracefulStop()
-		close(done)
-	}()
-
-	select {
-	case <-done:
-		log.Println("gRPC server stopped gracefully")
-	case <-ctx.Done():
-		log.Println("timeout reached, forcing gRPC server stop")
-		grpcServer.Stop()
+	if err := httpServer.Shutdown(ctx); err != nil {
+		log.Printf("HTTP shutdown error: %v", err)
 	}
 
-	log.Println("Shutdown complete")
+	grpcServer.GracefulStop()
+
+	log.Println("Servers stopped")
 }
