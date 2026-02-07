@@ -50,10 +50,10 @@ func main() {
 	getAllFilesProxy := proxy.NewProxy("http://file-service:8005", "/file-service/get_all")
 	getFileByIDProxy := proxy.NewProxy("http://file-service:8005", "/file-service/get_by_id")
 	
-	createClientProxy := proxy.NewProxy("http://user-service:8002", "user-service/create")
-	deleteClientProxy := proxy.NewProxy("http://user-service:8002", "user-service/delete")
-	getAllClientsProxy := proxy.NewProxy("http://user-service:8002", "user-service/get_all")
-	getClientByIDProxy := proxy.NewProxy("http://user-service:8002", "user-service/get_by_id")
+	createClientProxy := proxy.NewProxy("http://user-service:8002", "/user-service/create")
+	deleteClientProxy := proxy.NewProxy("http://user-service:8002", "/user-service/delete")
+	getAllClientsProxy := proxy.NewProxy("http://user-service:8002", "/user-service/get_all")
+	getClientByIDProxy := proxy.NewProxy("http://user-service:8002", "/user-service/get_by_id")
 
 	handler := http.NewServeMux()
 	handler.Handle(
