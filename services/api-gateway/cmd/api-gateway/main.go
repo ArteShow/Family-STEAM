@@ -33,10 +33,10 @@ func main() {
 	registerProxy := proxy.NewProxy("http://auth-service:8003", "auth-service/register")
 	loginProxy := proxy.NewProxy("http://auth-service:8003", "auth-service/login")
 
-	createClientProxy := proxy.NewProxy("http://user-service:8002", "user-service/create")
-	deleteClientProxy := proxy.NewProxy("http://user-service:8002", "user-service/delete")
-	getAllClientsProxy := proxy.NewProxy("http://user-service:8002", "user-service/get_all")
-	getClientByIDProxy := proxy.NewProxy("http://user-service:8002", "user-service/get_by_id")
+	createClientProxy := proxy.NewProxy("http://user-service:8002", "/user-service/create")
+	deleteClientProxy := proxy.NewProxy("http://user-service:8002", "/user-service/delete")
+	getAllClientsProxy := proxy.NewProxy("http://user-service:8002", "/user-service/get_all")
+	getClientByIDProxy := proxy.NewProxy("http://user-service:8002", "/user-service/get_by_id")
 
 
 	createProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/create")
