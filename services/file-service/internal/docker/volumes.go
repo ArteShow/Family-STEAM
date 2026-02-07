@@ -7,10 +7,10 @@ import (
 	"io"
 	"path/filepath"
 
+	"github.com/ArteShow/Family-STEAM/services/file-service/pkg/uuid"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
-	"github.com/google/uuid"
 )
 
 const volumeName = "family-steam"
@@ -25,7 +25,7 @@ func UploadFile(data []byte, fileName string) (string, error) {
 		return "", err
 	}
 
-	id := uuid.New().String()
+	id := uuid.CreateUUID()
 
 	ctx := context.Background()
 
