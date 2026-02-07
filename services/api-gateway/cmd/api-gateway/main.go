@@ -33,6 +33,12 @@ func main() {
 	registerProxy := proxy.NewProxy("http://auth-service:8003", "auth-service/register")
 	loginProxy := proxy.NewProxy("http://auth-service:8003", "auth-service/login")
 
+	createClientProxy := proxy.NewProxy("http://user-service:8002", "user-service/create")
+	deleteClientProxy := proxy.NewProxy("http://user-service:8002", "user-service/delete")
+	getAllClientsProxy := proxy.NewProxy("http://user-service:8002", "user-service/get_all")
+	getClientByIDProxy := proxy.NewProxy("http://user-service:8002", "user-service/get_by_id")
+
+
 	createProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/create")
 	deleteProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/delete")
 	getAllProxy := proxy.NewProxy("http://calender-service:8001", "calender-service/get_all")
@@ -53,6 +59,11 @@ func main() {
 	)
 	handler.Handle("/api/v1/auth/register", middleware.LogMiddleware(registerProxy))
 	handler.Handle("/api/v1/auth/login", middleware.LogMiddleware(loginProxy))
+
+	handler.Handle("/api/v1/client/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createClientProxy)))
+	handler.Handle("/api/v1/client/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteClientProxy)))
+	handler.Handle("/api/v1/client/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllClientsProxy)))
+	handler.Handle("/api/v1/client/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getClientByIDProxy)))
 
 	handler.Handle("/api/v1/calender/create", middleware.LogMiddleware(createProxy))
 	handler.Handle("/api/v1/calender/delete", middleware.LogMiddleware(deleteProxy))
