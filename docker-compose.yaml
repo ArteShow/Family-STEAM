@@ -66,9 +66,6 @@ services:
       - ./config/docker.env
     ports:
       - "${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}"
-    depends_on:
-      migrate:
-        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:${AUTH_SERVICE_PORT}/health"]
       interval: 10s
@@ -86,6 +83,21 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "wget", "-qO-"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - disknet
+  
+  camp-service:
+    build: ./services/camp-service
+    container_name: camp-service
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${CAMP_SERVICE_PORT}:${CAMP_SERVICE_PORT}"
     healthcheck:
       test: ["CMD", "wget", "-qO-"]
       interval: 10s
