@@ -127,6 +127,7 @@ services:
 volumes:
   postgres_data:
   family-steam:
+    name: family-steam
 
 networks:
   disknet:
