@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS clients (
     family_name TEXT NOT NULL,
     birth_date TEXT NOT NULL,
     email TEXT NOT NULL,
-    number TEXT NOT NULL UNIQUE,
+    number TEXT NOT NULL,
     type TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
