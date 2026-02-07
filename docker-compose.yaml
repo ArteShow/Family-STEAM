@@ -123,6 +123,21 @@ services:
       retries: 5
     networks:
       - disknet
+  
+  event-service:
+    build: ./services/event-service
+    container_name: event-service
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${EVENT_SERVICE_PORT}:${EVENT_SERVICE_PORT}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - disknet
 
 volumes:
   postgres_data:
