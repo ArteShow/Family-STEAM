@@ -61,6 +61,11 @@ func main() {
 	getByIDEventProxy := proxy.NewProxy("http://event-service:8006", "/event-service/get_by_id")
 	updateEventProxy := proxy.NewProxy("http://event-service:8006", "/event-service/update")
 
+	createNewsProxy := proxy.NewProxy("http://news-service:8007", "/news-service/create")
+	deleteNewsProxy := proxy.NewProxy("http://news-service:8007", "/news-service/delete")
+	getAllNewsProxy := proxy.NewProxy("http://news-service:8007", "/news-service/get_all")
+	getNewsByIDProxy := proxy.NewProxy("http://news-service:8007", "/news-service/get_by_id")
+	
 	handler := http.NewServeMux()
 	handler.Handle(
 		"/api/v1/api-gateway/health",
@@ -103,6 +108,11 @@ func main() {
 	handler.Handle("/api/v1/event/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllEventProxy)))
 	handler.Handle("/api/v1/event/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDEventProxy)))
 	handler.Handle("/api/v1/event/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateEventProxy)))
+
+	handler.Handle("/api/v1/news/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createNewsProxy)))
+	handler.Handle("/api/v1/news/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteNewsProxy)))
+	handler.Handle("/api/v1/news/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllNewsProxy)))
+	handler.Handle("/api/v1/news/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getNewsByIDProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
