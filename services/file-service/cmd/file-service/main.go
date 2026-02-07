@@ -31,7 +31,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/camp-service/health", func(w http.ResponseWriter, _ *http.Request) {
+	mux.HandleFunc("/file-service/health", func(w http.ResponseWriter, _ *http.Request) {
 		_, err = w.Write([]byte("ok"))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

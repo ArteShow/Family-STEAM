@@ -45,6 +45,11 @@ func main() {
 	getByIDCampProxy := proxy.NewProxy("http://camp-service:8004", "/camp-service/get_by_id")
 	updateCampProxy := proxy.NewProxy("http://camp-service:8004", "/camp-service/update")
 
+	uploadFileProxy := proxy.NewProxy("http://file-service:8005", "/file-service/upload")
+	downloadFileProxy := proxy.NewProxy("http://file-service:8005", "/file-service/download")
+	getAllFilesProxy := proxy.NewProxy("http://file-service:8005", "/file-service/get_all")
+	getFileByIDProxy := proxy.NewProxy("http://file-service:8005", "/file-service/get_by_id")
+
 	handler := http.NewServeMux()
 	handler.Handle(
 		"/api/v1/api-gateway/health",
@@ -71,6 +76,11 @@ func main() {
 	handler.Handle("/api/v1/camp/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllCampProxy)))
 	handler.Handle("/api/v1/camp/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDCampProxy)))
 	handler.Handle("/api/v1/camp/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateCampProxy)))
+
+	handler.Handle("/api/v1/file/upload", middleware.LogMiddleware(middleware.AuthMiddleware()(uploadFileProxy)))
+	handler.Handle("/api/v1/file/download", middleware.LogMiddleware(middleware.AuthMiddleware()(downloadFileProxy)))
+	handler.Handle("/api/v1/file/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllFilesProxy)))
+	handler.Handle("/api/v1/file/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getFileByIDProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
