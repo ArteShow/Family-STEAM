@@ -15,7 +15,7 @@ type UserClient struct {
 }
 
 func NewUserClient() (*UserClient, error) {
-	conn, err := grpc.Dial("user-service:8002", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("user-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
