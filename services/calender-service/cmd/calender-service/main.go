@@ -40,8 +40,8 @@ func main() {
 	})
 	mux.Handle("/calender-service/create", middleware.AdminCheckMiddleware(handlers.CreateHandler))
 	mux.Handle("/calender-service/delete", middleware.AdminCheckMiddleware(handlers.DeleteHandler))
-	mux.Handle("/calender-service/get_all", middleware.AdminCheckMiddleware(handlers.GetAllHandler))
-	mux.Handle("/calender-service/get_by_id", middleware.AdminCheckMiddleware(handlers.GetByIDHandler))
+	mux.HandleFunc("/calender-service/get_all", handlers.GetAllHandler)
+	mux.HandleFunc("/calender-service/get_by_id", handlers.GetByIDHandler)
 	mux.Handle("/calender-service/update", middleware.AdminCheckMiddleware(handlers.UpdateColumnHandler))
 
 	srv := &http.Server{
