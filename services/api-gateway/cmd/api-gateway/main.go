@@ -88,8 +88,8 @@ func main() {
 
 	handler.Handle("/api/v1/calender/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createCalenderProxy)))
 	handler.Handle("/api/v1/calender/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteCalenderProxy)))
-	handler.Handle("/api/v1/calender/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllCalenderProxy)))
-	handler.Handle("/api/v1/calender/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDCalenderProxy)))
+	handler.Handle("/api/v1/calender/get_all", middleware.LogMiddleware(getAllCalenderProxy))
+	handler.Handle("/api/v1/calender/get_by_id", middleware.LogMiddleware(getByIDCalenderProxy))
 	handler.Handle("/api/v1/calender/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateCalenderProxy)))
 
 	handler.Handle("/api/v1/camp/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createCampProxy)))
