@@ -39,7 +39,7 @@ func main() {
 		}
 	})
 	mux.Handle("/file-service/upload", middleware.AdminCheckMiddleware(handlers.UploadFile))
-	mux.Handle("/file-service/download", middleware.AdminCheckMiddleware(handlers.DownloadFile))
+	mux.HandleFunc("/file-service/download", handlers.DownloadFile)
 	mux.Handle("/file-service/get_all", middleware.AdminCheckMiddleware(handlers.GetAllFiles))
 	mux.Handle("/file-service/get_by_id", middleware.AdminCheckMiddleware(handlers.GetFileByID))
 

@@ -78,7 +78,7 @@ func main() {
 	handler.Handle("/api/v1/camp/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateCampProxy)))
 
 	handler.Handle("/api/v1/file/upload", middleware.LogMiddleware(middleware.AuthMiddleware()(uploadFileProxy)))
-	handler.Handle("/api/v1/file/download", middleware.LogMiddleware(middleware.AuthMiddleware()(downloadFileProxy)))
+	handler.Handle("/api/v1/file/download", middleware.LogMiddleware(downloadFileProxy))
 	handler.Handle("/api/v1/file/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllFilesProxy)))
 	handler.Handle("/api/v1/file/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getFileByIDProxy)))
 
