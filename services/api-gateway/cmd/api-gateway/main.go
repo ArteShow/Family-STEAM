@@ -94,8 +94,8 @@ func main() {
 
 	handler.Handle("/api/v1/camp/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createCampProxy)))
 	handler.Handle("/api/v1/camp/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteCampProxy)))
-	handler.Handle("/api/v1/camp/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllCampProxy)))
-	handler.Handle("/api/v1/camp/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDCampProxy)))
+	handler.Handle("/api/v1/camp/get_all", middleware.LogMiddleware(getAllCampProxy))
+	handler.Handle("/api/v1/camp/get_by_id", middleware.LogMiddleware(getByIDCampProxy))
 	handler.Handle("/api/v1/camp/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateCampProxy)))
 
 	handler.Handle("/api/v1/file/upload", middleware.LogMiddleware(middleware.AuthMiddleware()(uploadFileProxy)))
