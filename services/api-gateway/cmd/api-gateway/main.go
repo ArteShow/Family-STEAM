@@ -121,8 +121,8 @@ func main() {
 
 	handler.Handle("/api/v1/feedback/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createFeedbackProxy)))
 	handler.Handle("/api/v1/feedback/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteFeedbackProxy)))
-	handler.Handle("/api/v1/feedback/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllFeedbacksProxy)))
-	handler.Handle("/api/v1/feedback/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getFeedbackByIDProxy)))
+	handler.Handle("/api/v1/feedback/get_all", middleware.LogMiddleware(getAllFeedbacksProxy))
+	handler.Handle("/api/v1/feedback/get_by_id", middleware.LogMiddleware(getFeedbackByIDProxy))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
