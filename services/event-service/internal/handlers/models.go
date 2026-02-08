@@ -9,6 +9,7 @@ type CreateRequest struct {
 	Place       string `json:"place"`
 	Price       string `json:"price"`
 	Description string `json:"description"`
+	ImageID string `json:"image_id"`
 }
 
 type CreateResponse struct {
