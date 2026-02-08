@@ -172,6 +172,14 @@ services:
       retries: 5
     networks:
       - disknet
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "${FORNTEND_PORT}:${NGINX_PORT}"
+    networks:
+      - disknet
+
 
 volumes:
   postgres_data:
