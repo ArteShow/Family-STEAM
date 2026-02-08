@@ -30,6 +30,7 @@ func CreatCamp(w http.ResponseWriter, r *http.Request) {
 		EndsAt: req.EndsAt,
 		Place: req.Place,
 		Price: req.Price,
+		ImageID: req.ImageID,
 	})
 
 	if err != nil {

@@ -9,6 +9,7 @@ type CreateCampRequest struct {
 	Place       string `json:"place"`
 	Price       string `json:"price"`
 	Description string `json:"description"`
+	ImageID string `json:"image_id"`
 }
 
 type CreateCampResponse struct {
