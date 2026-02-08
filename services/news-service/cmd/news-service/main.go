@@ -40,8 +40,8 @@ func main() {
 	})
 	mux.Handle("/news-service/create", middleware.AdminCheckMiddleware(handlers.CreatNews))
 	mux.Handle("/news-service/delete", middleware.AdminCheckMiddleware(handlers.DeleteNews))
-	mux.Handle("/news-service/get_all", middleware.AdminCheckMiddleware(handlers.GetAllNews))
-	mux.Handle("/news-service/get_by_id", middleware.AdminCheckMiddleware(handlers.GetCampByID))
+	mux.HandleFunc("/news-service/get_all", handlers.GetAllNews)
+	mux.HandleFunc("/news-service/get_by_id",handlers.GetCampByID)
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
