@@ -66,6 +66,11 @@ func main() {
 	getAllNewsProxy := proxy.NewProxy("http://news-service:8007", "/news-service/get_all")
 	getNewsByIDProxy := proxy.NewProxy("http://news-service:8007", "/news-service/get_by_id")
 	
+	createFeedbackProxy := proxy.NewProxy("http://feedback-service:8008", "/feedback-service/create")
+	deleteFeedbackProxy := proxy.NewProxy("http://feedback-service:8008", "/feedback-service/delete")
+	getAllFeedbacksProxy := proxy.NewProxy("http://feedback-service:8008", "/feedback-service/get_all")
+	getFeedbackByIDProxy := proxy.NewProxy("http://feedback-service:8008", "/feedback-service/get_by_id")
+
 	handler := http.NewServeMux()
 	handler.Handle(
 		"/api/v1/api-gateway/health",
@@ -113,6 +118,11 @@ func main() {
 	handler.Handle("/api/v1/news/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteNewsProxy)))
 	handler.Handle("/api/v1/news/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllNewsProxy)))
 	handler.Handle("/api/v1/news/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getNewsByIDProxy)))
+
+	handler.Handle("/api/v1/feedback/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createFeedbackProxy)))
+	handler.Handle("/api/v1/feedback/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteFeedbackProxy)))
+	handler.Handle("/api/v1/feedback/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllFeedbacksProxy)))
+	handler.Handle("/api/v1/feedback/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getFeedbackByIDProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
