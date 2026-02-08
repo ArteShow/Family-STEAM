@@ -40,8 +40,8 @@ func main() {
 	})
 	mux.Handle("/event-service/create", middleware.AdminCheckMiddleware(handlers.CreateHandler))
 	mux.Handle("/event-service/delete", middleware.AdminCheckMiddleware(handlers.DeleteHandler))
-	mux.Handle("/event-service/get_all", middleware.AdminCheckMiddleware(handlers.GetAllHandler))
-	mux.Handle("/event-service/get_by_id", middleware.AdminCheckMiddleware(handlers.GetByIDHandler))
+	mux.HandleFunc("/event-service/get_all", handlers.GetAllHandler)
+	mux.HandleFunc("/event-service/get_by_id", handlers.GetByIDHandler)
 	mux.Handle("/event-service/update", middleware.AdminCheckMiddleware(handlers.UpdateColumnHandler))
 
 	srv := &http.Server{

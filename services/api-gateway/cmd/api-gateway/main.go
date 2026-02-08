@@ -100,8 +100,8 @@ func main() {
 
 	handler.Handle("/api/v1/event/create", middleware.LogMiddleware(middleware.AuthMiddleware()(creatEventProxy)))
 	handler.Handle("/api/v1/event/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteEventProxy)))
-	handler.Handle("/api/v1/event/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllEventProxy)))
-	handler.Handle("/api/v1/event/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDEventProxy)))
+	handler.Handle("/api/v1/event/get_all", middleware.LogMiddleware(getAllEventProxy))
+	handler.Handle("/api/v1/event/get_by_id", middleware.LogMiddleware(getByIDEventProxy))
 	handler.Handle("/api/v1/event/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateEventProxy)))
 
 	srv := &http.Server{
