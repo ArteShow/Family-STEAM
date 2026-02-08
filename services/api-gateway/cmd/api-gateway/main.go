@@ -116,8 +116,8 @@ func main() {
 
 	handler.Handle("/api/v1/news/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createNewsProxy)))
 	handler.Handle("/api/v1/news/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteNewsProxy)))
-	handler.Handle("/api/v1/news/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllNewsProxy)))
-	handler.Handle("/api/v1/news/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getNewsByIDProxy)))
+	handler.Handle("/api/v1/news/get_all", middleware.LogMiddleware(getAllNewsProxy))
+	handler.Handle("/api/v1/news/get_by_id", middleware.LogMiddleware(getNewsByIDProxy))
 
 	handler.Handle("/api/v1/feedback/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createFeedbackProxy)))
 	handler.Handle("/api/v1/feedback/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteFeedbackProxy)))
