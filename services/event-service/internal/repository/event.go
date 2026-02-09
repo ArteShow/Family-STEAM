@@ -18,6 +18,7 @@ type Event struct {
 	Price       string `json:"price"`
 	Description string `json:"description"`
 	CreatedAt   string `json:"created_at"`
+	ImageID     string `json:"image_id"`
 }
 
 func Create(ctx context.Context, e Event) (string, error) {
@@ -30,12 +31,15 @@ func Create(ctx context.Context, e Event) (string, error) {
 	id := uuid.CreateUUID()
 
 	_, err = conn.ExecContext(ctx,
-		`INSERT INTO event (id, name, starts_at, ends_at, place, price, description)
-		 VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-		id, e.Name, e.StartsAt, e.EndsAt, e.Place, e.Price, e.Description,
+		`INSERT INTO event (id, name, starts_at, ends_at, place, price, description, image_id)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+		id, e.Name, e.StartsAt, e.EndsAt, e.Place, e.Price, e.Description, e.ImageID,
 	)
+	if err != nil {
+		return "", err
+	}
 
-	return id, err
+	return id, nil
 }
 
 func GetByID(ctx context.Context, id string) (*Event, error) {
@@ -48,7 +52,7 @@ func GetByID(ctx context.Context, id string) (*Event, error) {
 	var e Event
 
 	err = conn.QueryRowContext(ctx,
-		`SELECT id, name, starts_at, ends_at, place, price, description, created_at
+		`SELECT id, name, starts_at, ends_at, place, price, description, created_at, image_id
 		 FROM event WHERE id = $1`, id,
 	).Scan(
 		&e.ID,
@@ -59,6 +63,7 @@ func GetByID(ctx context.Context, id string) (*Event, error) {
 		&e.Price,
 		&e.Description,
 		&e.CreatedAt,
+		&e.ImageID,
 	)
 
 	if err == sql.ErrNoRows {
@@ -76,7 +81,7 @@ func GetAll(ctx context.Context) ([]Event, error) {
 	defer conn.Close()
 
 	rows, err := conn.QueryContext(ctx,
-		`SELECT id, name, starts_at, ends_at, place, price, description, created_at FROM event`,
+		`SELECT id, name, starts_at, ends_at, place, price, description, created_at, image_id FROM event`,
 	)
 	if err != nil {
 		return nil, err
@@ -97,6 +102,7 @@ func GetAll(ctx context.Context) ([]Event, error) {
 			&e.Price,
 			&e.Description,
 			&e.CreatedAt,
+			&e.ImageID,
 		)
 		if err != nil {
 			return nil, err
@@ -136,6 +142,7 @@ func UpdateColumn(ctx context.Context, id, column string, value any) error {
 		"place":       true,
 		"price":       true,
 		"description": true,
+		"image_id":    true,
 	}
 
 	if !allowed[column] {

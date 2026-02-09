@@ -88,18 +88,18 @@ func main() {
 
 	handler.Handle("/api/v1/calender/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createCalenderProxy)))
 	handler.Handle("/api/v1/calender/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteCalenderProxy)))
-	handler.Handle("/api/v1/calender/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllCalenderProxy)))
-	handler.Handle("/api/v1/calender/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDCalenderProxy)))
+	handler.Handle("/api/v1/calender/get_all", middleware.LogMiddleware(getAllCalenderProxy))
+	handler.Handle("/api/v1/calender/get_by_id", middleware.LogMiddleware(getByIDCalenderProxy))
 	handler.Handle("/api/v1/calender/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateCalenderProxy)))
 
 	handler.Handle("/api/v1/camp/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createCampProxy)))
 	handler.Handle("/api/v1/camp/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteCampProxy)))
-	handler.Handle("/api/v1/camp/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllCampProxy)))
-	handler.Handle("/api/v1/camp/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDCampProxy)))
+	handler.Handle("/api/v1/camp/get_all", middleware.LogMiddleware(getAllCampProxy))
+	handler.Handle("/api/v1/camp/get_by_id", middleware.LogMiddleware(getByIDCampProxy))
 	handler.Handle("/api/v1/camp/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateCampProxy)))
 
 	handler.Handle("/api/v1/file/upload", middleware.LogMiddleware(middleware.AuthMiddleware()(uploadFileProxy)))
-	handler.Handle("/api/v1/file/download", middleware.LogMiddleware(middleware.AuthMiddleware()(downloadFileProxy)))
+	handler.Handle("/api/v1/file/download", middleware.LogMiddleware(downloadFileProxy))
 	handler.Handle("/api/v1/file/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllFilesProxy)))
 	handler.Handle("/api/v1/file/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getFileByIDProxy)))
 	
@@ -110,19 +110,19 @@ func main() {
 
 	handler.Handle("/api/v1/event/create", middleware.LogMiddleware(middleware.AuthMiddleware()(creatEventProxy)))
 	handler.Handle("/api/v1/event/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteEventProxy)))
-	handler.Handle("/api/v1/event/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllEventProxy)))
-	handler.Handle("/api/v1/event/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getByIDEventProxy)))
+	handler.Handle("/api/v1/event/get_all", middleware.LogMiddleware(getAllEventProxy))
+	handler.Handle("/api/v1/event/get_by_id", middleware.LogMiddleware(getByIDEventProxy))
 	handler.Handle("/api/v1/event/update", middleware.LogMiddleware(middleware.AuthMiddleware()(updateEventProxy)))
 
 	handler.Handle("/api/v1/news/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createNewsProxy)))
 	handler.Handle("/api/v1/news/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteNewsProxy)))
-	handler.Handle("/api/v1/news/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllNewsProxy)))
-	handler.Handle("/api/v1/news/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getNewsByIDProxy)))
+	handler.Handle("/api/v1/news/get_all", middleware.LogMiddleware(getAllNewsProxy))
+	handler.Handle("/api/v1/news/get_by_id", middleware.LogMiddleware(getNewsByIDProxy))
 
 	handler.Handle("/api/v1/feedback/create", middleware.LogMiddleware(middleware.AuthMiddleware()(createFeedbackProxy)))
 	handler.Handle("/api/v1/feedback/delete", middleware.LogMiddleware(middleware.AuthMiddleware()(deleteFeedbackProxy)))
-	handler.Handle("/api/v1/feedback/get_all", middleware.LogMiddleware(middleware.AuthMiddleware()(getAllFeedbacksProxy)))
-	handler.Handle("/api/v1/feedback/get_by_id", middleware.LogMiddleware(middleware.AuthMiddleware()(getFeedbackByIDProxy)))
+	handler.Handle("/api/v1/feedback/get_all", middleware.LogMiddleware(getAllFeedbacksProxy))
+	handler.Handle("/api/v1/feedback/get_by_id", middleware.LogMiddleware(getFeedbackByIDProxy))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,

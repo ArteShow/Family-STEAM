@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS camp (
     place TEXT NOT NULL,
     price TEXT NOT NULL,
     description TEXT NOT NULL,
+    image_id TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -53,6 +54,7 @@ CREATE TABLE IF NOT EXISTS event (
     place TEXT NOT NULL,
     price TEXT NOT NULL,
     description TEXT NOT NULL,
+    image_id TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

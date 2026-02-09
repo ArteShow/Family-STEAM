@@ -40,8 +40,8 @@ func main() {
 	})
 	mux.Handle("/feedback-service/create", middleware.AdminCheckMiddleware(handlers.CreateHandler))
 	mux.Handle("/feedback-service/delete", middleware.AdminCheckMiddleware(handlers.DeleteHandler))
-	mux.Handle("/feedback-service/get_all", middleware.AdminCheckMiddleware(handlers.GetAllHandler))
-	mux.Handle("/feedback-service/get_by_id", middleware.AdminCheckMiddleware(handlers.GetByIDHandler))
+	mux.HandleFunc("/feedback-service/get_all", handlers.GetAllHandler)
+	mux.HandleFunc("/feedback-service/get_by_id", handlers.GetByIDHandler)
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
