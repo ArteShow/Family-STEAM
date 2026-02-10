@@ -1,0 +1,12 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "${FORNTEND_PORT}:${NGINX_PORT}"
+    networks:
+      - disknet
+
+networks:
+  disknet:
+    driver: bridge
