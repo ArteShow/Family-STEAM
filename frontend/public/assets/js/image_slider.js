@@ -1,5 +1,5 @@
 const images = [
-    "assets/images/slider1.jpg",
+    "assets/images/slider1.webp",
     "assets/images/slider2.jpg",
     "assets/images/slider3.jpg"
 ];
