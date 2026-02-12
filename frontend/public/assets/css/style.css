@@ -12,7 +12,6 @@ body{
     );
 }
 
-/* HEADER */
 header {
     display: flex;
     justify-content: space-between;
@@ -44,7 +43,47 @@ nav a:hover {
     color: rgb(2, 41, 95);
 }
 
-/* MAIN TITLE */
+.slider_section {
+    position: relative;
+    width: 100%;
+    height: 70vh; 
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0; 
+}
+
+.background_slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 1s ease-in-out;
+}
+
+.slider_text {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.slider_text h2 {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.slider_text p {
+    font-size: 20px;
+}
+
+
 main h3 {
     text-align: center;
     padding: 70px 20px 40px;
@@ -52,7 +91,6 @@ main h3 {
     color: rgb(17, 52, 176);
 }
 
-/* EVENTS SECTION */
 #incoming {
     display: flex;
     justify-content: center;
