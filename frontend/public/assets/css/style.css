@@ -1,0 +1,46 @@
+*{
+    margin: 0px;
+}
+
+body{
+    background: linear-gradient(
+    135deg,
+    rgb(224, 242, 255),
+    rgb(255, 244, 184)
+);
+}
+
+header {
+    gap: 200px;
+    display: flex;
+    align-items: center;
+    height: auto;
+    background-color: rgb(90, 160, 255);
+}
+
+img{
+    width: 7%;
+    height: auto;
+    border-radius: 10px;
+    padding-top: 2%;
+    padding-left: 1.5%;
+    padding-bottom: 1.5%;
+}
+
+nav {
+    display: flex;
+    gap: 80px;
+}
+
+
+nav a {
+    text-decoration: none;
+    font-size: 115%;
+    color: rgb(255, 239, 170);
+    white-space: nowrap;
+}
+
+nav a:hover {
+    transition: 0.5s;
+    color: rgb(2, 41, 95);
+}
