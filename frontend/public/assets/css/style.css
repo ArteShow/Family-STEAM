@@ -172,3 +172,32 @@ main .why_we .reason i {
     font-size: 3em;
     margin-bottom: 20px;
 }
+.feedbacks {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    padding: 65px;
+}
+
+.feedbacks .feedback {
+    align-self: flex-start;
+    text-decoration: none;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 20px;
+    transition: 0.3s;
+    height: auto;
+}
+
+.feedbacks .feedback .where {
+    padding-bottom: 10px;
+    color: rgb(250, 137, 39);
+}
+
+.feedbacks .feedback h5 {
+    padding-top: 15px;
+    font-size: 26px;
+    padding-bottom: 10px;
+}
