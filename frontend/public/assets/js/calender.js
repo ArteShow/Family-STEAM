@@ -3,8 +3,37 @@ const calendarBody = document.getElementById("calendarBody")
 const prevMonth = document.getElementById("prevMonth")
 const nextMonth = document.getElementById("nextMonth")
 const todayBtn = document.getElementById("todayBtn")
+const eventsCard = document.getElementById("eventsCard")
+const eventDate = document.getElementById("eventDate")
+const eventsList = document.getElementById("eventsList")
+const closeBtn = document.getElementById("closeBtn")
 
 let currentDate = new Date()
+
+// Sample events data
+const sampleEvents = {
+    "1": [
+        { title: "Kids Coding Workshop", time: "10:00 AM" },
+        { title: "Art & Craft Session", time: "2:00 PM" }
+    ],
+    "5": [
+        { title: "Robot Building Class", time: "3:00 PM" }
+    ],
+    "10": [
+        { title: "Science Experiment Day", time: "11:00 AM" },
+        { title: "Movie Night - Animation", time: "6:00 PM" }
+    ],
+    "15": [
+        { title: "Music Lessons", time: "4:00 PM" }
+    ],
+    "20": [
+        { title: "Drama Workshop", time: "2:30 PM" },
+        { title: "Snack & Chat", time: "5:00 PM" }
+    ],
+    "25": [
+        { title: "Field Trip - Museum", time: "9:00 AM" }
+    ]
+}
 
 function renderCalendar(date) {
     calendarBody.innerHTML = ""
@@ -50,6 +79,11 @@ function renderCalendar(date) {
             cell.classList.add("today")
         }
 
+        // Add click event to show events
+        cell.addEventListener("click", () => {
+            showEvents(day, month, year)
+        })
+
         row.appendChild(cell)
 
         if ((firstDayIndex + day) % 7 === 0) {
@@ -76,6 +110,47 @@ nextMonth.addEventListener("click", () => {
 todayBtn.addEventListener("click", () => {
     currentDate = new Date()
     renderCalendar(currentDate)
+})
+
+function showEvents(day, month, year) {
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ]
+
+    const dateStr = `${monthNames[month]} ${day}, ${year}`
+    eventDate.textContent = dateStr
+
+    // Get events for this day or show "No events"
+    const events = sampleEvents[day.toString()] || []
+    
+    eventsList.innerHTML = ""
+
+    if (events.length === 0) {
+        eventsList.innerHTML = '<p style="text-align: center; color: rgb(100, 100, 100);">No events planned for this day.</p>'
+    } else {
+        events.forEach((event, index) => {
+            const eventItem = document.createElement("div")
+            eventItem.className = "event-item"
+            eventItem.innerHTML = `
+                <h3>${event.title}</h3>
+                <p>${event.time}</p>
+            `
+            eventsList.appendChild(eventItem)
+        })
+    }
+
+    // Show the card with animation
+    eventsCard.classList.remove("hidden")
+    eventsCard.classList.add("show")
+
+    // Scroll to the card
+    eventsCard.scrollIntoView({ behavior: "smooth", block: "nearest" })
+}
+
+closeBtn.addEventListener("click", () => {
+    eventsCard.classList.add("hidden")
+    eventsCard.classList.remove("show")
 })
 
 renderCalendar(currentDate)
