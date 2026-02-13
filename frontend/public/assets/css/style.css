@@ -330,8 +330,85 @@ main .why_we .reason:hover i {
 footer {
     background-color: black;
     color: white;
-    padding: 2.5rem 0;
+    padding: 4rem 0 2.5rem;
     font-family: Arial, sans-serif;
+}
+
+.footer_content {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem;
+    padding: 0 3.75rem 3rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 0.0625rem solid rgb(60, 60, 60);
+}
+
+.footer_section h4 {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+    color: rgb(41, 128, 225);
+    font-weight: 600;
+}
+
+.footer_section p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgb(200, 200, 200);
+}
+
+.footer_section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer_section ul li {
+    margin-bottom: 0.75rem;
+}
+
+.footer_section ul li a {
+    text-decoration: none;
+    color: rgb(200, 200, 200);
+    font-size: 0.9rem;
+    transition: 0.3s ease;
+}
+
+.footer_section ul li a:hover {
+    color: rgb(41, 128, 225);
+    padding-left: 0.5rem;
+}
+
+.newsletter_form {
+    display: flex;
+    margin-top: 1rem;
+    gap: 0.5rem;
+}
+
+.newsletter_form input {
+    flex: 1;
+    padding: 0.625rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.newsletter_form input::placeholder {
+    color: rgb(150, 150, 150);
+}
+
+.newsletter_form button {
+    padding: 0.625rem 1.5rem;
+    background-color: rgb(41, 128, 225);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.newsletter_form button:hover {
+    background-color: rgb(255, 102, 0);
 }
 
 footer #contact {
@@ -375,6 +452,81 @@ footer .legal {
     border-top: 0.0625rem solid gray;
     padding-top: 0.625rem;
 }
+
+.faq_container {
+    max-width: 50rem;
+    margin: 3rem auto;
+    padding: 0 1.25rem;
+    opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 1s forwards 1.9s;
+}
+
+.faq_item {
+    margin-bottom: 1.25rem;
+    border-radius: 0.75rem;
+    background-color: white;
+    overflow: hidden;
+    transition: 0.3s ease;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+}
+
+.faq_item:hover {
+    box-shadow: 0 0.5rem 1.5rem rgba(41, 128, 225, 0.15);
+}
+
+.faq_question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgb(255, 255, 255) 0%, rgb(240, 248, 255) 100%);
+    cursor: pointer;
+    transition: 0.3s ease;
+    border-left: 4px solid rgb(41, 128, 225);
+    font-weight: 600;
+    font-size: 1.0625rem;
+    color: rgb(24, 37, 110);
+}
+
+.faq_question:hover {
+    background: linear-gradient(135deg, rgb(240, 248, 255) 0%, rgb(230, 243, 255) 100%);
+}
+
+.faq_question i {
+    font-size: 1.25rem;
+    color: rgb(41, 128, 225);
+    transition: 0.3s ease;
+}
+
+.faq_item.active .faq_question {
+    background: linear-gradient(135deg, rgb(41, 128, 225) 0%, rgb(24, 37, 110) 100%);
+    color: white;
+    border-left: 4px solid rgb(255, 102, 0);
+}
+
+.faq_item.active .faq_question i {
+    color: rgb(255, 102, 0);
+    transform: rotate(180deg);
+}
+
+.faq_answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+}
+
+.faq_item.active .faq_answer {
+    max-height: 30rem;
+}
+
+.faq_answer p {
+    padding: 0 1.5rem 1.5rem;
+    color: #555;
+    font-size: 0.9375rem;
+    line-height: 1.8;
+}
+
 @keyframes fadeInUp {
     0% {
         opacity: 0;
@@ -384,5 +536,510 @@ footer .legal {
     100% {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 0.625rem 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    header img {
+        width: 3.5rem;
+    }
+
+    nav {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+
+    nav a {
+        font-size: 0.875rem;
+        white-space: normal;
+    }
+
+    .slider_section {
+        height: 50vh;
+    }
+
+    .slider_text h2 {
+        font-size: 1.75rem;
+    }
+
+    .slider_text p {
+        font-size: 0.875rem;
+    }
+
+    .explore {
+        gap: 1.25rem;
+        padding: 0 0.625rem;
+        margin-top: -3rem;
+    }
+
+    .explore .explore_card {
+        width: 100%;
+        max-width: 18.75rem;
+        padding: 1.25rem;
+        margin: 0 auto;
+    }
+
+    main h3 {
+        font-size: 1.75rem;
+        padding: 2.5rem 0.75rem 1.5rem;
+    }
+
+    #incoming {
+        flex-direction: column;
+        gap: 1.875rem;
+        padding: 1.5rem 0.75rem 3rem;
+        align-items: center;
+    }
+
+    .incoming_event {
+        width: 100%;
+        max-width: 20rem;
+        margin: 0 auto;
+    }
+
+    main .why_we {
+        gap: 1.5rem;
+        padding: 0 0.625rem;
+        min-height: auto;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    main .why_we .reason {
+        min-width: auto;
+        max-width: 100%;
+        padding: 1.5rem;
+        width: 100%;
+    }
+
+    main .why_we .reason i {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .feedbacks {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.5rem 0.75rem;
+        align-items: center;
+    }
+
+    .feedbacks .feedback {
+        padding: 1rem;
+        font-size: 0.875rem;
+        max-width: 20rem;
+        width: 100%;
+    }
+
+    .feedbacks .feedback h5 {
+        font-size: 1.125rem;
+    }
+
+    .faq_container {
+        margin: 1.5rem auto;
+        padding: 0 0.5rem;
+        width: 100%;
+    }
+
+    .faq_question {
+        padding: 1rem;
+        font-size: 0.9375rem;
+    }
+
+    .faq_question i {
+        font-size: 1rem;
+    }
+
+    .faq_answer p {
+        padding: 0 1rem 1rem;
+        font-size: 0.8125rem;
+    }
+
+    .footer_content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 1rem 1.5rem;
+    }
+
+    .footer_section h4 {
+        font-size: 1rem;
+    }
+
+    .footer_section p {
+        font-size: 0.8125rem;
+    }
+
+    .newsletter_form {
+        flex-direction: column;
+    }
+
+    .newsletter_form button {
+        width: 100%;
+    }
+
+    footer #contact {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 0.75rem;
+        align-items: center;
+    }
+
+    footer #contact_info {
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+        align-items: center;
+    }
+
+    footer .contact_item {
+        font-size: 0.875rem;
+    }
+
+    footer #social_medias {
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    footer #social_medias a {
+        font-size: 1.25rem;
+    }
+
+    .section-divider {
+        margin: 1rem 0;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 0.75rem 1.5rem;
+    }
+
+    header img {
+        width: 4rem;
+    }
+
+    nav {
+        gap: 1.5rem;
+    }
+
+    nav a {
+        font-size: 0.9375rem;
+    }
+
+    .slider_section {
+        height: 60vh;
+    }
+
+    .slider_text h2 {
+        font-size: 2.25rem;
+    }
+
+    .slider_text p {
+        font-size: 1rem;
+    }
+
+    .explore {
+        gap: 1.875rem;
+        padding: 0 1rem;
+        margin-top: -4rem;
+    }
+
+    .explore .explore_card {
+        width: 100%;
+        max-width: 16.25rem;
+    }
+
+    main h3 {
+        font-size: 2rem;
+        padding: 3rem 1rem 2rem;
+    }
+
+    #incoming {
+        flex-direction: column;
+        gap: 2rem;
+        padding: 2rem 1rem 4rem;
+    }
+
+    .incoming_event {
+        width: 100%;
+        max-width: 18.75rem;
+    }
+
+    main .why_we {
+        gap: 2rem;
+        padding: 0 1rem;
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    main .why_we .reason {
+        min-width: auto;
+        max-width: 100%;
+        padding: 1.75rem;
+    }
+
+    main .why_we .reason i {
+        font-size: 3rem;
+    }
+
+    .feedbacks {
+        flex-direction: column;
+        gap: 1.25rem;
+        padding: 2rem 1rem;
+        align-items: stretch;
+    }
+
+    .feedbacks .feedback {
+        padding: 1.25rem;
+    }
+
+    .faq_question {
+        padding: 1.25rem;
+        font-size: 1rem;
+    }
+
+    .footer_content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        padding: 0 2rem 2rem;
+    }
+
+    .newsletter_form {
+        flex-direction: column;
+    }
+
+    .newsletter_form button {
+        width: 100%;
+    }
+
+    footer #contact {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    footer #contact_info {
+        flex-direction: column;
+        gap: 1.25rem;
+        width: 100%;
+    }
+}
+
+@media (max-width: 1024px) {
+    header {
+        padding: 0.9375rem 2rem;
+    }
+
+    header img {
+        width: 4.5rem;
+    }
+
+    nav {
+        gap: 1.875rem;
+    }
+
+    nav a {
+        font-size: 0.9375rem;
+    }
+
+    .slider_section {
+        height: 65vh;
+    }
+
+    .slider_text h2 {
+        font-size: 2.5rem;
+    }
+
+    .slider_text p {
+        font-size: 1.125rem;
+    }
+
+    .explore {
+        gap: 2rem;
+        padding: 0 1.5rem;
+        margin-top: -4.5rem;
+    }
+
+    .explore .explore_card {
+        width: 100%;
+        max-width: 17.5rem;
+    }
+
+    main h3 {
+        font-size: 2.25rem;
+        padding: 3.5rem 1.5rem 2rem;
+    }
+
+    #incoming {
+        flex-wrap: wrap;
+        gap: 2.5rem;
+        padding: 2.5rem 2rem 5rem;
+        justify-content: center;
+    }
+
+    .incoming_event {
+        width: 100%;
+        max-width: 18.75rem;
+    }
+
+    main .why_we {
+        gap: 3rem;
+        padding: 0 2rem;
+        flex-wrap: wrap;
+    }
+
+    main .why_we .reason {
+        min-width: 13rem;
+        max-width: 16rem;
+        flex: 1 1 calc(33.333% - 2rem);
+    }
+
+    .feedbacks {
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        padding: 2.5rem 2rem;
+    }
+
+    .feedbacks .feedback {
+        flex: 1 1 calc(50% - 0.75rem);
+        min-width: 15rem;
+    }
+
+    .footer_content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2.5rem;
+        padding: 0 2rem 2rem;
+    }
+
+    footer #contact {
+        flex-direction: column;
+        gap: 1.875rem;
+    }
+
+    footer #contact_info {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 1440px) {
+    header {
+        padding: 0.9375rem 2.5rem;
+    }
+
+    nav {
+        gap: 2rem;
+    }
+
+    .explore {
+        gap: 2.5rem;
+        padding: 0 2rem;
+    }
+
+    .explore .explore_card {
+        width: 17.5rem;
+    }
+
+    #incoming {
+        gap: 3rem;
+        padding: 2.5rem 3rem 5rem;
+    }
+
+    main .why_we {
+        gap: 4rem;
+        padding: 0 2.5rem;
+    }
+
+    main .why_we .reason {
+        min-width: 14rem;
+        max-width: 17rem;
+    }
+
+    .feedbacks {
+        gap: 1.5rem;
+        padding: 3rem 2.5rem;
+    }
+
+    .footer_content {
+        padding: 0 2.5rem 2.5rem;
+    }
+}
+
+@media (min-width: 1441px) {
+    header {
+        padding: 0.9375rem 4rem;
+    }
+
+    nav {
+        gap: 2.75rem;
+    }
+
+    .explore {
+        gap: 3.125rem;
+        padding: 0 2rem;
+    }
+
+    main .why_we {
+        gap: 6.25rem;
+        padding: 0 3.125rem;
+    }
+
+    .feedbacks {
+        gap: 2rem;
+        padding: 4.0625rem 3rem;
+    }
+
+    .footer_content {
+        padding: 0 3.75rem 3rem;
+    }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .slider_section {
+        height: 100vh;
+    }
+
+    header {
+        padding: 0.5rem 1rem;
+    }
+
+    header img {
+        width: 3rem;
+    }
+
+    nav a {
+        font-size: 0.75rem;
+    }
+
+    .slider_text h2 {
+        font-size: 1.5rem;
+    }
+
+    .slider_text p {
+        font-size: 0.75rem;
+    }
+
+    .explore {
+        margin-top: -2rem;
+    }
+}
+
+@media print {
+    header, footer, .explore, .feedbacks, .faq_container {
+        display: none;
+    }
+
+    main {
+        padding: 0;
+    }
+
+    .slider_section {
+        display: none;
     }
 }
