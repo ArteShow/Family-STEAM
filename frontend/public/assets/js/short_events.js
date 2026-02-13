@@ -71,10 +71,20 @@
 		const carousel = document.createElement('div');
 		carousel.className = 'event_carousel';
 
-		const img = document.createElement('img');
-		img.className = 'carousel_image';
-		img.src = ev.images[0] || 'https://via.placeholder.com/800x500?text=No+Image';
-		img.alt = ev.title;
+		const track = document.createElement('div');
+		track.className = 'carousel_track';
+
+		if (!ev.images || ev.images.length === 0) ev.images = ['https://via.placeholder.com/800x500?text=No+Image'];
+		ev.images.forEach(src => {
+			const slide = document.createElement('div');
+			slide.className = 'carousel_slide';
+			const sImg = document.createElement('img');
+			sImg.className = 'carousel_image';
+			sImg.src = src;
+			sImg.alt = ev.title;
+			slide.appendChild(sImg);
+			track.appendChild(slide);
+		});
 
 		const left = document.createElement('button');
 		left.className = 'carousel_btn left';
@@ -85,7 +95,7 @@
 		right.innerHTML = '&#10095;';
 
 		carousel.appendChild(left);
-		carousel.appendChild(img);
+		carousel.appendChild(track);
 		carousel.appendChild(right);
 
 		const info = document.createElement('div');
@@ -116,14 +126,44 @@
 		root.appendChild(row);
 
 		let cur = 0;
+		const slidesCount = ev.images.length;
+		const trackEl = track;
+		trackEl.style.transition = 'transform 420ms cubic-bezier(.22,.9,.3,1)';
+
+		function updateTrack(){
+			trackEl.style.transform = `translateX(-${cur * 100}%)`;
+		}
+
 		function show(index){
-			if(!ev.images || ev.images.length === 0) return;
-			cur = (index + ev.images.length) % ev.images.length;
-			img.src = ev.images[cur];
+			cur = (index + slidesCount) % slidesCount;
+			updateTrack();
 		}
 
 		left.addEventListener('click', ()=> show(cur - 1));
 		right.addEventListener('click', ()=> show(cur + 1));
+
+		// touch / swipe support for mobile
+		let startX = 0, deltaX = 0, isDragging = false;
+		carousel.addEventListener('touchstart', (e) => {
+			startX = e.touches[0].clientX;
+			deltaX = 0;
+			isDragging = true;
+			trackEl.style.transition = 'none';
+		}, {passive:true});
+		carousel.addEventListener('touchmove', (e) => {
+			if(!isDragging) return;
+			deltaX = e.touches[0].clientX - startX;
+			trackEl.style.transform = `translateX(calc(-${cur * 100}% + ${deltaX}px))`;
+		}, {passive:true});
+		carousel.addEventListener('touchend', () => {
+			isDragging = false;
+			trackEl.style.transition = 'transform 420ms cubic-bezier(.22,.9,.3,1)';
+			if(Math.abs(deltaX) > 50){
+				if(deltaX < 0) show(cur + 1); else show(cur - 1);
+			} else {
+				updateTrack();
+			}
+		});
 	});
 
 })();
