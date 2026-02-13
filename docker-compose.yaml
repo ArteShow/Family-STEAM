@@ -180,12 +180,15 @@ services:
     networks:
       - disknet
 
+<<<<<<< HEAD
 
 volumes:
   postgres_data:
   family-steam:
     name: family-steam
 
+=======
+>>>>>>> eda3de5ab948ca1dce475bb9575dd9c820dc9ed0
 networks:
   disknet:
     driver: bridge

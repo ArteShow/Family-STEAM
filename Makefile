@@ -1,4 +1,4 @@
-.PHONY: tests deps tidy lint lint-fix build up down
+.PHONY: tests tidy build up down
 
 tests:
 	@find ./services -type f -name "go.mod" | while read gomod_file; do \
@@ -7,32 +7,11 @@ tests:
 		(cd "$$module_dir" && go test -v ./...) || exit 1; \
 	done
 
-deps:
-	@find ./services -type f -name "go.mod" | while read gomod_file; do \
-		module_dir=$$(dirname "$$gomod_file"); \
-		echo "Downloading deps in: $$module_dir"; \
-		(cd "$$module_dir" && go mod download) || exit 1; \
-	done
-
 tidy:
 	@find ./services -type f -name "go.mod" | while read gomod_file; do \
 		module_dir=$$(dirname "$$gomod_file"); \
 		echo "Tidying module in: $$module_dir"; \
 		(cd "$$module_dir" && go mod tidy) || exit 1; \
-	done
-
-lint:
-	@find ./services -type f -name "go.mod" | while read gomod_file; do \
-		module_dir=$$(dirname "$$gomod_file"); \
-		echo "Linting module in: $$module_dir"; \
-		(cd "$$module_dir" && golangci-lint run) || exit 1; \
-	done
-
-lint-fix:
-	@find ./services -type f -name "go.mod" | while read gomod_file; do \
-		module_dir=$$(dirname "$$gomod_file"); \
-		echo "Linting module in: $$module_dir"; \
-		(cd "$$module_dir" && golangci-lint run --fix) || exit 1; \
 	done
 
 build:
