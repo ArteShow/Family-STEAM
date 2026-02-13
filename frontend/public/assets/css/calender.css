@@ -278,7 +278,6 @@ main h3 {
     transform: translateY(-1px);
 }
 
-/* Animations */
 @keyframes fadeInUp {
     0% {
         opacity: 0;
@@ -337,7 +336,6 @@ main h3 {
     }
 }
 
-/* Responsive Design */
 @media (max-width: 480px) {
     .calendar-container {
         width: 98%;

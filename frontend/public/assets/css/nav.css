@@ -58,7 +58,6 @@ nav a:hover::after {
     width: 100%;
 }
 
-/* Mobile Menu Button */
 .menu-toggle {
     display: none;
     flex-direction: column;
@@ -88,7 +87,6 @@ nav a:hover::after {
     transform: rotate(-45deg) translate(8px, -8px);
 }
 
-/* Responsive Design */
 @media (max-width: 1300px) {
     header {
         padding: 0.875rem 2.5rem;

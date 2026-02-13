@@ -183,7 +183,6 @@ footer .legal {
     color: rgb(150, 150, 150);
 }
 
-/* Animations */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -195,7 +194,6 @@ footer .legal {
     }
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
     .footer_content {
         grid-template-columns: repeat(2, 1fr);
