@@ -37,10 +37,9 @@ main h3 {
     padding: 0.6rem;
     border-radius: 12px;
     box-shadow: 0 6px 18px rgba(20,20,60,0.06);
-    min-height: 320px;
-    height: 320px;
-    overflow: hidden;
-    transition: transform 240ms ease, box-shadow 240ms ease;
+    min-height: 380px;
+        overflow: visible;
+        transition: transform 240ms ease, box-shadow 240ms ease, min-height 300ms ease;
 }
 .event_row.reverse{flex-direction: row-reverse}
 
@@ -80,14 +79,20 @@ main h3 {
     flex: 1 1 40%;
     display:flex;
     flex-direction:column;
-    justify-content:center;
-    padding: 0.6rem 0.8rem;
+    justify-content: flex-start;
+        padding: 1rem 1.2rem;
+        overflow-y: auto;
 }
 .event_info h4{
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.9rem;
     color: #16224b;
+    font-size: 1.1rem;
+        line-height: 1.4;
 }
-.event_info p{color:#40507a}
+.event_info p {
+    color: #40507a;
+    margin-bottom: 0.5rem
+}
 .event_icons{
     list-style: none;
     display: grid;
@@ -118,12 +123,89 @@ main h3 {
 }
 .register_btn:hover{transform: translateY(-4px); opacity:0.98}
 
+.event_responsibility {
+    font-size: 0.85rem;
+    color: #16224b;
+    margin-top: 0.6rem;
+    margin-bottom: 0.6rem;
+    font-style: italic;
+}
+
+.event_responsibility strong {
+    color: #ff6b6b;
+    font-style: normal;
+}
+
+.event_desc_container {
+    margin-top: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.expand_btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem 0.6rem;
+    font-size: 1.1rem;
+    color: #ff6b6b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 300ms ease;
+    margin-bottom: 0.6rem;
+}
+
+.expand_btn:hover {
+    transform: scale(1.15);
+}
+
+.expand_btn.rotated {
+    transform: rotate(180deg);
+}
+
+.event_desc_content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 400ms ease, opacity 300ms ease;
+    opacity: 0;
+    padding: 0;
+}
+
+.event_desc_content.expanded {
+    max-height: 500px;
+    opacity: 1;
+    padding: 0.8rem 0;
+    border-top: 1px solid rgba(255, 107, 107, 0.2);
+}
+
+.event_desc_content p {
+    color: #40507a;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+    text-align: justify;
+    word-break: break-word;
+}
 .event_row:hover{transform: translateY(-6px); box-shadow: 0 16px 36px rgba(20,20,60,0.12)}
 
 @keyframes fadeInUp {from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .event_row{animation: fadeInUp .6s ease both}
 
 @media (max-width: 820px){
-    .event_row, .event_row.reverse{flex-direction:column;height:auto;min-height:0}
+    .event_row,
+        .event_row.reverse {
+            flex-direction: column;
+            height: auto;
+            min-height: 0;
+            overflow: visible
+        }
     .event_carousel{width:100%;height:240px}
+        .event_info {
+            padding: 1rem;
+            overflow-y: visible
+        }
+    
+        .event_desc_content.expanded {
+            max-height: 800px
+        }
 }
