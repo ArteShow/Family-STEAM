@@ -32,7 +32,15 @@ This hands-on workshop will guide participants through the basics of robot assem
 			duration: '1.5h',
 			persons: 'All ages',
 			responsibility: 'Conducted by professional art facilitators',
-			description: 'Experience the joy of creative expression in our Family Painting Hour, where art becomes a bonding experience for all ages! This inclusive workshop welcomes families with members ranging from young children to grandparents. Our professional art facilitators guide the creative journey while encouraging individual expression and unique artistic vision. The session features a relaxed, judgment-free environment where the process matters more than the final product. Participants can choose from various mediums including acrylics, watercolors, and mixed media. Whether you are an experienced artist or picking up a brush for the first time, there is something for everyone. The workshop includes instruction on color theory, brush techniques, composition, and storytelling through art. Each family creates their own masterpiece to take home, or collaborate on a shared canvas if preferred. Throughout the session, participants share creative ideas and appreciate each other\'s work in a supportive community setting. We provide all art supplies, aprons, and materials. The workshop concludes with a brief gallery walk where participants display and discuss their creations. This is a perfect opportunity to strengthen family bonds while exploring artistic talents.',
+			description: `🎨 Experience the joy of creative expression in our Family Painting Hour, where art becomes a bonding experience for all ages!
+
+This inclusive workshop welcomes families with members ranging from young children to grandparents. Our professional art facilitators guide the creative journey while encouraging individual expression and unique artistic vision.
+
+🖌️ The session features a relaxed, judgment-free environment where the process matters more than the final product. Participants can choose from various mediums including acrylics, watercolors, and mixed media. Whether you are an experienced artist or picking up a brush for the first time, there is something for everyone.
+
+🎭 The workshop includes instruction on color theory, brush techniques, composition, and storytelling through art. Each family creates their own masterpiece to take home, or collaborate on a shared canvas if preferred.
+
+❤️ Throughout the session, participants share creative ideas and appreciate each other's work in a supportive community setting. We provide all art supplies, aprons, and materials. The workshop concludes with a brief gallery walk where participants display and discuss their creations. This is a perfect opportunity to strengthen family bonds while exploring artistic talents!`,
 			images: [
                 '../images/slider1.webp',
                 '../images/slider2.jpg',
@@ -48,7 +56,15 @@ This hands-on workshop will guide participants through the basics of robot assem
 			duration: '3h',
 			persons: 'All ages',
 			responsibility: 'Guided by amateur astronomy enthusiasts',
-			description: 'Discover the wonders of the night sky during our enchanting Star Gazing Night at scenic Hill Park! This astronomy experience invites participants of all ages to explore the cosmos and marvel at celestial objects. Our knowledgeable guides use powerful telescopes to help you observe planets, star clusters, nebulae, and other deep-sky objects. The evening begins with an introduction to the constellations visible in the current season, followed by telescope observations and interactive discussions about our universe. Learn about the life cycles of stars, galaxy formations, and the latest space missions. Even without telescopes, the naked eye reveals countless stars and constellations. We teach participants how to locate major constellations and navigate the night sky using simple techniques. The experience includes fascinating stories about mythology connected to the constellations. Dress warmly as the evening can be cool, and bring blankets or camping chairs for comfortable viewing. We provide hot beverages and snacks. Clear skies are essential for this activity, but we reschedule if weather conditions are unfavorable. This unforgettable experience fosters appreciation for astronomy and ignites curiosity about our place in the universe.',
+			description: `⭐ Discover the wonders of the night sky during our enchanting Star Gazing Night at scenic Hill Park!
+
+This astronomy experience invites participants of all ages to explore the cosmos and marvel at celestial objects. Our knowledgeable guides use powerful telescopes to help you observe planets, star clusters, nebulae, and other deep-sky objects.
+
+🔭 The evening begins with an introduction to the constellations visible in the current season, followed by telescope observations and interactive discussions about our universe. Learn about the life cycles of stars, galaxy formations, and the latest space missions.
+
+✨ Even without telescopes, the naked eye reveals countless stars and constellations. We teach participants how to locate major constellations and navigate the night sky using simple techniques. The experience includes fascinating stories about mythology connected to the constellations.
+
+🌙 Dress warmly as the evening can be cool, and bring blankets or camping chairs for comfortable viewing. We provide hot beverages and snacks. Clear skies are essential for this activity, but we reschedule if weather conditions are unfavorable. This unforgettable experience fosters appreciation for astronomy and ignites curiosity about our place in the universe!`,
 			images: [
 				'https://via.placeholder.com/800x500?text=Stars+1'
 			]
@@ -155,11 +171,11 @@ This hands-on workshop will guide participants through the basics of robot assem
 		info.appendChild(title);
 		info.appendChild(icons);
 		info.appendChild(resp);
-		info.appendChild(descContainer);
 		info.appendChild(register);
 
 		row.appendChild(carousel);
 		row.appendChild(info);
+		row.appendChild(descContainer);
 		root.appendChild(row);
 
 		// Expand/collapse functionality
