@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../images/favicon.png" type="image/png">
     <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/calender.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <title>Family STEAM | ArteShow</title>
 </head>
 <body>
     <header>
-        <img src="assets/images/logo_png.png" alt="logo">
+        <img src="../images/logo_png.png" alt="logo">
         <nav>
             <a href="../../index.html">Home</a>
             <a href="">About Us</a>
-            <a href="">Calender</a>
+            <a href="calender.html">Calender</a>
             <a href="">Short events</a>
             <a href="">Camps</a>
             <a href="">FAQ</a>
@@ -22,6 +23,30 @@
         </nav>
     </header>
 
+    <main class="calendar-container">
+        <div class="calendar-header">
+            <button id="prevMonth"><i class="fa-solid fa-chevron-left"></i></button>
+            <h1 id="monthYear"></h1>
+            <button id="nextMonth"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <table class="calendar">
+            <thead>
+                <tr>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                    <th>Sun</th>
+                </tr>
+            </thead>
+            <tbody id="calendarBody"></tbody>
+        </table>
+    </main>
+
+    <script src="../js/calender.js"></script>
     <script src="https://kit.fontawesome.com/d9e39d51d2.js" crossorigin="anonymous"></script>
 </body>
 </html>

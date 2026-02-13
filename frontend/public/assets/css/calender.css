@@ -1,0 +1,78 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg,
+            rgb(224, 242, 255),
+            rgb(255, 244, 184));
+}
+
+.calendar-container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.calendar-header button {
+    padding: 10px 15px;
+    font-size: 18px;
+    border: none;
+    background: rgb(0, 119, 182);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.calendar-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.calendar th {
+    background: rgb(0, 119, 182);
+    color: white;
+    padding: 15px;
+    font-weight: 600;
+}
+
+.calendar td {
+    height: 100px;
+    border: 1px solid #eee;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.calendar td:hover {
+    background: rgb(224, 242, 255);
+    cursor: pointer;
+}
+
+.weekend {
+    background: rgb(255, 244, 184);
+}
+
+.today {
+    background: rgb(255, 99, 132);
+    color: white;
+}
