@@ -10,28 +10,27 @@ const closeBtn = document.getElementById("closeBtn")
 
 let currentDate = new Date()
 
-// Sample events data
 const sampleEvents = {
     "1": [
-        { title: "Kids Coding Workshop", time: "10:00 AM" },
-        { title: "Art & Craft Session", time: "2:00 PM" }
+        { title: "Kids Coding Workshop", time: "10:00 AM", type: "event" },
+        { title: "Art & Craft Session", time: "2:00 PM", type: "event" }
     ],
     "5": [
-        { title: "Robot Building Class", time: "3:00 PM" }
+        { title: "Robot Building Class", time: "3:00 PM", type: "camp" }
     ],
     "10": [
-        { title: "Science Experiment Day", time: "11:00 AM" },
-        { title: "Movie Night - Animation", time: "6:00 PM" }
+        { title: "Science Experiment Day", time: "11:00 AM", type: "event" },
+        { title: "Movie Night - Animation", time: "6:00 PM", type: "event" }
     ],
     "15": [
-        { title: "Music Lessons", time: "4:00 PM" }
+        { title: "Music Lessons", time: "4:00 PM", type: "camp" }
     ],
     "20": [
-        { title: "Drama Workshop", time: "2:30 PM" },
-        { title: "Snack & Chat", time: "5:00 PM" }
+        { title: "Drama Workshop", time: "2:30 PM", type: "event" },
+        { title: "Snack & Chat", time: "5:00 PM", type: "event" }
     ],
     "25": [
-        { title: "Field Trip - Museum", time: "9:00 AM" }
+        { title: "Field Trip - Museum", time: "9:00 AM", type: "camp" }
     ]
 }
 
@@ -62,7 +61,7 @@ function renderCalendar(date) {
 
     for (let day = 1; day <= totalDays; day++) {
         const cell = document.createElement("td")
-        cell.textContent = day
+        let cellContent = `<div class="day-number">${day}</div>`
 
         const dayOfWeek = (new Date(year, month, day).getDay() + 6) % 7
 
@@ -79,7 +78,22 @@ function renderCalendar(date) {
             cell.classList.add("today")
         }
 
-        // Add click event to show events
+        if (sampleEvents[day.toString()]) {
+            const events = sampleEvents[day.toString()]
+            const eventTypes = new Set(events.map(e => e.type))
+            
+            cellContent += '<div class="event-tags">'
+            if (eventTypes.has("event")) {
+                cellContent += '<span class="tag event-tag">Event</span>'
+            }
+            if (eventTypes.has("camp")) {
+                cellContent += '<span class="tag camp-tag">Camp</span>'
+            }
+            cellContent += '</div>'
+        }
+
+        cell.innerHTML = cellContent
+
         cell.addEventListener("click", () => {
             showEvents(day, month, year)
         })
@@ -132,9 +146,16 @@ function showEvents(day, month, year) {
         events.forEach((event, index) => {
             const eventItem = document.createElement("div")
             eventItem.className = "event-item"
+            const tagClass = event.type === "camp" ? "camp-tag" : "event-tag"
+            const tagText = event.type.charAt(0).toUpperCase() + event.type.slice(1)
             eventItem.innerHTML = `
-                <h3>${event.title}</h3>
-                <p>${event.time}</p>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h3>${event.title}</h3>
+                        <p>${event.time}</p>
+                    </div>
+                    <span class="tag ${tagClass}">${tagText}</span>
+                </div>
             `
             eventsList.appendChild(eventItem)
         })
