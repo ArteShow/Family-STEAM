@@ -76,3 +76,26 @@ body {
     background: rgb(255, 99, 132);
     color: white;
 }
+
+main h3 {
+    text-align: center;
+    padding: 4.375rem 1.25rem 2.5rem;
+    font-size: 2.625rem;
+    color: rgb(24, 37, 110);
+    animation: fadeInUp 1s forwards 0.9s;
+}
+
+.today-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background: rgb(76, 175, 80);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.today-btn:hover {
+    background: rgb(56, 155, 60);
+}

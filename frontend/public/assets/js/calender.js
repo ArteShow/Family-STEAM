@@ -2,6 +2,7 @@ const monthYear = document.getElementById("monthYear")
 const calendarBody = document.getElementById("calendarBody")
 const prevMonth = document.getElementById("prevMonth")
 const nextMonth = document.getElementById("nextMonth")
+const todayBtn = document.getElementById("todayBtn")
 
 let currentDate = new Date()
 
@@ -69,6 +70,11 @@ prevMonth.addEventListener("click", () => {
 
 nextMonth.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1)
+    renderCalendar(currentDate)
+})
+
+todayBtn.addEventListener("click", () => {
+    currentDate = new Date()
     renderCalendar(currentDate)
 })
 
