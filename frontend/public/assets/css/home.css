@@ -19,42 +19,6 @@ body {
     width: 100%;
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.9375rem 3.75rem;
-    background-color: rgb(41, 128, 225);
-    position: sticky;
-    top: 0;
-        z-index: 1000;
-    transition: box-shadow 0.3s, transform 0.3s;
-}
-
-header img {
-    width: 5rem;
-    border-radius: 0.75rem;
-}
-
-nav {
-    display: flex;
-    gap: 2.5rem;
-}
-
-nav a {
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
-    color: rgb(255, 239, 170);
-    white-space: nowrap;
-    transition: 0.3s, transform 0.3s;
-}
-
-nav a:hover {
-    color: rgb(255, 255, 255);
-    transform: scale(1.1);
-}
-
 .slider_section {
     position: relative;
     width: 100%;
