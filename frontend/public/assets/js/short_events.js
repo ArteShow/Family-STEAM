@@ -61,7 +61,7 @@
 
 		const register = document.createElement('a');
 		register.className = 'register_btn';
-		register.href = ev.registerUrl || '#';
+		register.href = ev.registerUrl || '../../forms/event_register.html';
 		register.textContent = ev.registerLabel || 'Register';
 		const title = document.createElement('h4');
 		title.textContent = ev.title + ' — ' + (new Date(ev.date)).toLocaleDateString();
