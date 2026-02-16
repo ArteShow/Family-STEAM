@@ -93,7 +93,7 @@
 
 		const registerBtn = document.createElement('a');
 		registerBtn.className = 'register_btn';
-		registerBtn.href = camp.registerUrl || '#';
+		registerBtn.href = camp.registerUrl || '../../forms/camp_register.html';
 		registerBtn.textContent = camp.registerLabel || 'Register Now';
 
 		actions.appendChild(registerBtn);

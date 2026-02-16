@@ -1,0 +1,140 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, rgb(224, 242, 255), rgb(255, 244, 184));
+    color: rgb(24, 37, 110);
+}
+
+.form-page {
+    padding: 2.5rem 1.5rem 4rem;
+    min-height: 70vh;
+}
+
+.form-hero {
+    max-width: 980px;
+    margin: 0 auto 2rem;
+    text-align: center;
+}
+
+.form-hero h1 {
+    font-size: 2.5rem;
+    color: rgb(24, 37, 110);
+    margin-bottom: 0.5rem;
+}
+
+.form-hero p {
+    color: #40507a;
+    font-size: 1.05rem;
+}
+
+.form-card {
+    max-width: 980px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: 0 20px 45px rgba(24, 37, 110, 0.12);
+    border: 1px solid rgba(24, 37, 110, 0.1);
+}
+
+.camp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 2rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.field label {
+    font-weight: 600;
+    color: rgb(24, 37, 110);
+}
+
+.field input,
+.field select {
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(24, 37, 110, 0.2);
+    font-size: 0.95rem;
+    background: white;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.field input:focus,
+.field select:focus {
+    outline: none;
+    border-color: rgb(41, 128, 225);
+    box-shadow: 0 0 0 3px rgba(41, 128, 225, 0.2);
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.form-actions button {
+    background: linear-gradient(135deg, rgb(41, 128, 225), rgb(24, 37, 110));
+    color: white;
+    border: none;
+    padding: 0.9rem 2.2rem;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(24, 37, 110, 0.2);
+}
+
+.form-note {
+    color: #40507a;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-card {
+        padding: 2rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 600px) {
+    .form-page {
+        padding: 2rem 1rem 3rem;
+    }
+
+    .form-hero h1 {
+        font-size: 2rem;
+    }
+
+    .form-card {
+        padding: 1.5rem;
+    }
+}

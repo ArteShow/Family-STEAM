@@ -3,9 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family STEAM | ArteShow</title>
+    <title>Family STEAM | Camp Registration</title>
+    <link rel="stylesheet" href="../assets/css/nav.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
+    <link rel="stylesheet" href="css/camp_register.css">
+    <link rel="icon" href="../assets/images/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    
+    <header>
+        <img src="../assets/images/logo_png.png" alt="logo">
+        <button class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav id="navMenu">
+            <a href="../index.html">Home</a>
+            <a href="../assets/html/about_us.html">About Us</a>
+            <a href="../assets/html/calender.html">Calender</a>
+            <a href="../assets/html/short_events.html">Short events</a>
+            <a href="../assets/html/camps.html">Camps</a>
+            <a href="../assets/html/contacts.html">Contacts</a>
+        </nav>
+    </header>
+
+    <main class="form-page">
+        <section class="form-hero">
+            <div class="form-hero-text">
+                <h1>Camp Registration</h1>
+                <p>Choose your camp and share the participant details. We will follow up with a confirmation email.</p>
+            </div>
+        </section>
+
+        <section class="form-card">
+            <form id="campRegisterForm" class="camp-form">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="campSelect">Select Camp</label>
+                        <select id="campSelect" name="camp" required>
+                            <option value="" disabled selected>Select a camp</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="First name" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Last name" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" id="dob" name="dob" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1 234 567 890" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="name@email.com" required>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Submit Registration</button>
+                    <p class="form-note">We will contact you within 2 business days.</p>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer_content">
+            <div class="footer_section">
+                <h4>About Us</h4>
+                <p>Family STEAM is dedicated to providing innovative, engaging, and educational programs for families of all ages. We believe in hands-on learning and creativity.</p>
+            </div>
+
+            <div class="footer_section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../assets/html/calender.html">Events Calendar</a></li>
+                    <li><a href="../assets/html/camps.html">Camps</a></li>
+                    <li><a href="../index.html#contact">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="footer_section">
+                <h4>Programs</h4>
+                <ul>
+                    <li><a href="../assets/html/camps.html">Science Programs</a></li>
+                    <li><a href="../assets/html/camps.html">Tech Labs</a></li>
+                    <li><a href="../assets/html/camps.html">Art Workshops</a></li>
+                    <li><a href="../assets/html/camps.html">Math Camp</a></li>
+                </ul>
+            </div>
+
+            <div class="footer_section">
+                <h4>Newsletter</h4>
+                <p>Subscribe to get updates about our latest programs and events.</p>
+                <form class="newsletter_form">
+                    <input type="email" placeholder="Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="contact">
+            <div id="contact_info">
+                <div class="contact_item" id="phone_number">
+                    <i class="fa-solid fa-phone"></i>
+                    <p>+123456789</p>
+                </div>
+                <div class="contact_item" id="email">
+                    <i class="fa-solid fa-envelope"></i>
+                    <p>lorem@mail.eu</p>
+                </div>
+            </div>
+            <div id="social_medias">
+                <div class="social_item" id="facebook">
+                    <a href="https://facebook.com">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                </div>
+                <div class="social_item" id="instagram">
+                    <a href="https://instagram.com">
+                        <i class="fa-brands fa-square-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="legal">
+            <p>© 2026 Family STEAM | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script src="js/camp_register.js"></script>
+    <script src="../assets/js/nav.js"></script>
+    <script src="https://kit.fontawesome.com/d9e39d51d2.js" crossorigin="anonymous"></script>
 </body>
 </html>
