@@ -41,7 +41,6 @@ main h3 {
     transition: transform 240ms ease, box-shadow 240ms ease;
 }
 .event_row.reverse {
-    direction: rtl;
 }
 
 .event_row.reverse .event_carousel {
@@ -225,8 +224,7 @@ main h3 {
             grid-template-columns: 1fr;
             direction: ltr;
         }
-        .event_row.reverse {
-        direction: ltr;
+                .event_row.reverse {
         }
                                                                 .event_carousel {
                                                                     grid-column: 1;
