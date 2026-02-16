@@ -2,45 +2,41 @@
 	const events = [
 		{
 			id: 1,
-			title: 'Mini Robotics Workshop',
+			title: 'Lorem Dolor Sit',
 			date: getOffsetDate(3),
-			place: 'Community Center',
+			place: 'Consectetur Location',
 			price: '€12',
 			duration: '2h',
 			persons: '6-12',
-			responsibility: 'Led by certified STEM instructors',
-			description: `🤖 Join us for an exciting Mini Robotics Workshop designed to introduce young learners to the fundamentals of robotics and engineering!
+			responsibility: 'Led by professional facilitators',
+			description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
-This hands-on workshop will guide participants through the basics of robot assembly, programming, and problem-solving. Participants will work with educational robotics kits, learning how to build simple mechanisms, understand sensors, and write basic code to control their robots.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 
-⚙️ Throughout the workshop, children will engage in team-based challenges that encourage creativity and critical thinking. Our experienced instructors create a supportive learning environment where mistakes become learning opportunities.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
 
-✨ This workshop is perfect for beginners with no prior robotics experience. Participants will take home a certificate of completion and an exclusive workshop guide. We provide all necessary equipment and materials.
-
-🏆 By the end of this workshop, participants will have gained foundational knowledge in robotics, improved their problem-solving skills, and made new friends who share their interest in technology. The workshop emphasizes hands-on learning through building, experimenting, and collaborating with peers. Each participant receives individual attention and support from our instructors to ensure they get the most out of the experience.`,
+Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.`,
 			images: [
-				'../images/math-camp.jpg',
-				'../images/math-camp.jpg'
+				'../images/slider1.webp',
+				'../images/slider2.jpg'
 			]
 		},
 		{
 			id: 2,
-			title: 'Family Painting Hour',
+			title: 'Adipiscing Elit Hour',
 			date: getOffsetDate(10),
-			place: 'Art Studio',
+			place: 'Sed Do Studio',
 			price: 'Free',
 			duration: '1.5h',
 			persons: 'All ages',
-			responsibility: 'Conducted by professional art facilitators',
-			description: `🎨 Experience the joy of creative expression in our Family Painting Hour, where art becomes a bonding experience for all ages!
+			responsibility: 'Conducted by expert coordinators',
+			description: `Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
-This inclusive workshop welcomes families with members ranging from young children to grandparents. Our professional art facilitators guide the creative journey while encouraging individual expression and unique artistic vision.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-🖌️ The session features a relaxed, judgment-free environment where the process matters more than the final product. Participants can choose from various mediums including acrylics, watercolors, and mixed media. Whether you are an experienced artist or picking up a brush for the first time, there is something for everyone.
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam. Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 
-🎭 The workshop includes instruction on color theory, brush techniques, composition, and storytelling through art. Each family creates their own masterpiece to take home, or collaborate on a shared canvas if preferred.
-
-❤️ Throughout the session, participants share creative ideas and appreciate each other's work in a supportive community setting. We provide all art supplies, aprons, and materials. The workshop concludes with a brief gallery walk where participants display and discuss their creations. This is a perfect opportunity to strengthen family bonds while exploring artistic talents!`,
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit. Sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt neque porro quisquam.`,
 			images: [
                 '../images/slider1.webp',
                 '../images/slider2.jpg',
@@ -49,24 +45,22 @@ This inclusive workshop welcomes families with members ranging from young childr
 		},
 		{
 			id: 3,
-			title: 'Star Gazing Night',
+			title: 'Incididunt Ut Night',
 			date: getOffsetDate(33),
-			place: 'Hill Park',
+			place: 'Labore Park',
 			price: '€5',
 			duration: '3h',
 			persons: 'All ages',
-			responsibility: 'Guided by amateur astronomy enthusiasts',
-			description: `⭐ Discover the wonders of the night sky during our enchanting Star Gazing Night at scenic Hill Park!
+			responsibility: 'Guided by professional coordinators',
+			description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
-This astronomy experience invites participants of all ages to explore the cosmos and marvel at celestial objects. Our knowledgeable guides use powerful telescopes to help you observe planets, star clusters, nebulae, and other deep-sky objects.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-🔭 The evening begins with an introduction to the constellations visible in the current season, followed by telescope observations and interactive discussions about our universe. Learn about the life cycles of stars, galaxy formations, and the latest space missions.
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 
-✨ Even without telescopes, the naked eye reveals countless stars and constellations. We teach participants how to locate major constellations and navigate the night sky using simple techniques. The experience includes fascinating stories about mythology connected to the constellations.
-
-🌙 Dress warmly as the evening can be cool, and bring blankets or camping chairs for comfortable viewing. We provide hot beverages and snacks. Clear skies are essential for this activity, but we reschedule if weather conditions are unfavorable. This unforgettable experience fosters appreciation for astronomy and ignites curiosity about our place in the universe!`,
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.`,
 			images: [
-				'https://via.placeholder.com/800x500?text=Stars+1'
+				'https://via.placeholder.com/800x500?text=Event+Image'
 			]
 		}
 	];

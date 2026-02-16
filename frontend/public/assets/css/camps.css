@@ -8,4 +8,313 @@ body {
     background: linear-gradient(135deg,
             rgb(224, 242, 255),
             rgb(255, 244, 184));
+    min-height: 100vh;
+    }
+    
+    main h3 {
+        text-align: center;
+        padding: 4.375rem 1.25rem 2.5rem;
+        font-size: 2.625rem;
+        color: rgb(24, 37, 110);
+        animation: fadeInUp 1s forwards 0.9s;
+        letter-spacing: 1px;
+    }
+    
+    .camps_root {
+        max-width: 1200px;
+        margin: 0 auto 4rem;
+        padding: 0 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+    }
+    
+    .camp_card {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        background: rgba(255, 255, 255, 0.67);
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(20, 20, 60, 0.06);
+        overflow: visible;
+        transition: transform 240ms ease, box-shadow 240ms ease;
+        animation: fadeInUp .6s ease both;
+    }
+    
+    .camp_card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 36px rgba(20, 20, 60, 0.12);
+    }
+    
+    .camp_carousel {
+        position: relative;
+        grid-column: 1;
+        grid-row: 1;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    
+    .carousel_track {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        will-change: transform;
+        transition: transform 420ms cubic-bezier(.22, .9, .3, 1);
+    }
+    
+    .carousel_slide {
+        flex: 0 0 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .carousel_image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    
+    .carousel_btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.45);
+        color: #fff;
+        border: none;
+        padding: 0.6rem 0.9rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1.35rem;
+        opacity: 0.9;
+        transition: background 180ms ease, transform 120ms ease, opacity 180ms ease;
+    }
+    
+    .carousel_btn.left {
+        left: 12px;
+    }
+    
+    .carousel_btn.right {
+        right: 12px;
+    }
+    
+    .carousel_btn:hover {
+        background: rgba(0, 0, 0, 0.65);
+        transform: translateY(-50%) scale(1.04);
+    }
+    
+    .camp_info {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 1rem 1.2rem;
+        overflow-y: auto;
+        max-height: 400px;
+    }
+    
+    .camp_info h4 {
+        margin-bottom: 0.9rem;
+        color: rgb(24, 37, 110);
+        font-weight: 700;
+    }
+    
+    .camp_info p {
+        color: #40507a;
+        margin-bottom: 0.8rem;
+        font-size: 1rem;
+    }
+    
+    .camp_short_desc {
+        color: #40507a;
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+    
+    .camp_icons {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem 1rem;
+        padding: 0;
+        margin-bottom: 0.8rem;
+    }
+    
+    .camp_icons li {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.35rem 0.25rem;
+        color: #2b3a67;
+        font-size: 0.95rem;
+    }
+    
+    .camp_icons i {
+        color: #ff6b6b;
+    }
+    
+    .duration_btn {
+        display: inline-block;
+        margin-top: 0.8rem;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        color: #fff;
+        padding: 0.5rem 0.9rem;
+        border-radius: 8px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 6px 14px rgba(102, 126, 234, 0.14);
+        transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+    }
+    
+    .duration_btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.95;
+    }
+    
+    .register_btn {
+        display: inline-block;
+        margin-top: 0.5rem;
+        background: linear-gradient(90deg, #ff7a7a, #ffb199);
+        color: #fff;
+        padding: 0.55rem 0.9rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 6px 14px rgba(255, 110, 110, 0.14);
+        transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+    }
+    
+    .register_btn:hover {
+        transform: translateY(-4px);
+        opacity: 0.98;
+    }
+    
+    .camp_desc_container {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        margin-bottom: 0.6rem;
+        padding: 1.2rem;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 8px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .expand_btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.4rem 0.6rem;
+        font-size: 1.1rem;
+        color: #ff6b6b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 300ms ease;
+        margin-bottom: 0.4rem;
+    }
+    
+    .expand_btn:hover {
+        transform: scale(1.15);
+    }
+    
+    .expand_btn.rotated {
+        transform: rotate(180deg);
+    }
+    
+    .camp_desc_content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 400ms ease, opacity 300ms ease;
+        opacity: 0;
+        padding: 0;
+    }
+    
+    .camp_desc_content.expanded {
+        max-height: none;
+        opacity: 1;
+        padding: 1.2rem 0;
+        border-top: 1px solid rgba(255, 107, 107, 0.2);
+    }
+    
+    .camp_desc_content p {
+        color: #40507a;
+        font-size: 1.05rem;
+        line-height: 1.8;
+        margin: 0;
+        text-align: justify;
+        word-break: break-word;
+        white-space: pre-wrap;
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+    
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+    
+    @media (max-width: 820px) {
+        .camp_card {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding: 1rem;
+        }
+    
+        .camp_carousel {
+            grid-column: 1;
+            grid-row: 1;
+            width: 100%;
+            height: 240px;
+            min-height: auto;
+        }
+    
+        .camp_info {
+            grid-column: 1;
+            grid-row: 2;
+            padding: 1rem;
+            overflow-y: visible;
+            max-height: none;
+        }
+    
+        .camp_desc_container {
+            grid-column: 1;
+            grid-row: 3;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+    
+        .camp_info h4 {
+            font-size: 1.15rem;
+        }
+    
+        .camp_info p {
+            font-size: 0.95rem;
+        }
+    
+        .register_btn {
+            margin-top: 0.8rem;
+        }
 }

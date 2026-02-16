@@ -10,6 +10,34 @@ const closeBtn = document.getElementById("closeBtn")
 
 let currentDate = new Date()
 
+// Multi-day events (camps) and single-day events
+const multiDayEvents = [
+	{
+		id: 1,
+		title: 'Summer STEAM Academy',
+		startDate: new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000),
+		endDate: new Date(new Date().getTime() + 17 * 24 * 60 * 60 * 1000),
+		type: 'camp',
+		time: 'All day'
+	},
+	{
+		id: 2,
+		title: 'Winter Art & Design Camp',
+		startDate: new Date(new Date().getTime() + 45 * 24 * 60 * 60 * 1000),
+		endDate: new Date(new Date().getTime() + 52 * 24 * 60 * 60 * 1000),
+		type: 'camp',
+		time: 'All day'
+	},
+	{
+		id: 3,
+		title: 'Robotics Challenge Camp',
+		startDate: new Date(new Date().getTime() + 20 * 24 * 60 * 60 * 1000),
+		endDate: new Date(new Date().getTime() + 27 * 24 * 60 * 60 * 1000),
+		type: 'camp',
+		time: 'All day'
+	}
+]
+
 const sampleEvents = {
     "1": [
         { title: "Kids Coding Workshop", time: "10:00 AM", type: "event" },
@@ -32,6 +60,44 @@ const sampleEvents = {
     "25": [
         { title: "Field Trip - Museum", time: "9:00 AM", type: "camp" }
     ]
+}
+
+// Get URL parameters
+function getQueryParam(param) {
+	const urlParams = new URLSearchParams(window.location.search);
+	return urlParams.get(param);
+}
+
+// Get all events for a specific day (including multi-day events)
+function getEventsForDay(date) {
+	const events = [];
+	
+	// Check single-day events
+	const dayStr = date.getDate().toString();
+	if (sampleEvents[dayStr]) {
+		events.push(...sampleEvents[dayStr]);
+	}
+	
+	// Check multi-day events
+	multiDayEvents.forEach(event => {
+		const eventStart = new Date(event.startDate);
+		const eventEnd = new Date(event.endDate);
+		eventStart.setHours(0, 0, 0, 0);
+		eventEnd.setHours(0, 0, 0, 0);
+		const checkDate = new Date(date);
+		checkDate.setHours(0, 0, 0, 0);
+		
+		if (checkDate >= eventStart && checkDate <= eventEnd) {
+			events.push(event);
+		}
+	});
+	
+	return events;
+}
+
+// Check if a day has any events
+function hasDayEvents(date) {
+	return getEventsForDay(date).length > 0;
 }
 
 function renderCalendar(date) {
@@ -78,9 +144,12 @@ function renderCalendar(date) {
             cell.classList.add("today")
         }
 
-        if (sampleEvents[day.toString()]) {
-            const events = sampleEvents[day.toString()]
-            const eventTypes = new Set(events.map(e => e.type))
+        // Get events for this day
+        const dayDate = new Date(year, month, day);
+        const dayEvents = getEventsForDay(dayDate);
+        
+        if (dayEvents.length > 0) {
+            const eventTypes = new Set(dayEvents.map(e => e.type))
             
             cellContent += '<div class="event-tags">'
             if (eventTypes.has("event")) {
@@ -135,8 +204,9 @@ function showEvents(day, month, year) {
     const dateStr = `${monthNames[month]} ${day}, ${year}`
     eventDate.textContent = dateStr
 
-    // Get events for this day or show "No events"
-    const events = sampleEvents[day.toString()] || []
+    // Get events for this day
+    const dayDate = new Date(year, month, day);
+    const events = getEventsForDay(dayDate);
     
     eventsList.innerHTML = ""
 
@@ -148,11 +218,20 @@ function showEvents(day, month, year) {
             eventItem.className = "event-item"
             const tagClass = event.type === "camp" ? "camp-tag" : "event-tag"
             const tagText = event.type.charAt(0).toUpperCase() + event.type.slice(1)
+            
+            let eventDetails = `<h3>${event.title}</h3><p>${event.time}</p>`;
+            
+            // Show date range for multi-day events
+			if (event.startDate && event.endDate) {
+				const startStr = event.startDate.toLocaleDateString();
+				const endStr = event.endDate.toLocaleDateString();
+				eventDetails = `<h3>${event.title}</h3><p>${startStr} - ${endStr}</p>`;
+			}
+            
             eventItem.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <div>
-                        <h3>${event.title}</h3>
-                        <p>${event.time}</p>
+                        ${eventDetails}
                     </div>
                     <span class="tag ${tagClass}">${tagText}</span>
                 </div>
@@ -173,5 +252,24 @@ closeBtn.addEventListener("click", () => {
     eventsCard.classList.add("hidden")
     eventsCard.classList.remove("show")
 })
+
+// Handle query parameters from camps page
+window.addEventListener('load', () => {
+	const campId = getQueryParam('campId');
+	const startDateParam = getQueryParam('startDate');
+	const endDateParam = getQueryParam('endDate');
+	
+	if (campId && startDateParam) {
+		// Parse the start date and navigate to that date
+		const startDate = new Date(startDateParam);
+		currentDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+		renderCalendar(currentDate);
+		
+		// Automatically show events for the camp's start date
+		setTimeout(() => {
+			showEvents(startDate.getDate(), startDate.getMonth(), startDate.getFullYear());
+		}, 100);
+	}
+});
 
 renderCalendar(currentDate)

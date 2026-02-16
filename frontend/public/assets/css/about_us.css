@@ -92,7 +92,7 @@ body {
 }
 
 .team_card h5 {
-    color: #16224b;
+    color: rgb(24, 37, 110);
     font-size: 1.3rem;
     margin-bottom: 0.8rem;
 }
@@ -134,7 +134,7 @@ body {
 }
 
 .goal_item h6 {
-    color: #16224b;
+    color: rgb(24, 37, 110);
     font-size: 1.1rem;
     margin-bottom: 0.6rem;
 }
