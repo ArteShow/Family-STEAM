@@ -1,4 +1,4 @@
-/* Auto slider for About Us page */
+
 (function(){
     const slider = document.querySelector('.about_slider');
     if(!slider) return;
@@ -22,14 +22,12 @@
     left && left.addEventListener('click', ()=> show(cur - 1));
     right && right.addEventListener('click', ()=> show(cur + 1));
 
-    // Auto-advance
     let autoId = setInterval(()=> show(cur + 1), 4000);
     function restartAuto(){ clearInterval(autoId); autoId = setInterval(()=> show(cur + 1), 4000); }
 
     slider.addEventListener('mouseenter', ()=> clearInterval(autoId));
     slider.addEventListener('mouseleave', restartAuto);
 
-    // Touch support
     let startX = 0, deltaX = 0, isDragging = false;
     slider.addEventListener('touchstart', (e)=>{
         startX = e.touches[0].clientX; deltaX = 0; isDragging = true; track.style.transition = 'none';
@@ -45,6 +43,5 @@
         else update();
     });
 
-    // initial
     update();
 })();

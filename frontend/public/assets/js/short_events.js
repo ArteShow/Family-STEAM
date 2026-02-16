@@ -1,74 +1,8 @@
 (function(){
-	const events = [
-		{
-			id: 1,
-			title: 'Lorem Dolor Sit',
-			date: getOffsetDate(3),
-			place: 'Consectetur Location',
-			price: '€12',
-			duration: '2h',
-			persons: '6-12',
-			responsibility: 'Led by professional facilitators',
-			description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
 
-Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.`,
-			images: [
-				'../images/slider1.webp',
-				'../images/slider2.jpg'
-			]
-		},
-		{
-			id: 2,
-			title: 'Adipiscing Elit Hour',
-			date: getOffsetDate(10),
-			place: 'Sed Do Studio',
-			price: 'Free',
-			duration: '1.5h',
-			persons: 'All ages',
-			responsibility: 'Conducted by expert coordinators',
-			description: `Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam. Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-
-Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit. Sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt neque porro quisquam.`,
-			images: [
-                '../images/slider1.webp',
-                '../images/slider2.jpg',
-                '../images/slider3.jpg'
-			]
-		},
-		{
-			id: 3,
-			title: 'Incididunt Ut Night',
-			date: getOffsetDate(33),
-			place: 'Labore Park',
-			price: '€5',
-			duration: '3h',
-			persons: 'All ages',
-			responsibility: 'Guided by professional coordinators',
-			description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-
-Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.`,
-			images: [
-				'https://via.placeholder.com/800x500?text=Event+Image'
-			]
-		}
-	];
-
-	function getOffsetDate(days){
-		const d = new Date(); d.setDate(d.getDate() + days);
-		return d.toISOString();
-	}
+	const events = shortEvents;
 
 	function isWithinNextDays(isoDate, days){
 		const now = new Date();
@@ -141,12 +75,10 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 			<li><i class="fa-solid fa-users"></i> <span>${ev.persons}</span></li>
 		`;
 
-		// Responsibility section
 		const resp = document.createElement('p');
 		resp.className = 'event_responsibility';
 		resp.innerHTML = `<strong>Responsibility:</strong> ${ev.responsibility || 'Professional team'}`;
 
-		// Expandable description section
 		const descContainer = document.createElement('div');
 		descContainer.className = 'event_desc_container';
 
@@ -162,17 +94,27 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 		descContainer.appendChild(expandBtn);
 		descContainer.appendChild(descContent);
 
+		const actions = document.createElement('div');
+		actions.className = 'event_actions';
+
+		const viewOnCalendar = document.createElement('a');
+		viewOnCalendar.className = 'see_more_btn';
+		viewOnCalendar.href = 'calender.html';
+		viewOnCalendar.textContent = 'View on Calendar';
+
+		actions.appendChild(register);
+		actions.appendChild(viewOnCalendar);
+
 		info.appendChild(title);
 		info.appendChild(icons);
 		info.appendChild(resp);
-		info.appendChild(register);
+		info.appendChild(actions);
 
 		row.appendChild(carousel);
 		row.appendChild(info);
 		row.appendChild(descContainer);
 		root.appendChild(row);
 
-		// Expand/collapse functionality
 		expandBtn.addEventListener('click', function() {
 			const isExpanded = expandBtn.getAttribute('aria-expanded') === 'true';
 			expandBtn.setAttribute('aria-expanded', !isExpanded);
@@ -197,7 +139,6 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 		left.addEventListener('click', ()=> show(cur - 1));
 		right.addEventListener('click', ()=> show(cur + 1));
 
-		// touch / swipe support for mobile
 		let startX = 0, deltaX = 0, isDragging = false;
 		carousel.addEventListener('touchstart', (e) => {
 			startX = e.touches[0].clientX;

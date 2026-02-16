@@ -10,75 +10,43 @@ const closeBtn = document.getElementById("closeBtn")
 
 let currentDate = new Date()
 
-// Multi-day events (camps) and single-day events
-const multiDayEvents = [
-	{
-		id: 1,
-		title: 'Summer STEAM Academy',
-		startDate: new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000),
-		endDate: new Date(new Date().getTime() + 17 * 24 * 60 * 60 * 1000),
-		type: 'camp',
-		time: 'All day'
-	},
-	{
-		id: 2,
-		title: 'Winter Art & Design Camp',
-		startDate: new Date(new Date().getTime() + 45 * 24 * 60 * 60 * 1000),
-		endDate: new Date(new Date().getTime() + 52 * 24 * 60 * 60 * 1000),
-		type: 'camp',
-		time: 'All day'
-	},
-	{
-		id: 3,
-		title: 'Robotics Challenge Camp',
-		startDate: new Date(new Date().getTime() + 20 * 24 * 60 * 60 * 1000),
-		endDate: new Date(new Date().getTime() + 27 * 24 * 60 * 60 * 1000),
-		type: 'camp',
-		time: 'All day'
-	}
-]
-
-const sampleEvents = {
-    "1": [
-        { title: "Kids Coding Workshop", time: "10:00 AM", type: "event" },
-        { title: "Art & Craft Session", time: "2:00 PM", type: "event" }
-    ],
-    "5": [
-        { title: "Robot Building Class", time: "3:00 PM", type: "camp" }
-    ],
-    "10": [
-        { title: "Science Experiment Day", time: "11:00 AM", type: "event" },
-        { title: "Movie Night - Animation", time: "6:00 PM", type: "event" }
-    ],
-    "15": [
-        { title: "Music Lessons", time: "4:00 PM", type: "camp" }
-    ],
-    "20": [
-        { title: "Drama Workshop", time: "2:30 PM", type: "event" },
-        { title: "Snack & Chat", time: "5:00 PM", type: "event" }
-    ],
-    "25": [
-        { title: "Field Trip - Museum", time: "9:00 AM", type: "camp" }
-    ]
+function isSameDay(firstDate, secondDate) {
+    return firstDate.getFullYear() === secondDate.getFullYear()
+        && firstDate.getMonth() === secondDate.getMonth()
+        && firstDate.getDate() === secondDate.getDate()
 }
 
-// Get URL parameters
+const multiDayEvents = camps.map(camp => ({
+    id: camp.id,
+    title: camp.title,
+    startDate: new Date(camp.startDate),
+    endDate: new Date(camp.endDate),
+    type: 'camp',
+    time: 'All day'
+}))
+
+const singleDayEvents = shortEvents.map(event => ({
+    id: event.id,
+    title: event.title,
+    date: new Date(event.date),
+    type: 'event',
+    time: event.time || event.duration || 'All day'
+}))
+
 function getQueryParam(param) {
 	const urlParams = new URLSearchParams(window.location.search);
 	return urlParams.get(param);
 }
 
-// Get all events for a specific day (including multi-day events)
 function getEventsForDay(date) {
 	const events = [];
-	
-	// Check single-day events
-	const dayStr = date.getDate().toString();
-	if (sampleEvents[dayStr]) {
-		events.push(...sampleEvents[dayStr]);
-	}
-	
-	// Check multi-day events
+
+    singleDayEvents.forEach(event => {
+        if (isSameDay(event.date, date)) {
+            events.push(event)
+        }
+    })
+
 	multiDayEvents.forEach(event => {
 		const eventStart = new Date(event.startDate);
 		const eventEnd = new Date(event.endDate);
@@ -95,7 +63,6 @@ function getEventsForDay(date) {
 	return events;
 }
 
-// Check if a day has any events
 function hasDayEvents(date) {
 	return getEventsForDay(date).length > 0;
 }
@@ -144,7 +111,6 @@ function renderCalendar(date) {
             cell.classList.add("today")
         }
 
-        // Get events for this day
         const dayDate = new Date(year, month, day);
         const dayEvents = getEventsForDay(dayDate);
         
@@ -204,7 +170,6 @@ function showEvents(day, month, year) {
     const dateStr = `${monthNames[month]} ${day}, ${year}`
     eventDate.textContent = dateStr
 
-    // Get events for this day
     const dayDate = new Date(year, month, day);
     const events = getEventsForDay(dayDate);
     
@@ -219,32 +184,36 @@ function showEvents(day, month, year) {
             const tagClass = event.type === "camp" ? "camp-tag" : "event-tag"
             const tagText = event.type.charAt(0).toUpperCase() + event.type.slice(1)
             
-            let eventDetails = `<h3>${event.title}</h3><p>${event.time}</p>`;
-            
-            // Show date range for multi-day events
+            let eventDetails = `<h3>${event.title}</h3><p>${event.time || 'All day'}</p>`;
+            let seeMoreLink = "#";
+
 			if (event.startDate && event.endDate) {
-				const startStr = event.startDate.toLocaleDateString();
-				const endStr = event.endDate.toLocaleDateString();
+                const startStr = new Date(event.startDate).toLocaleDateString();
+                const endStr = new Date(event.endDate).toLocaleDateString();
 				eventDetails = `<h3>${event.title}</h3><p>${startStr} - ${endStr}</p>`;
+				seeMoreLink = `camps.html#camp-${event.id}`;
+			} else if (event.type === 'camp') {
+				seeMoreLink = `camps.html#camp-${event.id}`;
+			} else if (event.type === 'event') {
+				seeMoreLink = `short_events.html#event-${event.id}`;
 			}
             
             eventItem.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                    <div style="flex-grow: 1;">
                         ${eventDetails}
                     </div>
                     <span class="tag ${tagClass}">${tagText}</span>
                 </div>
+                <a href="${seeMoreLink}" class="see_more_btn" style="margin-top: 1rem; display: inline-block;">See More</a>
             `
             eventsList.appendChild(eventItem)
         })
     }
 
-    // Show the card with animation
     eventsCard.classList.remove("hidden")
     eventsCard.classList.add("show")
 
-    // Scroll to the card
     eventsCard.scrollIntoView({ behavior: "smooth", block: "nearest" })
 }
 
@@ -253,23 +222,19 @@ closeBtn.addEventListener("click", () => {
     eventsCard.classList.remove("show")
 })
 
-// Handle query parameters from camps page
 window.addEventListener('load', () => {
-	const campId = getQueryParam('campId');
-	const startDateParam = getQueryParam('startDate');
-	const endDateParam = getQueryParam('endDate');
-	
-	if (campId && startDateParam) {
-		// Parse the start date and navigate to that date
-		const startDate = new Date(startDateParam);
-		currentDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
-		renderCalendar(currentDate);
-		
-		// Automatically show events for the camp's start date
-		setTimeout(() => {
-			showEvents(startDate.getDate(), startDate.getMonth(), startDate.getFullYear());
-		}, 100);
-	}
+    const dateParam = getQueryParam('date') || getQueryParam('startDate');
+    if (!dateParam) return;
+
+    const targetDate = new Date(dateParam);
+    if (Number.isNaN(targetDate.getTime())) return;
+
+    currentDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
+    renderCalendar(currentDate);
+
+    setTimeout(() => {
+        showEvents(targetDate.getDate(), targetDate.getMonth(), targetDate.getFullYear());
+    }, 100);
 });
 
 renderCalendar(currentDate)

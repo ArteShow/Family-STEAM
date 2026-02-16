@@ -128,7 +128,7 @@ main h3 {
 
 .register_btn{
     display:inline-block;
-    margin-top: 1.5rem;
+    margin-top: 0;
     background: linear-gradient(90deg,#ff7a7a,#ffb199);
     color:#fff;
     padding:0.55rem 0.9rem;
@@ -140,6 +140,31 @@ main h3 {
 }
 .register_btn:hover{transform: translateY(-4px); opacity:0.98}
 
+.event_actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.2rem;
+}
+
+.see_more_btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background: linear-gradient(135deg, rgb(24, 37, 110), rgb(41, 128, 225));
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(24, 37, 110, 0.2);
+}
+
+.see_more_btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(24, 37, 110, 0.3);
+    background: linear-gradient(135deg, rgb(41, 128, 225), rgb(24, 37, 110));
+}
 .event_responsibility {
     font-size: 0.9rem;
     color: #16224b;

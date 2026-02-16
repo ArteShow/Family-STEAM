@@ -116,8 +116,8 @@ body {
         flex-direction: column;
         justify-content: flex-start;
         padding: 1rem 1.2rem;
-        overflow-y: auto;
-        max-height: 400px;
+        overflow: visible;
+            max-height: none;
     }
     
     .camp_info h4 {
@@ -161,12 +161,20 @@ body {
         color: #ff6b6b;
     }
     
-    .duration_btn {
+                .camp_actions {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.8rem;
+                    margin-top: 0.8rem;
+                    margin-top: auto;
+                    padding-top: 0.6rem;
+                }
+        
+                .view_calendar_btn {
         display: inline-block;
-        margin-top: 0.8rem;
         background: linear-gradient(90deg, #667eea, #764ba2);
         color: #fff;
-        padding: 0.5rem 0.9rem;
+        padding: 0.55rem 0.9rem;
         border-radius: 8px;
         text-decoration: none;
         border: none;
@@ -176,15 +184,15 @@ body {
         box-shadow: 0 6px 14px rgba(102, 126, 234, 0.14);
         transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
     }
-    
-    .duration_btn:hover {
+
+                .view_calendar_btn:hover {
         transform: translateY(-2px);
         opacity: 0.95;
     }
-    
+
     .register_btn {
         display: inline-block;
-        margin-top: 0.5rem;
+        margin-top: 0;
         background: linear-gradient(90deg, #ff7a7a, #ffb199);
         color: #fff;
         padding: 0.55rem 0.9rem;
@@ -194,7 +202,7 @@ body {
         box-shadow: 0 6px 14px rgba(255, 110, 110, 0.14);
         transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
     }
-    
+
     .register_btn:hover {
         transform: translateY(-4px);
         opacity: 0.98;

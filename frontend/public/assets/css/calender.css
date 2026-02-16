@@ -287,6 +287,24 @@ main h3 {
     font-weight: 500;
 }
 
+.see_more_btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background: linear-gradient(135deg, rgb(24, 37, 110), rgb(41, 128, 225));
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(24, 37, 110, 0.2);
+}
+
+.see_more_btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(24, 37, 110, 0.3);
+    background: linear-gradient(135deg, rgb(41, 128, 225), rgb(24, 37, 110));
+}
 .close-btn {
     display: block;
     margin: 0 auto;

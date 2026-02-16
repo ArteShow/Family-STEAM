@@ -139,6 +139,18 @@ main h3 {
         animation: fadeInUp 1s forwards 0.9s;
 }
 
+.incoming_events_container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 2rem;
+    padding: 2.5rem 5rem 6.25rem;
+    max-width: 1300px;
+    margin: 0 auto;
+    justify-items: stretch;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s forwards 1.1s;
+}
 #incoming {
     display: flex;
     justify-content: center;
@@ -150,59 +162,144 @@ main h3 {
 }
 
 .incoming_event {
-    background: white;
-    border-radius: 1.25rem;
-    width: 20rem;
+    background: rgba(255, 255, 255, 0.85);
+        border-radius: 12px;
     overflow: hidden;
-    transition: 0.4s ease;
+    transition: all 0.4s ease;
     opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 0.8s forwards 1.3s;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s forwards;
+        box-shadow: 0 6px 18px rgba(20, 20, 60, 0.06);
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
 }
 
 .incoming_event:hover {
-    transition: 1s;
-    transform: translateY(-10px);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.571);
+    transform: translateY(-8px);
+        box-shadow: 0 16px 36px rgba(20, 20, 60, 0.12);
 }
 
-.incoming_event img {
+.event_image_container {
+    position: relative;
     width: 100%;
-    height: 12.5rem;
+    height: 200px;
+        overflow: hidden;
+    }
+    
+    .event_image_container img {
+        width: 100%;
+        height: 100%;
     object-fit: cover;
+    transition: transform 0.4s ease;
+    }
+    
+    .incoming_event:hover .event_image_container img {
+        transform: scale(1.08);
+    }
+    
+    .event_tag {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: linear-gradient(135deg, rgb(24, 37, 110), rgb(41, 128, 225));
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .event_date {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        color: rgb(24, 37, 110);
+        padding: 0.5rem 0.9rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
 }
 
 .incoming_event_details {
-    padding: 1.25rem;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.9375rem;
+    gap: 0.9rem;
+        flex-grow: 1;
 }
 
 .incoming_event_details h5 {
-    font-size: 1.25rem;
     color: rgb(24, 37, 110);
+        font-size: 1.15rem;
+        margin: 0;
+    }
+    
+    .event_place {
+        color: #40507a;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .event_place i {
+    color: rgb(24, 37, 110);
+    font-size: 0.9rem;
+    }
+    
+    .event_description {
+        color: #40507a;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        flex-grow: 1;
+    }
+    
+    .event_footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(24, 37, 110, 0.1);
+    }
+    
+    .event_footer.single {
+        justify-content: flex-start;
+    
+
+.event_price {
+    color: rgb(24, 37, 110);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.see_details_btn {
+    text-decoration: none;
+    color: white;
+    background: linear-gradient(135deg, rgb(24, 37, 110), rgb(41, 128, 225));
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+}
+
+.see_details_btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(24, 37, 110, 0.25);
 }
 
 .incoming_event_details p {
     font-size: 0.875rem;
     color: #555;
     line-height: 1.6;
-}
-
-.incoming_event_details a {
-    align-self: flex-start;
-    text-decoration: none;
-    background-color: rgb(41, 128, 225);
-    color: white;
-    padding: 0.5rem 1.125rem;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    transition: 0.3s;
-}
-
-.incoming_event_details a:hover {
-    background-color: rgb(255, 102, 0);
 }
 
 main .why_we {
@@ -429,6 +526,11 @@ main .why_we .reason:hover i {
         padding: 2.5rem 0.75rem 1.5rem;
     }
 
+                                .incoming_events_container {
+                                    padding: 1.5rem 0.75rem 3rem !important;
+                                    grid-template-columns: 1fr;
+                                    gap: 1.5rem;
+                                }
     #incoming {
         flex-direction: column;
         gap: 1.875rem;
@@ -558,6 +660,11 @@ main .why_we .reason:hover i {
         padding: 3rem 1rem 2rem;
     }
 
+                                .incoming_events_container {
+                                    padding: 2rem 1rem 4rem !important;
+                                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                                    gap: 2rem;
+                                }
     #incoming {
         flex-direction: column;
         gap: 2rem;
@@ -656,6 +763,10 @@ main .why_we .reason:hover i {
         padding: 3.5rem 1.5rem 2rem;
     }
 
+                                .incoming_events_container {
+                                    padding: 2.5rem 2rem 5rem !important;
+                                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                                }
     #incoming {
         flex-wrap: wrap;
         gap: 2.5rem;

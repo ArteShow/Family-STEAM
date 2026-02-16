@@ -8,4 +8,401 @@ body {
     background: linear-gradient(135deg,
             rgb(224, 242, 255),
             rgb(255, 244, 184));
+    min-height: 100vh;
+    }
+    
+    main h3 {
+        text-align: center;
+        padding: 4.375rem 1.25rem 2.5rem;
+        font-size: 2.625rem;
+        color: rgb(24, 37, 110);
+        animation: fadeInUp 1s forwards 0.9s;
+        letter-spacing: 1px;
+    }
+    
+    .contacts_container {
+        max-width: 800px;
+        margin: 0 auto 4rem;
+        padding: 0 1rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    
+    .contact_info_section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+    
+    .contact_card.wide {
+        grid-column: 1 / -1;
+    }
+    
+    .contact_card {
+        background: rgba(255, 255, 255, 0.67);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(20, 20, 60, 0.06);
+        text-align: center;
+        transition: transform 240ms ease, box-shadow 240ms ease;
+        animation: fadeInUp 0.6s ease both;
+    }
+    
+    .contact_card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 36px rgba(20, 20, 60, 0.12);
+    }
+    
+    .card_icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, rgb(24, 37, 110), rgb(41, 128, 225));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.8rem;
+        color: white;
+        animation: scaleIn 0.5s ease backwards;
+    }
+    
+    .contact_card:nth-child(1) .card_icon {
+        animation-delay: 0.1s;
+    }
+    
+    .contact_card:nth-child(2) .card_icon {
+        animation-delay: 0.2s;
+    }
+    
+    .contact_card:nth-child(3) .card_icon {
+        animation-delay: 0.3s;
+    }
+    
+    .contact_card h4 {
+        color: rgb(24, 37, 110);
+        margin-bottom: 0.8rem;
+        font-size: 1.25rem;
+    }
+    
+    .contact_card p {
+        color: #40507a;
+        line-height: 1.8;
+        font-size: 0.95rem;
+    }
+    
+    
+    .contact_form_section {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .form_container,
+    .social_section {
+        background: rgba(255, 255, 255, 0.67);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(20, 20, 60, 0.06);
+        animation: fadeInUp 0.6s ease both;
+    }
+    
+    .form_container {
+        animation-delay: 0.2s;
+    }
+    
+    .social_section {
+        animation-delay: 0.3s;
+    }
+    
+    .form_container h4,
+    .social_section h4 {
+        color: rgb(24, 37, 110);
+        margin-bottom: 0.5rem;
+        font-size: 1.4rem;
+    }
+    
+    .form_subtitle,
+    .social_section p {
+        color: #40507a;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+    
+    .contact_form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+    
+    .form_group {
+        display: flex;
+    }
+    
+    .form_group input,
+    .form_group textarea {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.95rem;
+        color: #40507a;
+        background: rgba(255, 255, 255, 0.5);
+        transition: border-color 200ms ease, box-shadow 200ms ease;
+    }
+    
+    .form_group input::placeholder,
+    .form_group textarea::placeholder {
+        color: #999;
+    }
+    
+    .form_group input:focus,
+    .form_group textarea:focus {
+        outline: none;
+        border-color: rgb(24, 37, 110);
+        box-shadow: 0 0 0 3px rgba(24, 37, 110, 0.1);
+    }
+    
+    .submit_btn {
+        padding: 0.9rem 2rem;
+        background: linear-gradient(135deg, rgb(24, 37, 110), rgb(41, 128, 225));
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 200ms ease, box-shadow 200ms ease;
+    }
+    
+    .submit_btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(24, 37, 110, 0.25);
+    }
+    
+    .submit_btn:active {
+        transform: translateY(0);
+    }
+    
+    
+    .social_links {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+    }
+    
+    .social_icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(24, 37, 110, 0.1);
+        color: rgb(24, 37, 110);
+        text-decoration: none;
+        font-size: 1.5rem;
+        transition: all 250ms ease;
+    }
+    
+    .social_icon:hover {
+        transform: translateY(-4px) scale(1.1);
+        background: rgb(24, 37, 110);
+        color: white;
+        box-shadow: 0 8px 20px rgba(24, 37, 110, 0.3);
+    }
+    
+    .social_icon.facebook:hover {
+        background: #1877F2;
+    }
+    
+    .social_icon.instagram:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .social_icon.twitter:hover {
+        background: #1DA1F2;
+    }
+    
+    .social_icon.youtube:hover {
+        background: #FF0000;
+    }
+    
+    
+    .info_section {
+        max-width: 1200px;
+        margin: 0 auto 4rem;
+        padding: 0 1rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        max-width: 600px;
+    }
+    
+    .info_card {
+        background: rgba(255, 255, 255, 0.67);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(20, 20, 60, 0.06);
+        transition: transform 240ms ease, box-shadow 240ms ease;
+        animation: fadeInUp 0.6s ease both;
+    }
+    
+    .info_card:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+    
+    .info_card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 36px rgba(20, 20, 60, 0.12);
+    }
+    
+    .info_card h5 {
+        color: rgb(24, 37, 110);
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+    }
+    
+    .info_card p {
+        color: #40507a;
+        line-height: 1.8;
+        font-size: 0.95rem;
+        text-align: justify;
+    }
+    
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+    
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    
+    @media (max-width: 820px) {
+        main h3 {
+            padding: 2.5rem 1rem 1.5rem;
+            font-size: 1.8rem;
+        }
+    
+        .contacts_container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+    
+        .contact_info_section {
+            grid-template-columns: 1fr;
+        }
+    
+        .contact_card {
+            padding: 1.5rem;
+        }
+    
+        .contact_card h4 {
+            font-size: 1.1rem;
+        }
+    
+        .contact_card p {
+            font-size: 0.9rem;
+        }
+    
+        .form_container,
+        .social_section {
+            padding: 1.5rem;
+        }
+    
+        .form_container h4,
+        .social_section h4 {
+            font-size: 1.2rem;
+        }
+    
+        .info_section {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    
+        .info_card {
+            padding: 1.5rem;
+        }
+    
+        .info_card h5 {
+            font-size: 1.1rem;
+        }
+    
+        .form_group input,
+        .form_group textarea {
+            padding: 0.8rem 0.9rem;
+            font-size: 0.9rem;
+        }
+    
+        .submit_btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
+        }
+    
+        .social_links {
+            gap: 1rem;
+        }
+    
+        .social_icon {
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        main h3 {
+            padding: 2rem 0.8rem 1rem;
+            font-size: 1.5rem;
+        }
+    
+        .contact_card {
+            padding: 1.2rem;
+        }
+    
+        .card_icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+    
+        .form_container,
+        .social_section {
+            padding: 1.2rem;
+        }
+    
+        .form_group {
+            margin-bottom: 0.5rem;
+        }
+    
+        .social_links {
+            gap: 0.8rem;
+        }
+    
+        .social_icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
 }

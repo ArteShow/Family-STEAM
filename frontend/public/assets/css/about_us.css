@@ -10,7 +10,7 @@ body {
             rgb(255, 244, 184));
     min-height: 100vh;
 }
-/* About page layout and slider */
+
 .about_root {
     max-width: 100%;
     margin: 0 auto 4rem;
@@ -44,7 +44,7 @@ body {
     text-align: justify;
 }
 
-/* Team cards section */
+
 .team_section {
     max-width: 1000px;
     margin: 2rem auto;
@@ -103,7 +103,7 @@ body {
     line-height: 1.6;
 }
 
-/* Goals section */
+
 .goals_section {
     max-width: 1000px;
     margin: 2.5rem auto;

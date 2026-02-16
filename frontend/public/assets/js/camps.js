@@ -1,84 +1,6 @@
 (function(){
-	// Array of camps data - ready to be replaced with backend data
-	const camps = [
-		{
-			id: 1,
-			title: 'Lorem Ipsum Dolor',
-			startDate: getOffsetDate(10),
-			endDate: getOffsetDate(17),
-			place: 'Consectetur Adipiscing Location',
-			price: '€250',
-			capacity: '8-15 years',
-			shortDesc: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua universitas enim ad minim.',
-			description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-
-Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-
-Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.`,
-			images: [
-				'../images/slider1.webp',
-				'../images/slider2.jpg',
-				'../images/slider3.jpg'
-			]
-		},
-		{
-			id: 2,
-			title: 'Consectetur Adipiscing Elit',
-			startDate: getOffsetDate(45),
-			endDate: getOffsetDate(52),
-			place: 'Sed Eiusmod Studio Lab',
-			price: '€200',
-			capacity: '6-18 years',
-			shortDesc: 'Incididunt ut labore et dolore magna aliqua sed do eiusmod tempor universitas.',
-			description: `Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-
-Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-
-Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.`,
-			images: [
-				'../images/slider2.jpg',
-				'../images/slider1.webp'
-			]
-		},
-		{
-			id: 3,
-			title: 'Tempor Incididunt Challenge',
-			startDate: getOffsetDate(20),
-			endDate: getOffsetDate(27),
-			place: 'Ut Labore Et Dolore Hub',
-			price: '€300',
-			capacity: '10-16 years',
-			shortDesc: 'Magna aliqua ut enim ad minim veniam quis nostrud exercitation universitas.',
-			description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-
-Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-
-Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit sed do eiusmod.`,
-			images: [
-				'../images/slider3.jpg',
-				'../images/slider1.webp',
-				'../images/slider2.jpg'
-			]
-		}
-	];
-
-	function getOffsetDate(days) {
-		const d = new Date();
-		d.setDate(d.getDate() + days);
-		return d.toISOString();
-	}
 
 	function formatDateRange(startISO, endISO) {
 		const start = new Date(startISO);
@@ -108,7 +30,6 @@ Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, ad
 		card.className = 'camp_card';
 		card.style.animationDelay = `${idx * 120}ms`;
 
-		// Carousel section
 		const carousel = document.createElement('div');
 		carousel.className = 'camp_carousel';
 
@@ -142,7 +63,6 @@ Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, ad
 		carousel.appendChild(track);
 		carousel.appendChild(rightBtn);
 
-		// Info section
 		const info = document.createElement('div');
 		info.className = 'camp_info';
 
@@ -163,27 +83,27 @@ Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, ad
 			<li><i class="fa-solid fa-users"></i> <span>${camp.capacity}</span></li>
 		`;
 
-		// Duration button to navigate to calendar
-		const durationBtn = document.createElement('button');
-		durationBtn.className = 'duration_btn';
-		durationBtn.textContent = `📅 View on Calendar (${formatDateRange(camp.startDate, camp.endDate)})`;
-		durationBtn.addEventListener('click', () => {
-			// Navigate to calendar with camp ID for highlighting
-			window.location.href = `calender.html?campId=${camp.id}&startDate=${encodeURIComponent(camp.startDate)}&endDate=${encodeURIComponent(camp.endDate)}`;
-		});
+		const actions = document.createElement('div');
+		actions.className = 'camp_actions';
+
+		const viewCalendarBtn = document.createElement('a');
+		viewCalendarBtn.className = 'view_calendar_btn';
+		viewCalendarBtn.href = `calender.html?date=${encodeURIComponent(camp.startDate)}`;
+		viewCalendarBtn.textContent = 'View on Calendar';
 
 		const registerBtn = document.createElement('a');
 		registerBtn.className = 'register_btn';
 		registerBtn.href = camp.registerUrl || '#';
 		registerBtn.textContent = camp.registerLabel || 'Register Now';
 
+		actions.appendChild(registerBtn);
+		actions.appendChild(viewCalendarBtn);
+
 		info.appendChild(title);
 		info.appendChild(shortDesc);
 		info.appendChild(icons);
-		info.appendChild(durationBtn);
-		info.appendChild(registerBtn);
+		info.appendChild(actions);
 
-		// Description container (expandable)
 		const descContainer = document.createElement('div');
 		descContainer.className = 'camp_desc_container';
 
@@ -199,13 +119,11 @@ Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, ad
 		descContainer.appendChild(expandBtn);
 		descContainer.appendChild(descContent);
 
-		// Assemble card
 		card.appendChild(carousel);
 		card.appendChild(info);
 		card.appendChild(descContainer);
 		root.appendChild(card);
 
-		// Expand/collapse functionality
 		expandBtn.addEventListener('click', function() {
 			const isExpanded = expandBtn.getAttribute('aria-expanded') === 'true';
 			expandBtn.setAttribute('aria-expanded', !isExpanded);
@@ -213,7 +131,6 @@ Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, ad
 			expandBtn.classList.toggle('rotated');
 		});
 
-		// Carousel logic
 		let cur = 0;
 		const slidesCount = camp.images.length;
 		const trackEl = track;
@@ -230,7 +147,6 @@ Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, ad
 		leftBtn.addEventListener('click', () => show(cur - 1));
 		rightBtn.addEventListener('click', () => show(cur + 1));
 
-		// Touch/swipe support
 		let startX = 0, deltaX = 0, isDragging = false;
 		carousel.addEventListener('touchstart', (e) => {
 			startX = e.touches[0].clientX;

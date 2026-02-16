@@ -31,4 +31,40 @@ faqItems.forEach(item => {
     });
 });
 
-setInterval(changeBackground, 5000); 
+function generateIncomingEvents() {
+    const incomingRoot = document.getElementById('incomingRoot');
+    const incomingEvents = getIncomingEvents();
+
+    if (incomingEvents.length === 0) {
+        incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #40507a;">No upcoming events. Check back soon!</p>';
+        return;
+    }
+
+    incomingRoot.innerHTML = incomingEvents.slice(0, 4).map((event, index) => {
+        const eventDate = new Date(event.date);
+        const dateParam = encodeURIComponent(eventDate.toISOString());
+        const detailsLink = `assets/html/calender.html?date=${dateParam}`;
+        const eventClass = 'incoming_event';
+
+        return `
+            <div class="${eventClass}" style="animation-delay: ${index * 0.1}s;">
+                <div class="event_image_container">
+                    <img src="assets/images/slider1.webp" alt="${event.title}">
+                </div>
+                <div class="incoming_event_details">
+                    <h5>${event.title}</h5>
+                    <p class="event_description">${event.shortDesc || event.description?.substring(0, 150) + '...'}</p>
+                    <div class="event_footer single">
+                        <a href="${detailsLink}" class="see_details_btn">See More Details</a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', generateIncomingEvents);
+} else {
+    generateIncomingEvents();
+} 
