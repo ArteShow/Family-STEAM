@@ -17,6 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCounts();
 });
 
+// Logout handler
+function handleLogout(event) {
+    event.preventDefault();
+    // Clear any authentication data if needed
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser');
+    // Redirect to login page
+    window.location.href = '../login.html';
+}
+
 // Navigation
 function initializeNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
