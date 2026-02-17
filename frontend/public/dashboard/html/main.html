@@ -3,9 +3,527 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family STEAM | ArteShow</title>
+    <title>Family STEAM | Admin Dashboard</title>
+    <link rel="stylesheet" href="../../assets/css/footer.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="icon" href="../../assets/images/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <header class="admin-header">
+        <div class="header-container">
+            <img src="../../assets/images/logo_png.png" alt="logo" class="admin-logo">
+            <nav class="admin-nav">
+                <a href="#" class="nav-link active" data-page="dashboard">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="#" class="nav-link" data-page="short-events">
+                    <i class="fas fa-calendar-check"></i> Short Events
+                </a>
+                <a href="#" class="nav-link" data-page="camps">
+                    <i class="fas fa-calendar-alt"></i> Camps
+                </a>
+            </nav>
+            <a href="../login.html" class="nav-link logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </header>
     
-</body>
-</html>
+    <div class="admin-container">
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <div class="page-header">
+                    <h1>Admin Dashboard</h1>
+                    <p>Manage your website content</p>
+                </div>
+    
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Short Events</h3>
+                        <p id="short-events-count" class="card-count">0</p>
+                        <a href="#" class="card-link" onclick="navigateTo('short-events')">Manage <i
+                                class="fas fa-arrow-right"></i></a>
+                    </div>
+    
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-campground"></i>
+                        </div>
+                        <h3>Camps</h3>
+                        <p id="camps-count" class="card-count">0</p>
+                        <a href="#" class="card-link" onclick="navigateTo('camps')">Manage <i
+                                class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Short Events Management Page -->
+            <div id="short-events-page" class="page">
+                <div class="page-header">
+                    <h1>Short Events Management</h1>
+                    <p>Create, edit, or delete short events</p>
+                </div>
+    
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="showForm('short-events')">
+                        <i class="fas fa-plus"></i> Create New Event
+                    </button>
+                </div>
+    
+                <!-- Form Modal -->
+                <div id="short-events-form-modal" class="form-modal">
+                    <div class="form-container">
+                        <div class="form-header">
+                            <h2>Create Short Event</h2>
+                            <button class="close-btn" onclick="closeForm('short-events')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form id="shortEventForm" onsubmit="handleShortEventSubmit(event)">
+                            <div class="form-group">
+                                <label for="eventTitle">Event Title</label>
+                                <input type="text" id="eventTitle" name="title" placeholder="Enter event title" required>
+                            </div>
+    
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eventDate">Date</label>
+                                    <input type="date" id="eventDate" name="date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventPlace">Place/Location</label>
+                                    <input type="text" id="eventPlace" name="place" placeholder="Enter location" required>
+                                </div>
+                            </div>
+    
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eventPrice">Price</label>
+                                    <input type="text" id="eventPrice" name="price" placeholder="e.g., €12 or Free"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventDuration">Duration</label>
+                                    <input type="text" id="eventDuration" name="duration" placeholder="e.g., 2h" required>
+                                </div>
+                            </div>
+    
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eventPersons">Suitable Persons</label>
+                                    <input type="text" id="eventPersons" name="persons" placeholder="e.g., 6-12 years"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventTag">Tag/Category</label>
+                                    <input type="text" id="eventTag" name="tag" placeholder="e.g., Workshop, Activity"
+                                        required>
+                                </div>
+                            </div>
+    
+                            <div class="form-group">
+                                <label for="eventResponsibility">Responsibility</label>
+                                <input type="text" id="eventResponsibility" name="responsibility"
+                                    placeholder="e.g., Led by professional facilitators" required>
+                            </div>
+    
+                            <div class="form-group">
+                                <label for="eventDescription">Description</label>
+                                <textarea id="eventDescription" name="description" placeholder="Enter event description"
+                                    rows="4" required></textarea>
+                            </div>
+    
+                            <div class="form-group">
+                                <label for="eventImage">Event Images</label>
+                                <div class="image-upload">
+                                    <input type="file" id="eventImage" name="image" accept="image/*" multiple>
+                                    <i class="fas fa-cloud-upload-alt"
+                                        style="font-size: 2rem; margin-bottom: 0.5rem; color: rgb(41, 128, 225);"></i>
+                                    <p id="imagePreviewText">Click to upload or drag and drop</p>
+                                    <div id="imagePreviewContainer" class="preview-container"></div>
+                                </div>
+                            </div>
+    
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary"
+                                    onclick="closeForm('short-events')">Cancel</button>
+                                <button type="submit" class="btn-primary">Create Event</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+    
+                <!-- Events List -->
+                <div class="events-list">
+                    <div id="shortEventsList" class="items-grid">
+                        <p class="empty-state">No short events yet. Create one to get started!</p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Camps Management Page -->
+            <div id="camps-page" class="page">
+                <div class="page-header">
+                    <h1>Camps Management</h1>
+                    <p>Create, edit, or delete camps</p>
+                </div>
+    
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="showForm('camps')">
+                        <i class="fas fa-plus"></i> Create New Camp
+                    </button>
+                </div>
+    
+                <!-- Form Modal -->
+                <div id="camps-form-modal" class="form-modal">
+                    <div class="form-container">
+                        <div class="form-header">
+                            <h2>Create Camp</h2>
+                            <button class="close-btn" onclick="closeForm('camps')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form id="campsEventForm" onsubmit="handleCampsEventSubmit(event)">
+                            <div class="form-group">
+                                <label for="campTitle">Camp Title</label>
+                                <input type="text" id="campTitle" name="title" placeholder="Enter camp title" required>
+                            </div>
+    
+                            <div class="form-group">
+                                <label for="campDescription">Description</label>
+                                <textarea id="campDescription" name="description" placeholder="Enter camp description"
+                                    rows="4" required></textarea>
+                            </div>
+    
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="campStartDate">Start Date</label>
+                                    <input type="date" id="campStartDate" name="startDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="campEndDate">End Date</label>
+                                    <input type="date" id="campEndDate" name="endDate" required>
+                                </div>
+                            </div>
+    
+                            <div class="form-group">
+                                <label for="campLocation">Location</label>
+                                <input type="text" id="campLocation" name="place" placeholder="Enter location" required>
+                            </div>
+    
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="campPrice">Price</label>
+                                    <input type="text" id="campPrice" name="price" placeholder="e.g., €250 or Free"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="campCapacity">Age Capacity</label>
+                                    <input type="text" id="campCapacity" name="capacity" placeholder="e.g., 8-15 years"
+                                        required>
+                                </div>
+                            </div>
+    
+                            <div class="form-group">
+                                <label for="campTag">Tag/Category</label>
+                                <input type="text" id="campTag" name="tag" placeholder="e.g., Camp, Workshop" required>
+                            </div>
+    
+                            <div class="form-group">
+                                <label for="campImage">Camp Images</label>
+                                <div class="image-upload">
+                                    <input type="file" id="campImage" name="image" accept="image/*" multiple>
+                                    <i class="fas fa-cloud-upload-alt"
+                                        style="font-size: 2rem; margin-bottom: 0.5rem; color: rgb(41, 128, 225);"></i>
+                                    <p id="campImagePreviewText">Click to upload or drag and drop</p>
+                                    <div id="campImagePreviewContainer" class="preview-container"></div>
+                                </div>
+                            </div>
+    
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="closeForm('camps')">Cancel</button>
+                                <button type="submit" class="btn-primary">Create Camp</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+    
+                <!-- Camps List -->
+                <div class="events-list">
+                    <div id="campsList" class="items-grid">
+                        <p class="empty-state">No camps yet. Create one to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="delete-modal">
+        <div class="delete-modal-content">
+            <div class="delete-modal-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h2>Delete Item</h2>
+            </div>
+            <p id="deleteMessage">Are you sure you want to delete this item? This action cannot be undone.</p>
+            <div class="delete-modal-actions">
+                <button class="btn-secondary" onclick="cancelDelete()">Cancel</button>
+                <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer_content">
+            <div class="footer_section">
+                <h4>About Us</h4>
+                <p>Family STEAM is dedicated to providing innovative, engaging, and educational programs for families of all
+                    ages. We believe in hands-on learning and creativity.</p>
+            </div>
+    
+            <div class="footer_section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../../assets/html/calender.html">Events Calendar</a></li>
+                    <li><a href="../../assets/html/camps.html">Camps</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                </ul>
+            </div>
+    
+            <div class="footer_section">
+                <h4>Programs</h4>
+                <ul>
+                    <li><a href="#science">Science Programs</a></li>
+                    <li><a href="#technology">Tech Labs</a></li>
+                    <li><a href="#arts">Art Workshops</a></li>
+                    <li><a href="#math">Math Camp</a></li>
+                </ul>
+            </div>
+    
+            <div class="footer_section">
+                <h4>Newsletter</h4>
+                <p>Subscribe to get updates about our latest programs and events.</p>
+                <form class="newsletter_form">
+                    <input type="email" placeholder="Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    
+        <div id="contact">
+            <div id="contact_info">
+                <div class="contact_item" id="phone_number">
+                    <i class="fa-solid fa-phone"></i>
+                    <p>+123456789</p>
+                </div>
+                <div class="contact_item" id="email">
+                    <i class="fa-solid fa-envelope"></i>
+                    <p>lorem@mail.eu</p>
+                </div>
+            </div>
+            <div id="social_medias">
+                <div class="social_item" id="facebook">
+                    <a href="https://facebook.com">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                </div>
+                <div class="social_item" id="instagram">
+                    <a href="https://instagram.com">
+                        <i class="fa-brands fa-square-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="legal">
+            <p>© 2026 Family STEAM | All Rights Reserved</p>
+        </div>
+    </footer>
+    
+    <script src="https://kit.fontawesome.com/d9e39d51d2.js" crossorigin="anonymous"></script>
+    <script src="../js/admin.js"></script>
+    </body>
+    
+    </html>
+    <div class="page-header">
+        <h1>Admin Dashboard</h1>
+        <p>Manage your website content</p>
+    </div>
+    
+    <div class="dashboard-cards">
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h3>Short Events</h3>
+            <p id="short-events-count" class="card-count">0</p>
+            <a href="#" class="card-link" onclick="navigateTo('short-events')">Manage <i class="fas fa-arrow-right"></i></a>
+        </div>
+    
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3>Calendar Events</h3>
+            <p id="calendar-count" class="card-count">0</p>
+            <a href="#" class="card-link" onclick="navigateTo('calendar')">Manage <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    </div>
+    
+    <!-- Short Events Management Page -->
+    <div id="short-events-page" class="page">
+        <div class="page-header">
+            <h1>Short Events Management</h1>
+            <p>Create, edit, or delete short events</p>
+        </div>
+    
+        <div class="action-buttons">
+            <button class="btn-primary" onclick="showForm('short-events')">
+                <i class="fas fa-plus"></i> Create New Event
+            </button>
+        </div>
+    
+        <!-- Form Modal -->
+        <div id="short-events-form-modal" class="form-modal">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Create Short Event</h2>
+                    <button class="close-btn" onclick="closeForm('short-events')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="shortEventForm" onsubmit="handleShortEventSubmit(event)">
+                    <div class="form-group">
+                        <label for="eventTitle">Event Title</label>
+                        <input type="text" id="eventTitle" name="title" placeholder="Enter event title" required>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="eventDescription">Description</label>
+                        <textarea id="eventDescription" name="description" placeholder="Enter event description" rows="4"
+                            required></textarea>
+                    </div>
+    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="eventDate">Date</label>
+                            <input type="date" id="eventDate" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTime">Time</label>
+                            <input type="time" id="eventTime" name="time" required>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="eventLocation">Location</label>
+                        <input type="text" id="eventLocation" name="location" placeholder="Enter location" required>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="eventImage">Event Image</label>
+                        <div class="image-upload">
+                            <input type="file" id="eventImage" name="image" accept="image/*">
+                            <p id="imagePreviewText">Click to upload or drag and drop</p>
+                            <img id="imagePreview" class="preview-img" style="display: none;">
+                        </div>
+                    </div>
+    
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeForm('short-events')">Cancel</button>
+                        <button type="submit" class="btn-primary">Create Event</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    
+        <!-- Events List -->
+        <div class="events-list">
+            <div id="shortEventsList" class="items-grid">
+                <p class="empty-state">No short events yet. Create one to get started!</p>
+            </div>
+        </div>
+    </div>
+    </main>
+    </div>
+    
+    <footer>
+        <div class="footer_content">
+            <div class="footer_section">
+                <h4>About Us</h4>
+                <p>Family STEAM is dedicated to providing innovative, engaging, and educational programs for families of all
+                    ages. We believe in hands-on learning and creativity.</p>
+            </div>
+    
+            <div class="footer_section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../../assets/html/calender.html">Events Calendar</a></li>
+                    <li><a href="../../assets/html/camps.html">Camps</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                </ul>
+            </div>
+    
+            <div class="footer_section">
+                <h4>Programs</h4>
+                <ul>
+                    <li><a href="#science">Science Programs</a></li>
+                    <li><a href="#technology">Tech Labs</a></li>
+                    <li><a href="#arts">Art Workshops</a></li>
+                    <li><a href="#math">Math Camp</a></li>
+                </ul>
+            </div>
+    
+            <div class="footer_section">
+                <h4>Newsletter</h4>
+                <p>Subscribe to get updates about our latest programs and events.</p>
+                <form class="newsletter_form">
+                    <input type="email" placeholder="Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    
+        <div id="contact">
+            <div id="contact_info">
+                <div class="contact_item" id="phone_number">
+                    <i class="fa-solid fa-phone"></i>
+                    <p>+123456789</p>
+                </div>
+                <div class="contact_item" id="email">
+                    <i class="fa-solid fa-envelope"></i>
+                    <p>lorem@mail.eu</p>
+                </div>
+            </div>
+            <div id="social_medias">
+                <div class="social_item" id="facebook">
+                    <a href="https://facebook.com">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                </div>
+                <div class="social_item" id="instagram">
+                    <a href="https://instagram.com">
+                        <i class="fa-brands fa-square-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="legal">
+            <p>© 2026 Family STEAM | All Rights Reserved</p>
+        </div>
+    </footer>
+    
+    <script src="https://kit.fontawesome.com/d9e39d51d2.js" crossorigin="anonymous"></script>
+    <script src="../js/admin.js"></script>
+                                </body>
+                                
+                                </html>

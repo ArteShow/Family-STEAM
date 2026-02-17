@@ -7,6 +7,7 @@
 body {
     background: linear-gradient(135deg, rgb(224, 242, 255), rgb(255, 244, 184));
     color: rgb(24, 37, 110);
+    min-height: 100vh;
 }
 
 main.auth-page {
@@ -25,6 +26,20 @@ main.auth-page {
     padding: 2.5rem;
     box-shadow: 0 20px 45px rgba(24, 37, 110, 0.12);
     border: 1px solid rgba(24, 37, 110, 0.1);
+    animation: slideInContainer 0.5s ease;
+        backdrop-filter: blur(10px);
+    }
+    
+    @keyframes slideInContainer {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
 }
 
 .auth-tabs {
@@ -45,25 +60,50 @@ main.auth-page {
     color: rgb(40, 50, 100);
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .tab-btn:hover {
     color: rgb(41, 128, 225);
+    transform: translateY(-2px);
 }
 
 .tab-btn.active {
     color: rgb(41, 128, 225);
     border-bottom-color: rgb(41, 128, 225);
+    animation: tabSlide 0.3s ease;
+    }
+    
+    @keyframes tabSlide {
+        from {
+            transform: scaleX(0);
+        }
+    
+        to {
+            transform: scaleX(1);
+        }
 }
 
 .auth-form {
     display: none;
+    animation: fadeIn 0.3s ease;
 }
 
 .auth-form.active {
     display: block;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 .auth-form h2 {
     font-size: 1.75rem;
     text-align: center;
@@ -97,13 +137,19 @@ main.auth-page {
     border: 1px solid rgba(24, 37, 110, 0.2);
     font-size: 0.95rem;
     background: white;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
+    }
+    
+    .form-group input:hover {
+        border-color: rgba(41, 128, 225, 0.4);
+        box-shadow: 0 2px 8px rgba(41, 128, 225, 0.1);
 }
 
 .form-group input:focus {
     outline: none;
     border-color: rgb(41, 128, 225);
     box-shadow: 0 0 0 3px rgba(41, 128, 225, 0.2);
+    transform: translateY(-2px);
 }
 
 .form-group input::placeholder {
@@ -120,8 +166,22 @@ main.auth-page {
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     margin-bottom: 1.5rem;
+    position: relative;
+        overflow: hidden;
+    }
+    
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.3s ease;
+        z-index: -1;
 }
 
 .submit-btn:hover {
@@ -129,6 +189,9 @@ main.auth-page {
     box-shadow: 0 10px 25px rgba(41, 128, 225, 0.3);
 }
 
+.submit-btn:hover::before {
+    left: 100%;
+}
 .submit-btn:active {
     transform: translateY(0);
 }
@@ -143,48 +206,44 @@ main.auth-page {
     color: rgb(41, 128, 225);
     text-decoration: none;
     font-weight: 600;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .form-toggle a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: rgb(41, 128, 225);
+        transition: width 0.3s ease;
 }
 
 .form-toggle a:hover {
     color: rgb(24, 37, 110);
-    text-decoration: underline;
+}
+
+.form-toggle a:hover::after {
+    width: 100%;
 }
 
 /* Responsive Design */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     main.auth-page {
-        padding: 1.5rem 1rem 2rem;
-        min-height: auto;
+        padding: 2rem 1.25rem 3rem;
+        min-height: 100vh;
     }
 
     .auth-container {
-        padding: 1.5rem;
-        margin-top: 2rem;
+        padding: 2rem;
+        border-radius: 1.25rem;
     }
 
     .auth-form h2 {
-        font-size: 1.5rem;
-    }
-
-    .form-subtitle {
-        margin-bottom: 1.5rem;
-    }
-
-    .tab-btn {
-        font-size: 0.9rem;
-        padding: 0.6rem 0.8rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .auth-container {
-        padding: 1.25rem;
-        border-radius: 1rem;
-    }
-
-    .auth-form h2 {
-        font-size: 1.3rem;
+        font-size: 1.6rem;
     }
 
     .form-group {
@@ -192,7 +251,132 @@ main.auth-page {
     }
 
     .submit-btn {
-        padding: 0.8rem 1rem;
-        font-size: 0.9rem;
+        padding: 0.9rem 1.5rem;
     }
 }
+@media (max-width: 600px) {
+    main.auth-page {
+        padding: 1.5rem 1rem 2rem;
+        min-height: auto;
+        align-items: flex-start;
+            padding-top: 3rem;
+    }
+
+    .auth-container {
+        padding: 1.5rem;
+        margin-top: 1rem;
+            border-radius: 1rem;
+    }
+
+    .auth-form h2 {
+        font-size: 1.4rem;
+    }
+
+    .form-subtitle {
+        margin-bottom: 1.25rem;
+            font-size: 0.9rem;
+    }
+
+    .tab-btn {
+        font-size: 0.9rem;
+        padding: 0.65rem 0.75rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.15rem;
+        }
+        
+        .form-group label {
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            padding: 0.75rem 0.9rem;
+            font-size: 0.9rem;
+        }
+        
+        .submit-btn {
+            padding: 0.85rem 1.25rem;
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-toggle {
+            font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    main.auth-page {
+            padding: 1rem 0.75rem 1.5rem;
+            min-height: auto;
+            padding-top: 2.5rem;
+        }
+    .auth-container {
+        padding: 1.25rem;
+        border-radius: 0.9rem;
+            box-shadow: 0 10px 30px rgba(24, 37, 110, 0.1);
+        }
+        
+        .auth-tabs {
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab-btn {
+            font-size: 0.8rem;
+            padding: 0.55rem 0.6rem;
+    }
+
+    .auth-form h2 {
+        font-size: 1.2rem;
+            margin-bottom: 0.4rem;
+        }
+        
+        .form-subtitle {
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+            gap: 0.4rem;
+        }
+        
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            padding: 0.7rem 0.85rem;
+            font-size: 0.85rem;
+            border-radius: 0.6rem;
+    }
+
+    .submit-btn {
+        padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            border-radius: 0.6rem;
+        }
+        
+        .form-toggle {
+            font-size: 0.8rem;
+        }
+        }
+        
+        @media (max-width: 360px) {
+            .auth-container {
+                padding: 1rem;
+            }
+        
+            .auth-form h2 {
+                font-size: 1.1rem;
+            }
+        
+            .form-group input {
+                font-size: 16px;
+    }
+}
+
