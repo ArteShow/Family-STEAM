@@ -38,6 +38,21 @@ services:
       retries: 5
     networks:
       - disknet
+  migrate:
+    image: migrate/migrate
+    container_name: migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations
+    entrypoint: >
+      migrate
+      -path /migrations
+      -database postgres://postgres:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
+      up
+    networks:
+      - disknet
 
 volumes:
   postgres_data:
