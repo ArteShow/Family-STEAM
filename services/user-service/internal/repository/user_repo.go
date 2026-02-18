@@ -9,15 +9,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUser(username string, password string) error {
+func CreateUser(username string, password string) (string, error) {
 	db, err := database.Connect()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	id := uuid.New().String()
@@ -31,7 +31,7 @@ func CreateUser(username string, password string) error {
 		time.Now(),
 	)
 
-	return err
+	return id, err
 }
 
 func CheckUserLogin(username string, password string) bool {
