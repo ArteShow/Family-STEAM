@@ -4,6 +4,7 @@ go 1.24.4
 
 require (
 	github.com/ilyakaznacheev/cleanenv v1.5.0
+	github.com/lib/pq v1.11.2
 	google.golang.org/grpc v1.79.1
 	google.golang.org/protobuf v1.36.11
 )
