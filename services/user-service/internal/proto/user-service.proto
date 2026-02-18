@@ -16,12 +16,12 @@ message SaveUserResponse {
 }
 
 message CompareLoginPasswordRequest {
-  string id = 1;
-  string username = 2;
+  string username = 1;
+  string password = 2;
 }
 
 message CompareLoginPasswordResponse {
-  string password = 1;
+  bool success = 1;
 }
 
 service UserService {

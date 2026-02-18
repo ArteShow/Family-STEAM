@@ -135,8 +135,8 @@ func (x *SaveUserResponse) GetSuccess() bool {
 
 type CompareLoginPasswordRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -171,13 +171,6 @@ func (*CompareLoginPasswordRequest) Descriptor() ([]byte, []int) {
 	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CompareLoginPasswordRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
 func (x *CompareLoginPasswordRequest) GetUsername() string {
 	if x != nil {
 		return x.Username
@@ -185,9 +178,16 @@ func (x *CompareLoginPasswordRequest) GetUsername() string {
 	return ""
 }
 
+func (x *CompareLoginPasswordRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
 type CompareLoginPasswordResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Password      string                 `protobuf:"bytes,1,opt,name=password,proto3" json:"password,omitempty"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -222,11 +222,11 @@ func (*CompareLoginPasswordResponse) Descriptor() ([]byte, []int) {
 	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CompareLoginPasswordResponse) GetPassword() string {
+func (x *CompareLoginPasswordResponse) GetSuccess() bool {
 	if x != nil {
-		return x.Password
+		return x.Success
 	}
-	return ""
+	return false
 }
 
 var File_internal_proto_user_service_proto protoreflect.FileDescriptor
@@ -240,12 +240,12 @@ const file_internal_proto_user_service_proto_rawDesc = "" +
 	"\x05email\x18\x03 \x01(\tR\x05email\"<\n" +
 	"\x10SaveUserResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\"I\n" +
-	"\x1bCompareLoginPasswordRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\":\n" +
-	"\x1cCompareLoginPasswordResponse\x12\x1a\n" +
-	"\bpassword\x18\x01 \x01(\tR\bpassword2\xc2\x01\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\"U\n" +
+	"\x1bCompareLoginPasswordRequest\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"8\n" +
+	"\x1cCompareLoginPasswordResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\xc2\x01\n" +
 	"\vUserService\x12I\n" +
 	"\bSaveUser\x12\x1d.user_service.SaveUserRequest\x1a\x1e.user_service.SaveUserResponse\x12h\n" +
 	"\x0fGetUserPassword\x12).user_service.CompareLoginPasswordRequest\x1a*.user_service.CompareLoginPasswordResponseB\x17Z\x15/internal/proto;protob\x06proto3"
