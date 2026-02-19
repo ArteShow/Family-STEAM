@@ -279,7 +279,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Clients Details Modal -->
+    <div id="clientsDetailsModal" class="details-modal">
+        <div class="details-modal-content">
+            <div class="details-modal-header">
+                <h2 id="clientsDetailsTitle">Clients Details</h2>
+                <button class="close-btn" onclick="closeClientsDetails()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
     
+            <div class="clients-table-wrapper">
+                <table class="clients-table">
+                    <thead>
+                        <tr id="clientsTableHeadRow"></tr>
+                    </thead>
+                    <tbody id="clientsTableBody"></tbody>
+                </table>
+            </div>
+    
+            <div class="details-actions">
+                <button class="btn-secondary" onclick="closeClientsDetails()">Cancel</button>
+                <button class="btn-primary" onclick="saveClientsDetails()">Save</button>
+            </div>
+        </div>
+    </div>
     <footer>
         <div class="footer_content">
             <div class="footer_section">
