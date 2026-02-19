@@ -55,20 +55,20 @@ func CheckUserLogin(username string, password string) bool {
 	return err == nil
 }
 
-func CheckUsersId(username string, id string) bool {
+func CheckUsersID(username string, id string) bool {
 	db, err := database.Connect()
 	if err != nil {
 		return false
 	}
 
-	var hash string
+	var DBid string
 
 	err = db.QueryRow(
 		`SELECT id FROM users WHERE username = $1`,
 		username,
-	).Scan(&hash)
+	).Scan(&DBid)
 
-	if err != nil {
+	if err != nil || DBid != id{
 		return false
 	}
 

@@ -24,7 +24,17 @@ message CompareLoginPasswordResponse {
   bool success = 1;
 }
 
+message CheckUserIdRequest {
+  string username = 1;
+  string id = 2;
+}
+
+message CheckUserIdResponse {
+  bool success = 1;
+}
+
 service UserService {
   rpc SaveUser(SaveUserRequest) returns (SaveUserResponse);
   rpc GetUserPassword(CompareLoginPasswordRequest) returns (CompareLoginPasswordResponse);
+  rpc CheckUserId(CheckUserIdRequest) returns (CheckUserIdResponse);
 }
