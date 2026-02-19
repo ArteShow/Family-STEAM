@@ -21,7 +21,8 @@ message CompareLoginPasswordRequest {
 }
 
 message CompareLoginPasswordResponse {
-  bool success = 1;
+  string id = 1;
+  bool success = 2;
 }
 
 message CheckUserIdRequest {
