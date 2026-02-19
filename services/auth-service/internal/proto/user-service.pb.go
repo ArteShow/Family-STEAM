@@ -231,8 +231,7 @@ func (x *CompareLoginPasswordResponse) GetSuccess() bool {
 
 type CheckUserIdRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Id            string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -265,13 +264,6 @@ func (x *CheckUserIdRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CheckUserIdRequest.ProtoReflect.Descriptor instead.
 func (*CheckUserIdRequest) Descriptor() ([]byte, []int) {
 	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *CheckUserIdRequest) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
 }
 
 func (x *CheckUserIdRequest) GetId() string {
@@ -341,15 +333,14 @@ const file_internal_proto_user_service_proto_rawDesc = "" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"8\n" +
 	"\x1cCompareLoginPasswordResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"@\n" +
-	"\x12CheckUserIdRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\tR\x02id\"/\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"$\n" +
+	"\x12CheckUserIdRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"/\n" +
 	"\x13CheckUserIdResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess2\x96\x02\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\x9b\x02\n" +
 	"\vUserService\x12I\n" +
-	"\bSaveUser\x12\x1d.user_service.SaveUserRequest\x1a\x1e.user_service.SaveUserResponse\x12h\n" +
-	"\x0fGetUserPassword\x12).user_service.CompareLoginPasswordRequest\x1a*.user_service.CompareLoginPasswordResponse\x12R\n" +
+	"\bSaveUser\x12\x1d.user_service.SaveUserRequest\x1a\x1e.user_service.SaveUserResponse\x12m\n" +
+	"\x14CompareLoginPassword\x12).user_service.CompareLoginPasswordRequest\x1a*.user_service.CompareLoginPasswordResponse\x12R\n" +
 	"\vCheckUserId\x12 .user_service.CheckUserIdRequest\x1a!.user_service.CheckUserIdResponseB\x17Z\x15/internal/proto;protob\x06proto3"
 
 var (
@@ -375,10 +366,10 @@ var file_internal_proto_user_service_proto_goTypes = []any{
 }
 var file_internal_proto_user_service_proto_depIdxs = []int32{
 	0, // 0: user_service.UserService.SaveUser:input_type -> user_service.SaveUserRequest
-	2, // 1: user_service.UserService.GetUserPassword:input_type -> user_service.CompareLoginPasswordRequest
+	2, // 1: user_service.UserService.CompareLoginPassword:input_type -> user_service.CompareLoginPasswordRequest
 	4, // 2: user_service.UserService.CheckUserId:input_type -> user_service.CheckUserIdRequest
 	1, // 3: user_service.UserService.SaveUser:output_type -> user_service.SaveUserResponse
-	3, // 4: user_service.UserService.GetUserPassword:output_type -> user_service.CompareLoginPasswordResponse
+	3, // 4: user_service.UserService.CompareLoginPassword:output_type -> user_service.CompareLoginPasswordResponse
 	5, // 5: user_service.UserService.CheckUserId:output_type -> user_service.CheckUserIdResponse
 	3, // [3:6] is the sub-list for method output_type
 	0, // [0:3] is the sub-list for method input_type

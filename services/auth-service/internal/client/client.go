@@ -45,8 +45,8 @@ func (u *UserClient) SaveUser(req *pb.SaveUserRequest) (*pb.SaveUserResponse, er
 	return res, nil
 }
 
-func (u *UserClient) GetUserPassword(req *pb.CompareLoginPasswordRequest) (*pb.CompareLoginPasswordResponse, error) {
-	res, err := u.Client.GetUserPassword(context.Background(), req)
+func (u *UserClient) CompareLoginPassword(req *pb.CompareLoginPasswordRequest) (*pb.CompareLoginPasswordResponse, error) {
+	res, err := u.Client.CompareLoginPassword(context.Background(), req)
 	if err != nil {
 		return &pb.CompareLoginPasswordResponse{}, err
 	}
