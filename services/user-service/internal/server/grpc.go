@@ -37,3 +37,14 @@ func (s *Server) GetUserPassword(_ context.Context, req *user_pb.CompareLoginPas
 		Success: success,
 	}, nil
 }
+
+func (s *Server) CheckUserId(_ context.Context, req *user_pb.CheckUserIdRequest) (*user_pb.CheckUserIdResponse, error) {
+	success := repository.CheckUsersID(req.GetUsername(), req.GetId())
+	if !success {
+		return &user_pb.CheckUserIdResponse{Success: success}, nil
+	}
+
+	return &user_pb.CheckUserIdResponse{
+		Success: success,
+	}, nil
+}
