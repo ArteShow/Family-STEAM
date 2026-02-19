@@ -28,13 +28,14 @@ func (s *Server) SaveUser(_ context.Context, req *user_pb.SaveUserRequest) (*use
 }
 
 func (s *Server) CompareLoginPassword(_ context.Context, req *user_pb.CompareLoginPasswordRequest) (*user_pb.CompareLoginPasswordResponse, error) {
-	success := repository.CheckUserLogin(req.GetUsername(), req.GetPassword())
+	id, success := repository.CheckUserLogin(req.GetUsername(), req.GetPassword())
 	if !success {
 		return &user_pb.CompareLoginPasswordResponse{}, nil
 	}
 
 	return &user_pb.CompareLoginPasswordResponse{
 		Success: success,
+		Id: id,
 	}, nil
 }
 

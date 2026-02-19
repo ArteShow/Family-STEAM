@@ -187,7 +187,8 @@ func (x *CompareLoginPasswordRequest) GetPassword() string {
 
 type CompareLoginPasswordResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Success       bool                   `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -220,6 +221,13 @@ func (x *CompareLoginPasswordResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CompareLoginPasswordResponse.ProtoReflect.Descriptor instead.
 func (*CompareLoginPasswordResponse) Descriptor() ([]byte, []int) {
 	return file_internal_proto_user_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CompareLoginPasswordResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
 }
 
 func (x *CompareLoginPasswordResponse) GetSuccess() bool {
@@ -331,9 +339,10 @@ const file_internal_proto_user_service_proto_rawDesc = "" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\"U\n" +
 	"\x1bCompareLoginPasswordRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"8\n" +
-	"\x1cCompareLoginPasswordResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"$\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"H\n" +
+	"\x1cCompareLoginPasswordResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\"$\n" +
 	"\x12CheckUserIdRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"/\n" +
 	"\x13CheckUserIdResponse\x12\x18\n" +

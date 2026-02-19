@@ -34,25 +34,25 @@ func CreateUser(username string, password string) (string, error) {
 	return id, err
 }
 
-func CheckUserLogin(username string, password string) bool {
+func CheckUserLogin(username string, password string) (string, bool) {
 	db, err := database.Connect()
 	if err != nil {
-		return false
+		return "", false
 	}
 
-	var hash string
+	var hash, id string
 
 	err = db.QueryRow(
-		`SELECT password FROM users WHERE username = $1`,
+		`SELECT password, id FROM users WHERE username = $1`,
 		username,
-	).Scan(&hash)
+	).Scan(&hash, &id)
 
 	if err != nil {
-		return false
+		return "", false
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
+	return id, err == nil
 }
 
 func CheckUserID(id string) bool {
