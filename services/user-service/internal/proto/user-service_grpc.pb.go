@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_SaveUser_FullMethodName        = "/user_service.UserService/SaveUser"
-	UserService_GetUserPassword_FullMethodName = "/user_service.UserService/GetUserPassword"
-	UserService_CheckUserId_FullMethodName     = "/user_service.UserService/CheckUserId"
+	UserService_SaveUser_FullMethodName             = "/user_service.UserService/SaveUser"
+	UserService_CompareLoginPassword_FullMethodName = "/user_service.UserService/CompareLoginPassword"
+	UserService_CheckUserId_FullMethodName          = "/user_service.UserService/CheckUserId"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -29,7 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	SaveUser(ctx context.Context, in *SaveUserRequest, opts ...grpc.CallOption) (*SaveUserResponse, error)
-	GetUserPassword(ctx context.Context, in *CompareLoginPasswordRequest, opts ...grpc.CallOption) (*CompareLoginPasswordResponse, error)
+	CompareLoginPassword(ctx context.Context, in *CompareLoginPasswordRequest, opts ...grpc.CallOption) (*CompareLoginPasswordResponse, error)
 	CheckUserId(ctx context.Context, in *CheckUserIdRequest, opts ...grpc.CallOption) (*CheckUserIdResponse, error)
 }
 
@@ -51,10 +51,10 @@ func (c *userServiceClient) SaveUser(ctx context.Context, in *SaveUserRequest, o
 	return out, nil
 }
 
-func (c *userServiceClient) GetUserPassword(ctx context.Context, in *CompareLoginPasswordRequest, opts ...grpc.CallOption) (*CompareLoginPasswordResponse, error) {
+func (c *userServiceClient) CompareLoginPassword(ctx context.Context, in *CompareLoginPasswordRequest, opts ...grpc.CallOption) (*CompareLoginPasswordResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CompareLoginPasswordResponse)
-	err := c.cc.Invoke(ctx, UserService_GetUserPassword_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, UserService_CompareLoginPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func (c *userServiceClient) CheckUserId(ctx context.Context, in *CheckUserIdRequ
 // for forward compatibility.
 type UserServiceServer interface {
 	SaveUser(context.Context, *SaveUserRequest) (*SaveUserResponse, error)
-	GetUserPassword(context.Context, *CompareLoginPasswordRequest) (*CompareLoginPasswordResponse, error)
+	CompareLoginPassword(context.Context, *CompareLoginPasswordRequest) (*CompareLoginPasswordResponse, error)
 	CheckUserId(context.Context, *CheckUserIdRequest) (*CheckUserIdResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
@@ -91,8 +91,8 @@ type UnimplementedUserServiceServer struct{}
 func (UnimplementedUserServiceServer) SaveUser(context.Context, *SaveUserRequest) (*SaveUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SaveUser not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserPassword(context.Context, *CompareLoginPasswordRequest) (*CompareLoginPasswordResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetUserPassword not implemented")
+func (UnimplementedUserServiceServer) CompareLoginPassword(context.Context, *CompareLoginPasswordRequest) (*CompareLoginPasswordResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CompareLoginPassword not implemented")
 }
 func (UnimplementedUserServiceServer) CheckUserId(context.Context, *CheckUserIdRequest) (*CheckUserIdResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CheckUserId not implemented")
@@ -136,20 +136,20 @@ func _UserService_SaveUser_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetUserPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserService_CompareLoginPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CompareLoginPasswordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GetUserPassword(ctx, in)
+		return srv.(UserServiceServer).CompareLoginPassword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_GetUserPassword_FullMethodName,
+		FullMethod: UserService_CompareLoginPassword_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetUserPassword(ctx, req.(*CompareLoginPasswordRequest))
+		return srv.(UserServiceServer).CompareLoginPassword(ctx, req.(*CompareLoginPasswordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -184,8 +184,8 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_SaveUser_Handler,
 		},
 		{
-			MethodName: "GetUserPassword",
-			Handler:    _UserService_GetUserPassword_Handler,
+			MethodName: "CompareLoginPassword",
+			Handler:    _UserService_CompareLoginPassword_Handler,
 		},
 		{
 			MethodName: "CheckUserId",

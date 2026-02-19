@@ -27,7 +27,7 @@ func (s *Server) SaveUser(_ context.Context, req *user_pb.SaveUserRequest) (*use
 	}, nil
 }
 
-func (s *Server) GetUserPassword(_ context.Context, req *user_pb.CompareLoginPasswordRequest) (*user_pb.CompareLoginPasswordResponse, error) {
+func (s *Server) CompareLoginPassword(_ context.Context, req *user_pb.CompareLoginPasswordRequest) (*user_pb.CompareLoginPasswordResponse, error) {
 	success := repository.CheckUserLogin(req.GetUsername(), req.GetPassword())
 	if !success {
 		return &user_pb.CompareLoginPasswordResponse{}, nil
@@ -39,7 +39,7 @@ func (s *Server) GetUserPassword(_ context.Context, req *user_pb.CompareLoginPas
 }
 
 func (s *Server) CheckUserId(_ context.Context, req *user_pb.CheckUserIdRequest) (*user_pb.CheckUserIdResponse, error) {
-	success := repository.CheckUsersID(req.GetUsername(), req.GetId())
+	success := repository.CheckUserID(req.GetId())
 	if !success {
 		return &user_pb.CheckUserIdResponse{Success: success}, nil
 	}
