@@ -8,6 +8,11 @@ let pendingDelete = {
     id: null
 };
 
+let detailsContext = {
+    type: null,
+    id: null
+};
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initializeNavigation();
@@ -307,6 +312,9 @@ function renderShortEvents() {
                 </div>
                 <p class="event-description">${event.description}</p>
                 <div class="event-actions">
+                    <button class="details-btn" onclick="openClientsDetails('short-events', ${event.id})">
+                        <i class="fas fa-users"></i> See details
+                    </button>
                     <button class="delete-btn" onclick="deleteShortEvent(${event.id})">
                         <i class="fas fa-trash"></i> Delete
                     </button>
@@ -352,6 +360,9 @@ function renderCampsEvents() {
                 </div>
                 <p class="event-description">${event.description}</p>
                 <div class="event-actions">
+                    <button class="details-btn" onclick="openClientsDetails('camps', ${event.id})">
+                        <i class="fas fa-users"></i> See details
+                    </button>
                     <button class="delete-btn" onclick="deleteCampsEvent(${event.id})">
                         <i class="fas fa-trash"></i> Delete
                     </button>
@@ -501,11 +512,188 @@ function initializeFormInteractions() {
             }
         });
     });
+
+    const detailsModal = document.getElementById('clientsDetailsModal');
+    if (detailsModal) {
+        detailsModal.addEventListener('click', (e) => {
+            if (e.target === detailsModal) {
+                closeClientsDetails();
+            }
+        });
+    }
 }
 
 function renderContent() {
     updateCounts();
     renderShortEvents();
     renderCampsEvents();
+}
+
+function openClientsDetails(type, id) {
+    const modal = document.getElementById('clientsDetailsModal');
+    const title = document.getElementById('clientsDetailsTitle');
+    const tableHead = document.getElementById('clientsTableHeadRow');
+    const tableBody = document.getElementById('clientsTableBody');
+    const selectedItem = type === 'short-events'
+        ? shortEvents.find(event => event.id === id)
+        : campsEvents.find(event => event.id === id);
+
+    if (!modal || !title || !tableHead || !tableBody || !selectedItem) return;
+
+    detailsContext.type = type;
+    detailsContext.id = id;
+    title.textContent = `${selectedItem.title} - Clients Details`;
+
+    const schema = getDetailsSchema(type);
+    const clients = getMockClientsForItem(type, id, selectedItem.title);
+
+    tableHead.innerHTML = schema.map(field => `<th data-col="${field.key}">${field.label}</th>`).join('');
+
+    tableBody.innerHTML = clients.map((client, index) => `
+        <tr>
+            ${schema.map(field => renderClientCell(field, client, index)).join('')}
+        </tr>
+    `).join('');
+
+    modal.classList.add('active');
+}
+
+function closeClientsDetails() {
+    const modal = document.getElementById('clientsDetailsModal');
+    const tableHead = document.getElementById('clientsTableHeadRow');
+    const tableBody = document.getElementById('clientsTableBody');
+
+    if (modal) {
+        modal.classList.remove('active');
+    }
+
+    if (tableHead) {
+        tableHead.innerHTML = '';
+    }
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    detailsContext.type = null;
+    detailsContext.id = null;
+}
+
+function saveClientsDetails() {
+    if (!detailsContext.type || !detailsContext.id) return;
+
+    const rows = Array.from(document.querySelectorAll('#clientsTableBody tr'));
+    rows.forEach(row => {
+        const inputs = row.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            if (input.type === 'checkbox') {
+                void input.checked;
+            } else {
+                void input.value;
+            }
+        });
+    });
+
+    closeClientsDetails();
+}
+
+function getDetailsSchema(type) {
+    if (type === 'camps') {
+        return [
+            { key: 'camp', label: 'Select Camp', inputType: 'text' },
+            { key: 'firstName', label: 'First Name', inputType: 'text' },
+            { key: 'lastName', label: 'Last Name', inputType: 'text' },
+            { key: 'dob', label: 'Date of Birth', inputType: 'date' },
+            { key: 'phone', label: 'Phone', inputType: 'text' },
+            { key: 'email', label: 'Email', inputType: 'email' },
+            { key: 'paid', label: 'Paid', inputType: 'checkbox' },
+            { key: 'comment', label: 'Comment', inputType: 'textarea' }
+        ];
+    }
+
+    return [
+        { key: 'firstName', label: 'First Name', inputType: 'text' },
+        { key: 'lastName', label: 'Last Name', inputType: 'text' },
+        { key: 'phone', label: 'Phone', inputType: 'text' },
+        { key: 'email', label: 'Email', inputType: 'email' },
+        { key: 'age', label: 'Age', inputType: 'number' },
+        { key: 'paid', label: 'Paid', inputType: 'checkbox' },
+        { key: 'comment', label: 'Comment', inputType: 'textarea' }
+    ];
+}
+
+function renderClientCell(field, client, index) {
+    const value = client[field.key] ?? '';
+
+    if (field.inputType === 'checkbox') {
+        return `<td data-col="${field.key}"><input type="checkbox" ${value ? 'checked' : ''} data-field="${field.key}" data-row="${index}"></td>`;
+    }
+
+    if (field.inputType === 'textarea') {
+        return `<td data-col="${field.key}"><textarea rows="2" data-field="${field.key}" data-row="${index}">${escapeHtml(String(value))}</textarea></td>`;
+    }
+
+    return `<td data-col="${field.key}"><input type="${field.inputType}" value="${escapeHtml(String(value))}" data-field="${field.key}" data-row="${index}"></td>`;
+}
+
+function escapeHtml(value) {
+    return value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
+
+function getMockClientsForItem(type, id, itemTitle) {
+    const baseSeed = Number(String(id).slice(-3)) || 1;
+    const day = String((baseSeed % 28) + 1).padStart(2, '0');
+    const month = String(((baseSeed + 3) % 12) + 1).padStart(2, '0');
+
+    if (type === 'camps') {
+        return [
+            {
+                camp: itemTitle || 'Camp Program',
+                firstName: `Client C${baseSeed}`,
+                lastName: 'Example',
+                dob: `2013-${month}-${day}`,
+                phone: '+389 70 111 111',
+                email: `clientc${baseSeed}@mail.com`,
+                paid: false,
+                comment: ''
+            },
+            {
+                camp: itemTitle || 'Camp Program',
+                firstName: `Client C${baseSeed + 1}`,
+                lastName: 'Sample',
+                dob: `2012-${month}-${day}`,
+                phone: '+389 70 222 222',
+                email: `clientc${baseSeed + 1}@mail.com`,
+                paid: true,
+                comment: 'Paid at desk'
+            }
+        ];
+    }
+
+    return [
+        {
+            firstName: `Client E${baseSeed}`,
+            lastName: 'Example',
+            phone: '+389 70 111 111',
+            email: `cliente${baseSeed}@mail.com`,
+            age: 10,
+            paid: false,
+            comment: ''
+        },
+        {
+            firstName: `Client E${baseSeed + 1}`,
+            lastName: 'Sample',
+            phone: '+389 70 222 222',
+            email: `cliente${baseSeed + 1}@mail.com`,
+            age: 11,
+            paid: true,
+            comment: 'Paid at desk'
+        }
+    ];
 }
 

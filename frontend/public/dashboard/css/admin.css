@@ -735,6 +735,197 @@ body {
     transform: translateY(-2px);
 }
 
+.details-btn {
+    background: #e0e7ff;
+    color: rgb(24, 37, 110);
+}
+
+.details-btn:hover {
+    background: rgb(41, 128, 225);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.details-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2100;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.details-modal.active {
+    display: flex;
+}
+
+.details-modal-content {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    width: min(1400px, 96vw);
+    max-height: 94vh;
+    overflow: auto;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+.details-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid rgba(24, 37, 110, 0.1);
+}
+
+.details-modal-header h2 {
+    color: rgb(24, 37, 110);
+    font-size: 1.25rem;
+}
+
+.clients-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid rgba(24, 37, 110, 0.12);
+    border-radius: 0.75rem;
+}
+
+.clients-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1150px;
+}
+
+.clients-table th[data-col="firstName"],
+.clients-table td[data-col="firstName"],
+.clients-table th[data-col="lastName"],
+.clients-table td[data-col="lastName"] {
+    min-width: 150px;
+}
+
+.clients-table th[data-col="phone"],
+.clients-table td[data-col="phone"] {
+    min-width: 170px;
+}
+
+.clients-table th[data-col="email"],
+.clients-table td[data-col="email"] {
+    min-width: 240px;
+}
+
+.clients-table th[data-col="paid"],
+.clients-table td[data-col="paid"] {
+    min-width: 90px;
+    text-align: center;
+}
+
+.clients-table th[data-col="comment"],
+.clients-table td[data-col="comment"] {
+    min-width: 280px;
+}
+
+.clients-table th[data-col="camp"],
+.clients-table td[data-col="camp"] {
+    min-width: 190px;
+}
+
+.clients-table th[data-col="dob"],
+.clients-table td[data-col="dob"] {
+    min-width: 170px;
+}
+
+.clients-table th[data-col="age"],
+.clients-table td[data-col="age"] {
+    min-width: 100px;
+}
+
+.clients-table th,
+.clients-table td {
+    border-bottom: 1px solid rgba(24, 37, 110, 0.1);
+    padding: 0.75rem;
+    text-align: left;
+    font-size: 0.9rem;
+    color: #40507a;
+    vertical-align: middle;
+}
+
+.clients-table th {
+    color: rgb(24, 37, 110);
+    background: rgba(41, 128, 225, 0.08);
+    font-weight: 600;
+}
+
+.clients-table input[type="text"],
+.clients-table input[type="email"],
+.clients-table textarea {
+    width: 100%;
+    border: 1px solid rgba(24, 37, 110, 0.2);
+    border-radius: 0.5rem;
+    padding: 0.55rem 0.6rem;
+    font-size: 0.85rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.clients-table textarea {
+    min-height: 2.4rem;
+    resize: vertical;
+}
+
+.clients-table input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid rgba(24, 37, 110, 0.25);
+    border-radius: 0.45rem;
+    background: white;
+    cursor: pointer;
+    display: inline-grid;
+    place-content: center;
+    transition: all 0.2s ease;
+}
+
+.clients-table input[type="checkbox"]::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.28rem;
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
+    transform: rotate(-45deg) scale(0);
+    transition: transform 0.2s ease;
+    margin-top: -1px;
+}
+
+.clients-table input[type="checkbox"]:checked {
+    background: rgb(41, 128, 225);
+    border-color: rgb(41, 128, 225);
+    box-shadow: 0 4px 10px rgba(41, 128, 225, 0.25);
+}
+
+.clients-table input[type="checkbox"]:checked::before {
+    transform: rotate(-45deg) scale(1);
+}
+
+.clients-table input[type="checkbox"]:hover {
+    border-color: rgb(41, 128, 225);
+}
+
+.clients-table input[type="checkbox"]:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(41, 128, 225, 0.2);
+}
+
+.details-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
 .empty-state {
     grid-column: 1 / -1;
     text-align: center;
