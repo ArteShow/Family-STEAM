@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/ArteShow/Family-STEAM/services/auth-service/internal/client"
 	"github.com/ArteShow/Family-STEAM/services/auth-service/internal/jwt"
@@ -39,9 +40,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := jwt.GenerateToken(GrpcRes.)
+	token, err := jwt.GenerateToken(GrpcRes.GetId(), time.Hour*24)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	res := LoginResponse{ID: saveUserRes.GetId()}
+	res := LoginResponse{Token: token}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
 	if err = json.NewEncoder(w).Encode(res); err != nil {
