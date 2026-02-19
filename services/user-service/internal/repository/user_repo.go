@@ -55,22 +55,22 @@ func CheckUserLogin(username string, password string) bool {
 	return err == nil
 }
 
-func CheckUsersID(username string, id string) bool {
+func CheckUserID(id string) bool {
 	db, err := database.Connect()
 	if err != nil {
 		return false
 	}
 
-	var DBid string
+	var exists bool
 
 	err = db.QueryRow(
-		`SELECT id FROM users WHERE username = $1`,
-		username,
-	).Scan(&DBid)
+		`SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)`,
+		id,
+	).Scan(&exists)
 
-	if err != nil || DBid != id{
+	if err != nil {
 		return false
 	}
 
-	return true
+	return exists
 }
