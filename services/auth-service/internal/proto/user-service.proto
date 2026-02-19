@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package user_service;
+
+option go_package = "/internal/proto;proto";
+
+message SaveUserRequest {
+  string username = 1;
+  string password = 2;
+  string email = 3;
+}
+
+message SaveUserResponse {
+  string id = 1;
+  bool success = 2;
+}
+
+message CompareLoginPasswordRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message CompareLoginPasswordResponse {
+  bool success = 1;
+}
+
+message CheckUserIdRequest {
+  string username = 1;
+  string id = 2;
+}
+
+message CheckUserIdResponse {
+  bool success = 1;
+}
+
+service UserService {
+  rpc SaveUser(SaveUserRequest) returns (SaveUserResponse);
+  rpc GetUserPassword(CompareLoginPasswordRequest) returns (CompareLoginPasswordResponse);
+  rpc CheckUserId(CheckUserIdRequest) returns (CheckUserIdResponse);
+}
