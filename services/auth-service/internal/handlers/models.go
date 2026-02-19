@@ -17,3 +17,7 @@ type LoginRequest struct {
 type LoginResponse struct {
 	Token string `json:"token"`
 }
+
+type CheckUserIdRequest struct {
+	Id string `json:"user_id"`
+}
