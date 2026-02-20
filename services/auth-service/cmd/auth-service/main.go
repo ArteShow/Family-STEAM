@@ -11,6 +11,7 @@ import (
 
 	"github.com/ArteShow/Family-STEAM/services/auth-service/internal/config"
 	"github.com/ArteShow/Family-STEAM/services/auth-service/internal/handlers"
+	"github.com/ArteShow/Family-STEAM/services/auth-service/internal/middleware"
 )
 
 const (
@@ -37,7 +38,7 @@ func main() {
 			return
 		}
 	})
-	mux.HandleFunc("/auth-service/register", handlers.RegisterHandler)
+	mux.Handle("/auth-service/register", middleware.JWTKeyMiddleware(http.HandlerFunc(handlers.RegisterHandler)))
 	mux.HandleFunc("/auth-service/login", handlers.LoginHandler)
 	mux.HandleFunc("/auth-service/verify", handlers.VerifyHandler)
 
