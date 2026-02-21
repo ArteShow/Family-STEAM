@@ -49,14 +49,19 @@ func AdminOnly(next http.Handler) http.Handler {
 
 		bodyBytes, _ := json.Marshal(reqBody)
 
-		_, err = http.Post(
-			"http://auth-service:8001/verify",
+		verifyResp, err := http.Post(
+			"http://auth-service:8001/auth-service/verify",
 			"application/json",
 			bytes.NewBuffer(bodyBytes),
 		)
-
 		if err != nil {
 			http.Error(w, "Auth service error", http.StatusInternalServerError)
+			return
+		}
+		defer verifyResp.Body.Close()
+
+		if verifyResp.StatusCode != http.StatusOK {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 

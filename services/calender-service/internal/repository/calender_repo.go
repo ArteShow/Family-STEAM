@@ -201,3 +201,18 @@ func GetAll() ([]Calendar, error) {
 
 	return list, nil
 }
+
+func UpdateImageIDs(id string, imageIDs []string) error {
+	db, err := database.Connect()
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec(
+		`UPDATE calendar SET image_ids = $1 WHERE id = $2`,
+		pq.Array(imageIDs),
+		id,
+	)
+
+	return err
+}

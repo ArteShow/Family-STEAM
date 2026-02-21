@@ -1,158 +1,57 @@
 package docker
 
 import (
-	"archive/tar"
-	"bytes"
-	"context"
 	"errors"
-	"io"
-	"path"
+	"os"
+	"path/filepath"
 
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/client"
 	"github.com/google/uuid"
 )
 
-const VolumeName = "family-steam"
+const DataDir = "/data"
 
 func UploadFile(fileBytes []byte, filename string) (string, error) {
-	ctx := context.Background()
-
-	cli, err := client.NewClientWithOpts(client.FromEnv)
-	if err != nil {
-		return "", err
-	}
-
 	id := uuid.New().String()
+	entryDir := filepath.Join(DataDir, id)
 
-	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "alpine:3.19",
-		Cmd:   []string{"sleep", "60"},
-	}, &container.HostConfig{
-		Binds: []string{VolumeName + ":/data"},
-	}, nil, nil, "")
+	err := os.MkdirAll(entryDir, 0o755)
 	if err != nil {
 		return "", err
 	}
 
-	containerID := resp.ID
-
-	err = cli.ContainerStart(ctx, containerID, container.StartOptions{})
+	filePath := filepath.Join(entryDir, filepath.Base(filename))
+	err = os.WriteFile(filePath, fileBytes, 0o644)
 	if err != nil {
 		return "", err
 	}
-
-	buf := new(bytes.Buffer)
-	tw := tar.NewWriter(buf)
-
-	err = tw.WriteHeader(&tar.Header{
-		Name: path.Join(id, filename),
-		Mode: 0644,
-		Size: int64(len(fileBytes)),
-	})
-	if err != nil {
-		return "", err
-	}
-
-	_, err = tw.Write(fileBytes)
-	if err != nil {
-		return "", err
-	}
-
-	tw.Close()
-
-	err = cli.CopyToContainer(ctx, containerID, "/data", buf, container.CopyToContainerOptions{})
-	if err != nil {
-		return "", err
-	}
-
-	cli.ContainerRemove(ctx, containerID, container.RemoveOptions{Force: true})
 
 	return id, nil
 }
 
 func DownloadFile(id string) ([]byte, error) {
-	ctx := context.Background()
-
-	cli, err := client.NewClientWithOpts(client.FromEnv)
+	entryDir := filepath.Join(DataDir, id)
+	entries, err := os.ReadDir(entryDir)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "alpine:3.19",
-		Cmd:   []string{"sleep", "60"},
-	}, &container.HostConfig{
-		Binds: []string{VolumeName + ":/data"},
-	}, nil, nil, "")
-	if err != nil {
-		return nil, err
-	}
-
-	containerID := resp.ID
-
-	err = cli.ContainerStart(ctx, containerID, container.StartOptions{})
-	if err != nil {
-		return nil, err
-	}
-	defer cli.ContainerRemove(ctx, containerID, container.RemoveOptions{Force: true})
-
-	reader, _, err := cli.CopyFromContainer(ctx, containerID, path.Join("/data", id))
-	if err != nil {
-		return nil, err
-	}
-	defer reader.Close()
-
-	tr := tar.NewReader(reader)
-
-	for {
-		hdr, nextErr := tr.Next()
-		if nextErr == io.EOF {
-			return nil, errors.New("file not found in folder")
-		}
-		if nextErr != nil {
-			return nil, nextErr
-		}
-
-		if hdr.Typeflag != tar.TypeReg {
+	for _, entry := range entries {
+		if entry.IsDir() {
 			continue
 		}
 
-		data, readErr := io.ReadAll(tr)
+		filePath := filepath.Join(entryDir, entry.Name())
+		data, readErr := os.ReadFile(filePath)
 		if readErr != nil {
 			return nil, readErr
 		}
 
 		return data, nil
 	}
+
+	return nil, errors.New("file not found in folder")
 }
 
 func RemoveFile(id string) error {
-	ctx := context.Background()
-
-	cli, err := client.NewClientWithOpts(client.FromEnv)
-	if err != nil {
-		return err
-	}
-
-	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "alpine:3.19",
-		Cmd:   []string{"rm", "-rf", path.Join("/data", id)},
-	}, &container.HostConfig{
-		Binds: []string{VolumeName + ":/data"},
-	}, nil, nil, "")
-	if err != nil {
-		return err
-	}
-
-	containerID := resp.ID
-
-	err = cli.ContainerStart(ctx, containerID, container.StartOptions{})
-	if err != nil {
-		return err
-	}
-
-	cli.ContainerRemove(ctx, containerID, container.RemoveOptions{Force: true})
-
-	return nil
+	return os.RemoveAll(filepath.Join(DataDir, id))
 }

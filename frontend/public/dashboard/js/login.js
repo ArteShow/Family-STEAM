@@ -136,11 +136,10 @@ async function handleRegister(event) {
     }
 
     try {
-        await requestJSON(`${API_BASE_URL}/register`, {
+                await requestJSON(`${API_BASE_URL}/register?jwt=${encodeURIComponent(jwtToken.trim())}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${jwtToken.trim()}`
+				'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 username,

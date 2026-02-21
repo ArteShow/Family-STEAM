@@ -25,3 +25,8 @@ type GetCalenderEntryByIDRequest struct {
 type GetCalenderEntryByIDResponse struct{
 	CalenderEntry repository.Calendar `json:"calender_entry"`
 }
+
+type UpdateCalenderEntryImagesRequest struct {
+	CalenderEntryID string   `json:"calender_entry_id"`
+	ImageIDs        []string `json:"image_ids"`
+}

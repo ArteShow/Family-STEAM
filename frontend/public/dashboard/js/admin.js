@@ -14,6 +14,199 @@ let detailsContext = {
 };
 
 const AUTH_VERIFY_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/auth/verify`;
+const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1`;
+const CALENDER_API_URL = `${API_BASE_URL}/calender`;
+const FILE_API_URL = `${API_BASE_URL}/file`;
+
+function getAuthToken() {
+    return localStorage.getItem('authToken') || '';
+}
+
+function showDashboardMessage(message, type = 'error') {
+    const prefix = type === 'success' ? '✅' : '⚠️';
+    console.log(`${prefix} ${message}`);
+}
+
+async function apiRequest(url, options = {}) {
+    const token = getAuthToken();
+    const headers = {
+        ...(options.headers || {})
+    };
+
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, {
+        ...options,
+        headers
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `Request failed with status ${response.status}`);
+    }
+
+    return response;
+}
+
+function parseDateToISO(dateValue) {
+    if (!dateValue) {
+        return null;
+    }
+    return `${dateValue}T00:00:00Z`;
+}
+
+function parseNumberFromText(value, fallback = 0) {
+    const match = String(value ?? '').match(/\d+/);
+    if (!match) {
+        return fallback;
+    }
+    return Number(match[0]);
+}
+
+async function downloadImagePreview(fileId) {
+    try {
+        const response = await apiRequest(`${FILE_API_URL}/download`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ file_id: fileId })
+        });
+
+        const blob = await response.blob();
+        return URL.createObjectURL(blob);
+    } catch (_) {
+        return null;
+    }
+}
+
+async function mapCalendarEntryToDashboardEvent(entry) {
+    const imageIDs = entry.image_ids || [];
+    const images = imageIDs.length > 0
+        ? (await Promise.all(imageIDs.map(downloadImagePreview))).filter(Boolean)
+        : [];
+
+    const base = {
+        id: entry.id,
+        title: entry.title,
+        description: entry.description,
+        place: entry.location,
+        price: entry.price,
+        tag: entry.tag,
+        images,
+        imageIDs,
+        createdAt: entry.created_at
+    };
+
+    if (entry.ends_at) {
+        return {
+            ...base,
+            startDate: entry.starts_at ? entry.starts_at.slice(0, 10) : '',
+            endDate: entry.ends_at ? entry.ends_at.slice(0, 10) : '',
+            capacity: entry.amount
+        };
+    }
+
+    return {
+        ...base,
+        date: entry.starts_at ? entry.starts_at.slice(0, 10) : '',
+        duration: entry.duration || '',
+        persons: entry.amount,
+        responsibility: entry.responsibility || ''
+    };
+}
+
+function getSliderId(eventId) {
+    return `slider-${String(eventId).replace(/[^a-zA-Z0-9_-]/g, '')}`;
+}
+
+function renderImageSlider(eventData) {
+    if (!eventData.images || eventData.images.length === 0) {
+        return '<div class="event-image"></div>';
+    }
+
+    const sliderId = getSliderId(eventData.id);
+    const showControls = eventData.images.length > 1;
+
+    return `
+        <div class="event-image-slider" id="${sliderId}" data-index="0">
+            <div class="event-image-track">
+                ${eventData.images.map(image => `<img src="${image}" alt="${eventData.title}" class="event-image">`).join('')}
+            </div>
+            ${showControls ? `
+                <button class="slider-btn prev" onclick="changeImageSlide('${eventData.id}', -1)"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-btn next" onclick="changeImageSlide('${eventData.id}', 1)"><i class="fas fa-chevron-right"></i></button>
+            ` : ''}
+        </div>
+    `;
+}
+
+function changeImageSlide(eventId, delta) {
+    const slider = document.getElementById(getSliderId(eventId));
+    if (!slider) {
+        return;
+    }
+
+    const track = slider.querySelector('.event-image-track');
+    const images = slider.querySelectorAll('.event-image');
+    if (!track || images.length <= 1) {
+        return;
+    }
+
+    const currentIndex = Number(slider.dataset.index || '0');
+    const nextIndex = (currentIndex + delta + images.length) % images.length;
+    slider.dataset.index = String(nextIndex);
+    track.style.transform = `translateX(-${nextIndex * 100}%)`;
+}
+
+async function reloadDashboardData() {
+    const response = await apiRequest(`${CALENDER_API_URL}/getAll`, {
+        method: 'GET'
+    });
+
+    const data = await response.json();
+    const entries = data?.calender_entries || [];
+
+    const mapped = await Promise.all(entries.map(mapCalendarEntryToDashboardEvent));
+    shortEvents = mapped.filter(event => !event.endDate);
+    campsEvents = mapped.filter(event => event.endDate);
+
+    renderContent();
+}
+
+async function reloadDashboardDataFromUI() {
+    try {
+        await reloadDashboardData();
+        showDashboardMessage('Dashboard refreshed', 'success');
+    } catch (error) {
+        showDashboardMessage(error.message || 'Failed to reload dashboard data');
+    }
+}
+
+async function uploadImagesForEntry(entryId, files) {
+    const fileIDs = [];
+
+    for (const file of files) {
+        const formData = new FormData();
+        formData.append('parent_id', entryId);
+        formData.append('file_name', file.name);
+        formData.append('file', file);
+
+        const response = await apiRequest(`${FILE_API_URL}/upload`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        if (data?.file_id) {
+            fileIDs.push(data.file_id);
+        }
+    }
+
+    return fileIDs;
+}
 
 function decodeJwtPayload(token) {
     try {
@@ -93,8 +286,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeNavigation();
     initializeImageUploads();
     initializeFormInteractions();
-    renderContent();
-    updateCounts();
+
+    try {
+        await reloadDashboardData();
+    } catch (error) {
+        showDashboardMessage(error.message || 'Failed to load dashboard data');
+        renderContent();
+    }
 });
 
 // Logout handler
@@ -210,140 +408,118 @@ function closeForm(type) {
 }
 
 // Handle Short Event Form Submission
-function handleShortEventSubmit(event) {
+async function handleShortEventSubmit(event) {
     event.preventDefault();
-    
+
     const formData = new FormData(document.getElementById('shortEventForm'));
-    const eventImageFiles = document.getElementById('eventImage').files;
-    const images = [];
-    
-    // Convert images to base64 for storage
-    const processImages = async () => {
-        for (let file of eventImageFiles) {
-            const reader = new FileReader();
-            const promise = new Promise((resolve) => {
-                reader.onload = (e) => {
-                    images.push(e.target.result);
-                    resolve();
-                };
-                reader.readAsDataURL(file);
-            });
-            await promise;
-        }
-        
-        return {
-            id: Date.now(),
-            title: formData.get('title'),
-            description: formData.get('description'),
-            date: formData.get('date'),
-            place: formData.get('place'),
-            price: formData.get('price'),
-            duration: formData.get('duration'),
-            persons: formData.get('persons'),
-            tag: formData.get('tag'),
-            responsibility: formData.get('responsibility'),
-            images: images,
-            createdAt: new Date().toISOString()
-        };
-    };
-    
-    if (eventImageFiles.length > 0) {
-        processImages().then(eventData => {
-            shortEvents.push(eventData);
-            localStorage.setItem('shortEvents', JSON.stringify(shortEvents));
-            closeForm('short-events');
-            renderShortEvents();
-            updateCounts();
+    const imageFiles = Array.from(document.getElementById('eventImage').files || []);
+
+    try {
+        const createResponse = await apiRequest(`${CALENDER_API_URL}/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                calender_entry: {
+                    location: formData.get('place'),
+                    price: parseNumberFromText(formData.get('price'), 0),
+                    tag: formData.get('tag'),
+                    image_ids: [],
+                    amount: parseNumberFromText(formData.get('persons'), 0),
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    responsibility: formData.get('responsibility'),
+                    starts_at: parseDateToISO(formData.get('date')),
+                    ends_at: null,
+                    duration: formData.get('duration')
+                }
+            })
         });
-    } else {
-        const eventData = {
-            id: Date.now(),
-            title: formData.get('title'),
-            description: formData.get('description'),
-            date: formData.get('date'),
-            place: formData.get('place'),
-            price: formData.get('price'),
-            duration: formData.get('duration'),
-            persons: formData.get('persons'),
-            tag: formData.get('tag'),
-            responsibility: formData.get('responsibility'),
-            images: [],
-            createdAt: new Date().toISOString()
-        };
-        
-        shortEvents.push(eventData);
-        localStorage.setItem('shortEvents', JSON.stringify(shortEvents));
+
+        const created = await createResponse.json();
+        const calenderEntryID = created?.calender_entry_id;
+        if (!calenderEntryID) {
+            throw new Error('Missing calender entry id in create response');
+        }
+
+        if (imageFiles.length > 0) {
+            const imageIDs = await uploadImagesForEntry(calenderEntryID, imageFiles);
+            await apiRequest(`${CALENDER_API_URL}/update-images`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    calender_entry_id: calenderEntryID,
+                    image_ids: imageIDs
+                })
+            });
+        }
+
         closeForm('short-events');
-        renderShortEvents();
-        updateCounts();
+        await reloadDashboardData();
+        showDashboardMessage('Short event created successfully', 'success');
+    } catch (error) {
+        showDashboardMessage(error.message || 'Failed to create short event');
     }
 }
 
 // Handle Calendar Event Form Submission
-function handleCampsEventSubmit(event) {
+async function handleCampsEventSubmit(event) {
     event.preventDefault();
-    
+
     const formData = new FormData(document.getElementById('campsEventForm'));
-    const eventImageFiles = document.getElementById('campImage').files;
-    const images = [];
-    
-    // Convert images to base64 for storage
-    const processImages = async () => {
-        for (let file of eventImageFiles) {
-            const reader = new FileReader();
-            const promise = new Promise((resolve) => {
-                reader.onload = (e) => {
-                    images.push(e.target.result);
-                    resolve();
-                };
-                reader.readAsDataURL(file);
-            });
-            await promise;
-        }
-        
-        return {
-            id: Date.now(),
-            title: formData.get('title'),
-            description: formData.get('description'),
-            startDate: formData.get('startDate'),
-            endDate: formData.get('endDate'),
-            place: formData.get('place'),
-            price: formData.get('price'),
-            capacity: formData.get('capacity'),
-            tag: formData.get('tag'),
-            images: images,
-            createdAt: new Date().toISOString()
-        };
-    };
-    
-    if (eventImageFiles.length > 0) {
-        processImages().then(eventData => {
-            campsEvents.push(eventData);
-            localStorage.setItem('campsEvents', JSON.stringify(campsEvents));
-            closeForm('camps');
-            renderCampsEvents();
-            updateCounts();
+    const imageFiles = Array.from(document.getElementById('campImage').files || []);
+
+    try {
+        const createResponse = await apiRequest(`${CALENDER_API_URL}/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                calender_entry: {
+                    location: formData.get('place'),
+                    price: parseNumberFromText(formData.get('price'), 0),
+                    tag: formData.get('tag'),
+                    image_ids: [],
+                    amount: parseNumberFromText(formData.get('capacity'), 0),
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    responsibility: null,
+                    starts_at: parseDateToISO(formData.get('startDate')),
+                    ends_at: parseDateToISO(formData.get('endDate')),
+                    duration: null
+                }
+            })
         });
-    } else {
-        const eventData = {
-            id: Date.now(),
-            title: formData.get('title'),
-            description: formData.get('description'),
-            startDate: formData.get('startDate'),
-            endDate: formData.get('endDate'),
-            place: formData.get('place'),
-            price: formData.get('price'),
-            capacity: formData.get('capacity'),
-            tag: formData.get('tag'),
-            images: [],
-            createdAt: new Date().toISOString()
-        };
-        
-        campsEvents.push(eventData);
-        localStorage.setItem('campsEvents', JSON.stringify(campsEvents));
+
+        const created = await createResponse.json();
+        const calenderEntryID = created?.calender_entry_id;
+        if (!calenderEntryID) {
+            throw new Error('Missing calender entry id in create response');
+        }
+
+        if (imageFiles.length > 0) {
+            const imageIDs = await uploadImagesForEntry(calenderEntryID, imageFiles);
+            await apiRequest(`${CALENDER_API_URL}/update-images`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    calender_entry_id: calenderEntryID,
+                    image_ids: imageIDs
+                })
+            });
+        }
+
         closeForm('camps');
-        renderCampsEvents();
-        updateCounts();
+        await reloadDashboardData();
+        showDashboardMessage('Camp created successfully', 'success');
+    } catch (error) {
+        showDashboardMessage(error.message || 'Failed to create camp');
     }
 }
 
@@ -358,7 +534,7 @@ function renderShortEvents() {
     
     container.innerHTML = shortEvents.map(event => `
         <div class="event-card">
-            ${event.images && event.images.length > 0 ? `<img src="${event.images[0]}" alt="${event.title}" class="event-image">` : '<div class="event-image"></div>'}
+            ${renderImageSlider(event)}
             <div class="event-content">
                 <h3>${event.title}</h3>
                 <div class="event-meta">
@@ -387,10 +563,10 @@ function renderShortEvents() {
                 </div>
                 <p class="event-description">${event.description}</p>
                 <div class="event-actions">
-                    <button class="details-btn" onclick="openClientsDetails('short-events', ${event.id})">
+                    <button class="details-btn" onclick="openClientsDetails('short-events', '${event.id}')">
                         <i class="fas fa-users"></i> See details
                     </button>
-                    <button class="delete-btn" onclick="deleteShortEvent(${event.id})">
+                    <button class="delete-btn" onclick="deleteShortEvent('${event.id}')">
                         <i class="fas fa-trash"></i> Delete
                     </button>
                 </div>
@@ -410,7 +586,7 @@ function renderCampsEvents() {
     
     container.innerHTML = campsEvents.map(event => `
         <div class="event-card">
-            ${event.images && event.images.length > 0 ? `<img src="${event.images[0]}" alt="${event.title}" class="event-image">` : '<div class="event-image"></div>'}
+            ${renderImageSlider(event)}
             <div class="event-content">
                 <h3>${event.title}</h3>
                 <div class="event-meta">
@@ -435,10 +611,10 @@ function renderCampsEvents() {
                 </div>
                 <p class="event-description">${event.description}</p>
                 <div class="event-actions">
-                    <button class="details-btn" onclick="openClientsDetails('camps', ${event.id})">
+                    <button class="details-btn" onclick="openClientsDetails('camps', '${event.id}')">
                         <i class="fas fa-users"></i> See details
                     </button>
-                    <button class="delete-btn" onclick="deleteCampsEvent(${event.id})">
+                    <button class="delete-btn" onclick="deleteCampsEvent('${event.id}')">
                         <i class="fas fa-trash"></i> Delete
                     </button>
                 </div>
@@ -474,21 +650,26 @@ function cancelDelete() {
     pendingDelete.id = null;
 }
 
-function confirmDelete() {
+async function confirmDelete() {
     if (!pendingDelete.type || !pendingDelete.id) return;
-    
-    if (pendingDelete.type === 'short-events') {
-        shortEvents = shortEvents.filter(event => event.id !== pendingDelete.id);
-        localStorage.setItem('shortEvents', JSON.stringify(shortEvents));
-        renderShortEvents();
-    } else if (pendingDelete.type === 'camps') {
-        campsEvents = campsEvents.filter(event => event.id !== pendingDelete.id);
-        localStorage.setItem('campsEvents', JSON.stringify(campsEvents));
-        renderCampsEvents();
+
+    try {
+        await apiRequest(`${CALENDER_API_URL}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                calender_entry_id: pendingDelete.id
+            })
+        });
+
+        cancelDelete();
+        await reloadDashboardData();
+        showDashboardMessage('Deleted successfully', 'success');
+    } catch (error) {
+        showDashboardMessage(error.message || 'Failed to delete entry');
     }
-    
-    cancelDelete();
-    updateCounts();
 }
 
 // Update Counts

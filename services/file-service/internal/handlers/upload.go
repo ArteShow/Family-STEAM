@@ -9,21 +9,21 @@ import (
 )
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
-	var req UploadRequest
-
-	body, err := io.ReadAll(r.Body)
+	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer r.Body.Close()
-
-	if err = json.Unmarshal(body, &req); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "invalid multipart form", http.StatusBadRequest)
 		return
 	}
 
-	r.ParseMultipartForm(10 << 20)
+	req := UploadRequest{
+		ParentID: r.FormValue("parent_id"),
+		FileName: r.FormValue("file_name"),
+	}
+
+	if req.ParentID == "" || req.FileName == "" {
+		http.Error(w, "parent_id and file_name are required", http.StatusBadRequest)
+		return
+	}
 
 	file, _, err := r.FormFile("file")
 	if err != nil {

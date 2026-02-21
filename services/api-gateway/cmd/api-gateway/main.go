@@ -47,6 +47,7 @@ func main() {
 	calenderDeleteProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/delete")
 	calenderGetProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/get")
 	calenderGetAllProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/getAll")
+	calenderUpdateImagesProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/update-images")
 
 	handler := http.NewServeMux()
 	handler.Handle(
@@ -76,6 +77,7 @@ func main() {
 
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/create", middleware.LoggingMiddleware(middleware.AdminOnly(calenderCreateProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/delete", middleware.LoggingMiddleware(middleware.AdminOnly(calenderDeleteProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/calender/update-images", middleware.LoggingMiddleware(middleware.AdminOnly(calenderUpdateImagesProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/get", middleware.LoggingMiddleware(calenderGetProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/getAll", middleware.LoggingMiddleware(calenderGetAllProxy))
 
