@@ -10,20 +10,19 @@ import (
 )
 
 type Client struct {
-	ID        string `json:"client_id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	Paid string `json:"paid"`
-	Birthday  *time.Time `json:"birthday"`
-	Age       *int `json:"age"`
-	Camp      *string `json:"camp"`
-	Event     *string `json:"event"`
-	CreatedAt time.Time `json:"created_at"`
+	ID         string     `json:"client_id"`
+	CalendarID string     `json:"calendar_id"`
+	FirstName  string     `json:"first_name"`
+	LastName   string     `json:"last_name"`
+	Email      string     `json:"email"`
+	Phone      string     `json:"phone"`
+	Paid       bool       `json:"paid"`
+	Birthday   *time.Time `json:"birthday"`
+	Age        *int       `json:"age"`
+	CreatedAt  time.Time  `json:"created_at"`
 }
 
-func Create(firstName, lastName, email, phone string, paid string, birthday *time.Time, age *int, camp, event *string) (string, error) {
+func Create(calendarID, firstName, lastName, email, phone string, paid bool, birthday *time.Time, age *int) (string, error) {
 	db, err := database.Connect()
 	if err != nil {
 		return "", err
@@ -32,9 +31,9 @@ func Create(firstName, lastName, email, phone string, paid string, birthday *tim
 	id := uuid.NewString()
 
 	_, err = db.Exec(
-		`INSERT INTO clients (id, first_name, last_name, email, phone, birthday, age, camp, event, paid) 
-		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-		id, firstName, lastName, email, phone, birthday, age, camp, event, paid,
+		`INSERT INTO clients (id, calendar_id, first_name, last_name, email, phone, paid, birthday, age) 
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+		id, calendarID, firstName, lastName, email, phone, paid, birthday, age,
 	)
 
 	return id, err
@@ -61,7 +60,7 @@ func GetByID(id string) (*Client, error) {
 	}
 
 	row := db.QueryRow(
-		`SELECT id, first_name, last_name, email, phone, birthday, age, camp, event, paid, created_at
+		`SELECT id, calendar_id, first_name, last_name, email, phone, paid, birthday, age, created_at
 		 FROM clients WHERE id = $1`,
 		id,
 	)
@@ -69,15 +68,14 @@ func GetByID(id string) (*Client, error) {
 	var client Client
 	err = row.Scan(
 		&client.ID,
+		&client.CalendarID,
 		&client.FirstName,
 		&client.LastName,
 		&client.Email,
 		&client.Phone,
+		&client.Paid,
 		&client.Birthday,
 		&client.Age,
-		&client.Camp,
-		&client.Event,
-		&client.Paid,
 		&client.CreatedAt,
 	)
 
@@ -95,6 +93,7 @@ func UpdateClient(value, column, id string) error {
 	}
 
 	allowedColumns := map[string]struct{}{
+		"calendar_id": {},
 		"first_name": {},
 		"last_name":  {},
 		"email":      {},
@@ -102,8 +101,6 @@ func UpdateClient(value, column, id string) error {
 		"paid":       {},
 		"birthday":   {},
 		"age":        {},
-		"camp":       {},
-		"event":      {},
 	}
 
 	normalizedColumn := strings.ToLower(strings.TrimSpace(column))

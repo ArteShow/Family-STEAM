@@ -24,6 +24,7 @@ func CreateClientHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, err := repository.Create(
+		req.Client.CalendarID,
 		req.Client.FirstName,
 		req.Client.LastName,
 		req.Client.Email,
@@ -31,8 +32,6 @@ func CreateClientHandler(w http.ResponseWriter, r *http.Request) {
 		req.Client.Paid,
 		req.Client.Birthday,
 		req.Client.Age,
-		req.Client.Camp,
-		req.Client.Event,
 	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
