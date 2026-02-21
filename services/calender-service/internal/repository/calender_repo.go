@@ -4,27 +4,27 @@ import (
 	"time"
 
 	"github.com/ArteShow/Family-STEAM/services/calender-service/internal/database"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
 
 type Calendar struct {
-	ID             string
-	Location       string
-	Price          int
-	Tag            string
-	ImageIDs       []string
-	Amount         int
-	Title          string
-	Description    string
-	Responsibility *string
-	StartsAt       *time.Time
-	EndsAt         *time.Time
-	Duration       *string
-	CreatedAt      time.Time
+	ID             string     `json:"id"`
+	Location       string     `json:"location"`
+	Price          int        `json:"price"`
+	Tag            string     `json:"tag"`
+	ImageIDs       []string   `json:"image_ids"`
+	Amount         int        `json:"amount"`
+	Title          string     `json:"title"`
+	Description    string     `json:"description"`
+	Responsibility *string    `json:"responsibility"`
+	StartsAt       *time.Time `json:"starts_at"`
+	EndsAt         *time.Time `json:"ends_at"`
+	Duration       *string    `json:"duration"`
+	CreatedAt      time.Time  `json:"created_at"`
 }
 
 func Create(
-	id string,
 	location string,
 	price int,
 	tag string,
@@ -36,11 +36,13 @@ func Create(
 	startsAt *time.Time,
 	endsAt *time.Time,
 	duration *string,
-) error {
+) (string, error) {
+
+	id := uuid.NewString()
 
 	db, err := database.Connect()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	_, err = db.Exec(`
@@ -74,7 +76,7 @@ func Create(
 		duration,
 	)
 
-	return err
+	return id, err
 }
 
 func Delete(id string) error {
