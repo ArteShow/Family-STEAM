@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/ArteShow/Family-STEAM/services/client-service/internal/database"
@@ -84,4 +86,45 @@ func GetByID(id string) (*Client, error) {
 	}
 
 	return &client, nil
+}
+
+func UpdateClient(value, column, id string) error {
+	db, err := database.Connect()
+	if err != nil {
+		return err
+	}
+
+	allowedColumns := map[string]struct{}{
+		"first_name": {},
+		"last_name":  {},
+		"email":      {},
+		"phone":      {},
+		"paid":       {},
+		"birthday":   {},
+		"age":        {},
+		"camp":       {},
+		"event":      {},
+	}
+
+	normalizedColumn := strings.ToLower(strings.TrimSpace(column))
+	if _, ok := allowedColumns[normalizedColumn]; !ok {
+		return fmt.Errorf("invalid column: %s", column)
+	}
+
+	query := fmt.Sprintf("UPDATE clients SET %s = $1 WHERE id = $2", normalizedColumn)
+	res, err := db.Exec(query, value, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("client not found: %s", id)
+	}
+
+	return nil
 }

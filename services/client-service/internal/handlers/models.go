@@ -21,3 +21,9 @@ type GetClientRequest struct {
 type GetClientResponse struct {
 	Client repository.Client `json:"client"`
 }
+
+type UpdateClientRequest struct {
+	Value string `json:"value"`
+	Column string `json:"column"`
+	ClientID string `json:"client_id"`
+}

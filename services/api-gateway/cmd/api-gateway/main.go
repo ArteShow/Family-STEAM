@@ -41,6 +41,7 @@ func main() {
 	clientCreateProxy := proxy.NewProxy("http://client-service:8004", "/client-service/create")
 	clientDeleteProxy := proxy.NewProxy("http://client-service:8004", "/client-service/delete")
 	clientGetProxy := proxy.NewProxy("http://client-service:8004", "/client-service/get")
+	clientUpdateProxy := proxy.NewProxy("http://client-service:8004", "/client-service/update")
 
 	handler := http.NewServeMux()
 	handler.Handle(
@@ -66,6 +67,7 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/client/create", middleware.LoggingMiddleware(clientCreateProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/delete", middleware.LoggingMiddleware(clientDeleteProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/get", middleware.LoggingMiddleware(clientGetProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/client/update", middleware.LoggingMiddleware(clientUpdateProxy))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
