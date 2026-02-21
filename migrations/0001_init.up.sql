@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS files (
     id TEXT PRIMARY KEY,
     parent_id TEXT NOT NULL,
+    file_name TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 )
