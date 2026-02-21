@@ -1,6 +1,6 @@
 module github.com/ArteShow/Family-STEAM/services/file-service
 
-go 1.25.4
+go 1.24.4
 
 require (
 	github.com/docker/docker v28.0.1+incompatible
