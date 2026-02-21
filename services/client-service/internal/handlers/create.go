@@ -28,6 +28,7 @@ func CreateClientHandler(w http.ResponseWriter, r *http.Request) {
 		req.Client.LastName,
 		req.Client.Email,
 		req.Client.Phone,
+		req.Client.Paid,
 		req.Client.Birthday,
 		req.Client.Age,
 		req.Client.Camp,

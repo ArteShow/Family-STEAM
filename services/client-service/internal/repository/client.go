@@ -13,6 +13,7 @@ type Client struct {
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Phone     string `json:"phone"`
+	Paid string `json:"paid"`
 	Birthday  *time.Time `json:"birthday"`
 	Age       *int `json:"age"`
 	Camp      *string `json:"camp"`
@@ -20,7 +21,7 @@ type Client struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func Create(firstName, lastName, email, phone string, birthday *time.Time, age *int, camp, event *string) (string, error) {
+func Create(firstName, lastName, email, phone string, paid string, birthday *time.Time, age *int, camp, event *string) (string, error) {
 	db, err := database.Connect()
 	if err != nil {
 		return "", err
@@ -29,9 +30,9 @@ func Create(firstName, lastName, email, phone string, birthday *time.Time, age *
 	id := uuid.NewString()
 
 	_, err = db.Exec(
-		`INSERT INTO clients (id, first_name, last_name, email, phone, birthday, age, camp, event) 
-		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-		id, firstName, lastName, email, phone, birthday, age, camp, event,
+		`INSERT INTO clients (id, first_name, last_name, email, phone, birthday, age, camp, event, paid) 
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+		id, firstName, lastName, email, phone, birthday, age, camp, event, paid,
 	)
 
 	return id, err
@@ -58,7 +59,7 @@ func GetByID(id string) (*Client, error) {
 	}
 
 	row := db.QueryRow(
-		`SELECT id, first_name, last_name, email, phone, birthday, age, camp, event, created_at
+		`SELECT id, first_name, last_name, email, phone, birthday, age, camp, event, paid, created_at
 		 FROM clients WHERE id = $1`,
 		id,
 	)
@@ -74,6 +75,7 @@ func GetByID(id string) (*Client, error) {
 		&client.Age,
 		&client.Camp,
 		&client.Event,
+		&client.Paid,
 		&client.CreatedAt,
 	)
 
