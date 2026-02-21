@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/ArteShow/Family-STEAM/services/client-service/internal/database"
+	"github.com/google/uuid"
 )
 
 type Client struct {
@@ -19,11 +20,13 @@ type Client struct {
 	CreatedAt time.Time
 }
 
-func Create(id, firstName, lastName, email, phone string, birthday *time.Time, age *int, camp, event *string) error {
+func Create(firstName, lastName, email, phone string, birthday *time.Time, age *int, camp, event *string) (string, error) {
 	db, err := database.Connect()
 	if err != nil {
-		return err
+		return "", err
 	}
+
+	id := uuid.NewString()
 
 	_, err = db.Exec(
 		`INSERT INTO clients (id, first_name, last_name, email, phone, birthday, age, camp, event) 
@@ -31,7 +34,7 @@ func Create(id, firstName, lastName, email, phone string, birthday *time.Time, a
 		id, firstName, lastName, email, phone, birthday, age, camp, event,
 	)
 
-	return err
+	return id, err
 }
 
 func Delete(id string) error {
