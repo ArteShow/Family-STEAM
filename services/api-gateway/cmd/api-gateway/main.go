@@ -43,6 +43,11 @@ func main() {
 	clientGetProxy := proxy.NewProxy("http://client-service:8004", "/client-service/get")
 	clientUpdateProxy := proxy.NewProxy("http://client-service:8004", "/client-service/update")
 
+	calenderCreateProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/create")
+	calenderDeleteProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/delete")
+	calenderGetProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/get")
+	calenderGetAllProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/getAll")
+
 	handler := http.NewServeMux()
 	handler.Handle(
 		"/api/"+cfg.APIVersion+"/api-gateway/health",
@@ -68,6 +73,11 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/client/delete", middleware.LoggingMiddleware(clientDeleteProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/get", middleware.LoggingMiddleware(clientGetProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/update", middleware.LoggingMiddleware(clientUpdateProxy))
+
+	handler.Handle("/api/"+cfg.APIVersion+"/calender/create", middleware.LoggingMiddleware(calenderCreateProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/calender/delete", middleware.LoggingMiddleware(calenderDeleteProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/calender/get", middleware.LoggingMiddleware(calenderGetProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/calender/getAll", middleware.LoggingMiddleware(calenderGetAllProxy))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
