@@ -8,3 +8,7 @@ type UploadRequest struct {
 type UploadResponse struct {
 	FileID string `json:"file_id"`
 }
+
+type DownloadRequest struct {
+	FileID string `json:"file_id"`
+}

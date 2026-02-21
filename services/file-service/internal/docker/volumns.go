@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"path"
 
@@ -70,7 +71,7 @@ func UploadFile(fileBytes []byte, filename string) (string, error) {
 	return id, nil
 }
 
-func DownloadFile(id string, filename string) ([]byte, error) {
+func DownloadFile(id string) ([]byte, error) {
 	ctx := context.Background()
 
 	cli, err := client.NewClientWithOpts(client.FromEnv)
@@ -94,8 +95,9 @@ func DownloadFile(id string, filename string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer cli.ContainerRemove(ctx, containerID, container.RemoveOptions{Force: true})
 
-	reader, _, err := cli.CopyFromContainer(ctx, containerID, path.Join("/data", id, filename))
+	reader, _, err := cli.CopyFromContainer(ctx, containerID, path.Join("/data", id))
 	if err != nil {
 		return nil, err
 	}
@@ -103,19 +105,26 @@ func DownloadFile(id string, filename string) ([]byte, error) {
 
 	tr := tar.NewReader(reader)
 
-	_, err = tr.Next()
-	if err != nil {
-		return nil, err
+	for {
+		hdr, nextErr := tr.Next()
+		if nextErr == io.EOF {
+			return nil, errors.New("file not found in folder")
+		}
+		if nextErr != nil {
+			return nil, nextErr
+		}
+
+		if hdr.Typeflag != tar.TypeReg {
+			continue
+		}
+
+		data, readErr := io.ReadAll(tr)
+		if readErr != nil {
+			return nil, readErr
+		}
+
+		return data, nil
 	}
-
-	data, err := io.ReadAll(tr)
-	if err != nil {
-		return nil, err
-	}
-
-	cli.ContainerRemove(ctx, containerID, container.RemoveOptions{Force: true})
-
-	return data, nil
 }
 
 func RemoveFile(id string) error {
