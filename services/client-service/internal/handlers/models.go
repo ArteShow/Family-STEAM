@@ -3,9 +3,21 @@ package handlers
 import "github.com/ArteShow/Family-STEAM/services/client-service/internal/repository"
 
 type CreateClientRequest struct {
-	Client repository.Client
+	Client repository.Client `json:"client"`
 }
 
 type CreateClientResponse struct {
 	ClientID string `json:"client_id"`
+}
+
+type DeleteClientRequest struct {
+	ClientID string `json:"client_id"`
+}
+
+type GetClientRequest struct {
+	ClientID string `json:"client_id"`
+}
+
+type GetClientResponse struct {
+	Client repository.Client `json:"client"`
 }
