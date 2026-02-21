@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS clients (
     last_name TEXT NOT NULL,
     email TEXT NOT NULL,
     phone TEXT NOT NULL,
+    paid BOOLEAN NOT NULL,
     birthday DATE,
     age INT,
     camp TEXT,

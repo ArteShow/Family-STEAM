@@ -40,6 +40,7 @@ func main() {
 	mux.HandleFunc("/client-service/create", handlers.CreateClientHandler)
 	mux.HandleFunc("/client-service/delete", handlers.DeleteClientHandler)
 	mux.HandleFunc("/client-service/get", handlers.GetClientHandler)
+	mux.HandleFunc("/client-service/update", handlers.UpdateClientHandler)
 
 	srv := &http.Server{
 		Addr:         cfg.Port,

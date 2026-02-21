@@ -8,8 +8,8 @@ import (
 	"github.com/ArteShow/Family-STEAM/services/client-service/internal/repository"
 )
 
-func CreateClientHandler(w http.ResponseWriter, r *http.Request) {
-	var req CreateClientRequest
+func UpdateClientHandler(w http.ResponseWriter, r *http.Request) {
+	var req UpdateClientRequest
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -23,26 +23,10 @@ func CreateClientHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := repository.Create(
-		req.Client.FirstName,
-		req.Client.LastName,
-		req.Client.Email,
-		req.Client.Phone,
-		req.Client.Paid,
-		req.Client.Birthday,
-		req.Client.Age,
-		req.Client.Camp,
-		req.Client.Event,
-	)
-	if err != nil {
+	if err = repository.UpdateClient(req.Value, req.Column, req.ClientID); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	res := CreateClientResponse{ClientID: id}
 	w.WriteHeader(http.StatusOK)
-	if err = json.NewEncoder(w).Encode(res); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 }
