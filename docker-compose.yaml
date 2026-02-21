@@ -66,6 +66,21 @@ services:
       start_period: 10s
     networks:
       - disknet
+  client:
+    build: ./services/client-service
+    container_name: client-service
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${CLIENT_SERVICE_PORT}:${CLIENT_SERVICE_PORT}"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${CLIENT_SERVICE_PORT}/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - disknet
   postgres:
     image: postgres:16
     container_name: postgres
