@@ -66,16 +66,16 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/auth/verify", middleware.LoggingMiddleware(authVerifyProxy))
 
 	handler.Handle("/api/"+cfg.APIVersion+"/file/download", middleware.LoggingMiddleware(fileDownloadProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/file/upload", middleware.LoggingMiddleware(fileUploadProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/file/delete", middleware.LoggingMiddleware(fileDeleteProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/file/upload", middleware.LoggingMiddleware(middleware.AdminOnly(fileUploadProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/file/delete", middleware.LoggingMiddleware(middleware.AdminOnly(fileDeleteProxy)))
 
-	handler.Handle("/api/"+cfg.APIVersion+"/client/create", middleware.LoggingMiddleware(clientCreateProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/client/delete", middleware.LoggingMiddleware(clientDeleteProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/client/get", middleware.LoggingMiddleware(clientGetProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/client/update", middleware.LoggingMiddleware(clientUpdateProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/client/create", middleware.LoggingMiddleware(middleware.AdminOnly(clientCreateProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/client/delete", middleware.LoggingMiddleware(middleware.AdminOnly(clientDeleteProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/client/get", middleware.LoggingMiddleware(middleware.AdminOnly(clientGetProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/client/update", middleware.LoggingMiddleware(middleware.AdminOnly(clientUpdateProxy)))
 
-	handler.Handle("/api/"+cfg.APIVersion+"/calender/create", middleware.LoggingMiddleware(calenderCreateProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/calender/delete", middleware.LoggingMiddleware(calenderDeleteProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/calender/create", middleware.LoggingMiddleware(middleware.AdminOnly(calenderCreateProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/calender/delete", middleware.LoggingMiddleware(middleware.AdminOnly(calenderDeleteProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/get", middleware.LoggingMiddleware(calenderGetProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/getAll", middleware.LoggingMiddleware(calenderGetAllProxy))
 
