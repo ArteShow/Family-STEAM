@@ -87,7 +87,7 @@ services:
 volumes:
   postgres_data:
   family-steam:
-    name: family-steam
+    name: family-steam:/data
 
 networks:
   disknet:
