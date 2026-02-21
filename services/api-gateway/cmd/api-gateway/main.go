@@ -34,6 +34,10 @@ func main() {
 	authLoginProxy := proxy.NewProxy("http://auth-service:8001", "/auth-service/login")
 	authVerifyProxy := proxy.NewProxy("http://auth-service:8001", "/auth-service/verify")
 
+	fileUploadProxy := proxy.NewProxy("http://file-service:8003", "/file-service/upload")
+	fileDownloadProxy := proxy.NewProxy("http://file-service:8003", "/file-service/download")
+	fileDeleteProxy := proxy.NewProxy("http://file-service:8003", "/file-service/delete")
+
 	handler := http.NewServeMux()
 	handler.Handle(
 		"/api/"+cfg.APIVersion+"/api-gateway/health",
@@ -47,9 +51,13 @@ func main() {
 		),
 	)
 
-	handler.Handle("/api/"+cfg.APIVersion+"/register", middleware.LoggingMiddleware(authRegisterProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/login", middleware.LoggingMiddleware(authLoginProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/verify", middleware.LoggingMiddleware(authVerifyProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/auth/register", middleware.LoggingMiddleware(authRegisterProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/auth/login", middleware.LoggingMiddleware(authLoginProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/auth/verify", middleware.LoggingMiddleware(authVerifyProxy))
+
+	handler.Handle("/api/"+cfg.APIVersion+"/file/download", middleware.LoggingMiddleware(fileDownloadProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/file/upload", middleware.LoggingMiddleware(fileUploadProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/file/delete", middleware.LoggingMiddleware(fileDeleteProxy))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
