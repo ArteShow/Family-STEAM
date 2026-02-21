@@ -27,10 +27,52 @@ function switchForm(formType) {
     }
 }
 
-const API_BASE_URL = '/api/v1/auth';
+const API_BASE_URL = 'http://localhost:8000/api/v1/auth';
 
-function showMessage(message) {
-    alert(message);
+function showMessage(message, type = 'error') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.position = 'fixed';
+        container.style.top = '20px';
+        container.style.right = '20px';
+        container.style.zIndex = '9999';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.gap = '10px';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.minWidth = '260px';
+    toast.style.maxWidth = '360px';
+    toast.style.padding = '12px 14px';
+    toast.style.borderRadius = '12px';
+    toast.style.fontSize = '14px';
+    toast.style.fontWeight = '600';
+    toast.style.color = '#fff';
+    toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.25)';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-8px)';
+    toast.style.transition = 'all 0.25s ease';
+    toast.style.background = type === 'success'
+        ? 'linear-gradient(135deg, #1e9f5d, #24c26a)'
+        : 'linear-gradient(135deg, #d84a4a, #ff6b6b)';
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+    });
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-8px)';
+        setTimeout(() => toast.remove(), 250);
+    }, 2800);
 }
 
 async function requestJSON(url, options) {
@@ -106,7 +148,7 @@ async function handleRegister(event) {
             })
         });
 
-        showMessage('Registration successful. Please login.');
+        showMessage('Registration successful. Please login.', 'success');
         switchForm('login');
         document.getElementById('loginUsername').value = username;
         document.getElementById('loginPassword').value = '';
