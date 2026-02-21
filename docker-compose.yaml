@@ -3,7 +3,7 @@ services:
     build: ./frontend
     container_name: frontend
     ports:
-      - "${FRONTEND_PORT}:${NGINX_PORT}"
+      - "${NGINX_PORT}:${NGINX_PORT}"
     networks:
       - disknet
   api-gateway:
