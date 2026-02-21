@@ -27,33 +27,90 @@ function switchForm(formType) {
     }
 }
 
+const API_BASE_URL = '/api/v1/auth';
+
+function showMessage(message) {
+    alert(message);
+}
+
+async function requestJSON(url, options) {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `Request failed with status ${response.status}`);
+    }
+
+    const text = await response.text();
+    if (!text) {
+        return null;
+    }
+
+    return JSON.parse(text);
+}
+
 // Handle login form submission
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
-    
-    // Get form values
+
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
-    
-    // For now, just clear the form and redirect to main.html
-    console.log('Login submitted with username:', username);
-    
-    // Redirect to main.html
-    window.location.href = 'html/main.html';
+
+    try {
+        const data = await requestJSON(`${API_BASE_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username,
+                password
+            })
+        });
+
+        if (!data || !data.token) {
+            throw new Error('Missing token in login response');
+        }
+
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('currentUser', username);
+        window.location.href = 'html/main.html';
+    } catch (error) {
+        showMessage(error.message || 'Login failed');
+    }
 }
 
 // Handle register form submission
-function handleRegister(event) {
+async function handleRegister(event) {
     event.preventDefault();
-    
-    // Get form values
+
     const username = document.getElementById('registerUsername').value;
     const password = document.getElementById('registerPassword').value;
     const jwtToken = document.getElementById('jwtToken').value;
-    
-    // For now, just clear the form and redirect to main.html
-    console.log('Register submitted with username:', username);
-    
-    // Redirect to main.html
-    window.location.href = 'html/main.html';
+
+    if (!jwtToken.trim()) {
+        showMessage('JWT token is required for registration');
+        return;
+    }
+
+    try {
+        await requestJSON(`${API_BASE_URL}/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwtToken.trim()}`
+            },
+            body: JSON.stringify({
+                username,
+                password
+            })
+        });
+
+        showMessage('Registration successful. Please login.');
+        switchForm('login');
+        document.getElementById('loginUsername').value = username;
+        document.getElementById('loginPassword').value = '';
+    } catch (error) {
+        showMessage(error.message || 'Registration failed');
+    }
 }
