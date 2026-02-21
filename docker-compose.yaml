@@ -66,7 +66,7 @@ services:
       start_period: 10s
     networks:
       - disknet
-  client:
+  client-service:
     build: ./services/client-service
     container_name: client-service
     env_file:
@@ -75,6 +75,21 @@ services:
       - "${CLIENT_SERVICE_PORT}:${CLIENT_SERVICE_PORT}"
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${CLIENT_SERVICE_PORT}/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - disknet
+  calender-service:
+    build: ./services/calender-service
+    container_name: calender-service
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${CALENDER_SERVICE_PORT}:${CALENDER_SERVICE_PORT}"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${CALENDER_SERVICE_PORT}/health"]
       interval: 10s
       timeout: 5s
       retries: 3
