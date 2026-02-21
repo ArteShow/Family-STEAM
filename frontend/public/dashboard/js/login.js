@@ -27,7 +27,7 @@ function switchForm(formType) {
     }
 }
 
-const API_BASE_URL = 'http://localhost:8000/api/v1/auth';
+const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/auth`;
 
 function showMessage(message, type = 'error') {
     let container = document.getElementById('toastContainer');

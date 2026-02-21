@@ -13,8 +13,83 @@ let detailsContext = {
     id: null
 };
 
+const AUTH_VERIFY_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/auth/verify`;
+
+function decodeJwtPayload(token) {
+    try {
+        const tokenParts = token.split('.');
+        if (tokenParts.length < 2) {
+            return null;
+        }
+
+        const base64Url = tokenParts[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, '=');
+        const json = atob(padded);
+        return JSON.parse(json);
+    } catch (_) {
+        return null;
+    }
+}
+
+async function verifyTokenWithBackend(tokenPayload, token) {
+    if (!tokenPayload || !tokenPayload.user_id) {
+        return false;
+    }
+
+    try {
+        const response = await fetch(AUTH_VERIFY_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                user_id: tokenPayload.user_id
+            })
+        });
+
+        return response.ok;
+    } catch (_) {
+        return false;
+    }
+}
+
+function redirectToLogin() {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser');
+    window.location.replace('../login.html');
+}
+
+async function enforceAuthGuard() {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        redirectToLogin();
+        return false;
+    }
+
+    const tokenPayload = decodeJwtPayload(token);
+    if (!tokenPayload) {
+        redirectToLogin();
+        return false;
+    }
+
+    const isValid = await verifyTokenWithBackend(tokenPayload, token);
+    if (!isValid) {
+        redirectToLogin();
+        return false;
+    }
+
+    return true;
+}
+
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    const isAllowed = await enforceAuthGuard();
+    if (!isAllowed) {
+        return;
+    }
+
     initializeNavigation();
     initializeImageUploads();
     initializeFormInteractions();

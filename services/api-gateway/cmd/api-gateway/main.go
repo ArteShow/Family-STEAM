@@ -81,7 +81,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
-		Handler:      handler,
+		Handler:      middleware.CORSMiddleware(handler),
 		ReadTimeout:  readTimeout,
 		WriteTimeout: writeTimeout,
 		IdleTimeout:  idleTimeou,
