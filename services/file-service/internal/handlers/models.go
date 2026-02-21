@@ -12,3 +12,7 @@ type UploadResponse struct {
 type DownloadRequest struct {
 	FileID string `json:"file_id"`
 }
+
+type DeleteFileRequest struct {
+	FileID string `json:"file_id"`
+}
