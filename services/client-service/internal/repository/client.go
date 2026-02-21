@@ -8,16 +8,16 @@ import (
 )
 
 type Client struct {
-	ID        string
-	FirstName string
-	LastName  string
-	Email     string
-	Phone     string
-	Birthday  *time.Time
-	Age       *int
-	Camp      *string
-	Event     *string
-	CreatedAt time.Time
+	ID        string `json:"client_id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
+	Birthday  *time.Time `json:"birthday"`
+	Age       *int `json:"age"`
+	Camp      *string `json:"camp"`
+	Event     *string `json:"event"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func Create(firstName, lastName, email, phone string, birthday *time.Time, age *int, camp, event *string) (string, error) {
