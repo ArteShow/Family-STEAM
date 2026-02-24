@@ -71,7 +71,7 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/file/upload", middleware.LoggingMiddleware(middleware.AdminOnly(fileUploadProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/file/delete", middleware.LoggingMiddleware(middleware.AdminOnly(fileDeleteProxy)))
 
-	handler.Handle("/api/"+cfg.APIVersion+"/client/create", middleware.LoggingMiddleware(middleware.AdminOnly(clientCreateProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/client/create", middleware.LoggingMiddleware(clientCreateProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/delete", middleware.LoggingMiddleware(middleware.AdminOnly(clientDeleteProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/get", middleware.LoggingMiddleware(middleware.AdminOnly(clientGetProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/update", middleware.LoggingMiddleware(middleware.AdminOnly(clientUpdateProxy)))

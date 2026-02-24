@@ -26,8 +26,13 @@ function isSameDayOnly(calendarDate, eventDateStr) {
 }
 
 function isEventOnDay(event, checkDate) {
-    const startDate = new Date(event.start_date)
-    const endDate = new Date(event.end_date)
+    const startDate = new Date(event.starts_at || event.start_date)
+    const endDateRaw = event.ends_at || event.end_date || event.starts_at || event.start_date
+    const endDate = new Date(endDateRaw)
+
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        return false
+    }
     
     startDate.setHours(0, 0, 0, 0)
     endDate.setHours(0, 0, 0, 0)
@@ -161,12 +166,14 @@ function showEvents(day, month, year) {
             const eventItem = document.createElement("div")
             eventItem.className = "event-item"
             
-            const startDate = new Date(event.start_date)
-            const endDate = new Date(event.end_date)
+            const startDate = new Date(event.starts_at || event.start_date)
+            const endDateRaw = event.ends_at || event.end_date || event.starts_at || event.start_date
+            const endDate = new Date(endDateRaw)
             const durationMs = endDate - startDate
             const durationHours = Math.ceil(durationMs / (1000 * 60 * 60))
-            const durationText = durationHours < 24 
-                ? `${durationHours}h` 
+            const normalizedDurationHours = durationHours > 0 ? durationHours : 1
+            const durationText = normalizedDurationHours < 24 
+                ? `${normalizedDurationHours}h` 
                 : `${Math.ceil(durationHours / 24)} days`
             
             const tagDisplay = event.tag || 'Event'
@@ -239,7 +246,7 @@ async function loadEvents() {
         const now = new Date()
         now.setHours(0, 0, 0, 0)
         allEvents = allEvents.filter(event => {
-            const eventDate = new Date(event.start_date)
+            const eventDate = new Date(event.starts_at || event.start_date)
             eventDate.setHours(0, 0, 0, 0)
             return eventDate >= now
         })

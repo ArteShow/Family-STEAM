@@ -1,6 +1,6 @@
 // Data storage
-let shortEvents = JSON.parse(localStorage.getItem('shortEvents')) || [];
-let campsEvents = JSON.parse(localStorage.getItem('campsEvents')) || [];
+let shortEvents = [];
+let campsEvents = [];
 
 // Delete confirmation state
 let pendingDelete = {
@@ -1105,24 +1105,12 @@ async function saveClientsDetails(closeAfterSave = true) {
 }
 
 function getDetailsSchema(type) {
-    if (type === 'camps') {
-        return [
-            { key: 'firstName', label: 'First Name', inputType: 'text' },
-            { key: 'lastName', label: 'Last Name', inputType: 'text' },
-            { key: 'birthday', label: 'Date of Birth', inputType: 'date' },
-            { key: 'phone', label: 'Phone', inputType: 'text' },
-            { key: 'email', label: 'Email', inputType: 'email' },
-            { key: 'age', label: 'Age', inputType: 'number' },
-            { key: 'paid', label: 'Paid', inputType: 'checkbox' }
-        ];
-    }
-
     return [
         { key: 'firstName', label: 'First Name', inputType: 'text' },
         { key: 'lastName', label: 'Last Name', inputType: 'text' },
+        { key: 'birthday', label: 'Date of Birth', inputType: 'date' },
         { key: 'phone', label: 'Phone', inputType: 'text' },
         { key: 'email', label: 'Email', inputType: 'email' },
-        { key: 'birthday', label: 'Date of Birth', inputType: 'date' },
         { key: 'age', label: 'Age', inputType: 'number' },
         { key: 'paid', label: 'Paid', inputType: 'checkbox' }
     ];
