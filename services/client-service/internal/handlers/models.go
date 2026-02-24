@@ -27,3 +27,11 @@ type UpdateClientRequest struct {
 	Column string `json:"column"`
 	ClientID string `json:"client_id"`
 }
+
+type ListClientsRequest struct {
+	CalenderEntryID string `json:"calender_entry_id"`
+}
+
+type ListClientsResponse struct {
+	Clients []repository.Client `json:"clients"`
+}

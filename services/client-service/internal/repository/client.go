@@ -125,3 +125,48 @@ func UpdateClient(value, column, id string) error {
 
 	return nil
 }
+
+func GetByCalendarID(calendarID string) ([]Client, error) {
+	db, err := database.Connect()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.Query(
+		`SELECT id, calendar_id, first_name, last_name, email, phone, paid, birthday, age, created_at
+		 FROM clients WHERE calendar_id = $1 ORDER BY created_at DESC`,
+		calendarID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	clients := make([]Client, 0)
+	for rows.Next() {
+		var client Client
+		err = rows.Scan(
+			&client.ID,
+			&client.CalendarID,
+			&client.FirstName,
+			&client.LastName,
+			&client.Email,
+			&client.Phone,
+			&client.Paid,
+			&client.Birthday,
+			&client.Age,
+			&client.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		clients = append(clients, client)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return clients, nil
+}

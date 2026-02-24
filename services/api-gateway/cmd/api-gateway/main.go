@@ -42,6 +42,7 @@ func main() {
 	clientDeleteProxy := proxy.NewProxy("http://client-service:8004", "/client-service/delete")
 	clientGetProxy := proxy.NewProxy("http://client-service:8004", "/client-service/get")
 	clientUpdateProxy := proxy.NewProxy("http://client-service:8004", "/client-service/update")
+	clientListProxy := proxy.NewProxy("http://client-service:8004", "/client-service/list")
 
 	calenderCreateProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/create")
 	calenderDeleteProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/delete")
@@ -74,6 +75,7 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/client/delete", middleware.LoggingMiddleware(middleware.AdminOnly(clientDeleteProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/get", middleware.LoggingMiddleware(middleware.AdminOnly(clientGetProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/update", middleware.LoggingMiddleware(middleware.AdminOnly(clientUpdateProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/client/list", middleware.LoggingMiddleware(middleware.AdminOnly(clientListProxy)))
 
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/create", middleware.LoggingMiddleware(middleware.AdminOnly(calenderCreateProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/delete", middleware.LoggingMiddleware(middleware.AdminOnly(calenderDeleteProxy)))

@@ -10,13 +10,15 @@ let pendingDelete = {
 
 let detailsContext = {
     type: null,
-    id: null
+    id: null,
+    clients: []
 };
 
 const AUTH_VERIFY_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/auth/verify`;
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1`;
 const CALENDER_API_URL = `${API_BASE_URL}/calender`;
 const FILE_API_URL = `${API_BASE_URL}/file`;
+const CLIENT_API_URL = `${API_BASE_URL}/client`;
 
 function getAuthToken() {
     return localStorage.getItem('authToken') || '';
@@ -785,32 +787,123 @@ function renderContent() {
     renderCampsEvents();
 }
 
-function openClientsDetails(type, id) {
-    const modal = document.getElementById('clientsDetailsModal');
-    const title = document.getElementById('clientsDetailsTitle');
+function toInputDateString(dateValue) {
+    if (!dateValue) {
+        return '';
+    }
+
+    if (typeof dateValue === 'string') {
+        return dateValue.slice(0, 10);
+    }
+
+    return new Date(dateValue).toISOString().slice(0, 10);
+}
+
+function mapApiClientToModalClient(apiClient) {
+    return {
+        clientID: apiClient.client_id,
+        firstName: apiClient.first_name || '',
+        lastName: apiClient.last_name || '',
+        phone: apiClient.phone || '',
+        email: apiClient.email || '',
+        age: apiClient.age ?? '',
+        birthday: toInputDateString(apiClient.birthday),
+        paid: Boolean(apiClient.paid)
+    };
+}
+
+async function fetchClientsForEntry(calenderEntryID) {
+    const response = await apiRequest(`${CLIENT_API_URL}/list`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            calender_entry_id: calenderEntryID
+        })
+    });
+
+    const data = await response.json();
+    return (data?.clients || []).map(mapApiClientToModalClient);
+}
+
+function renderClientsTable(schema, clients) {
     const tableHead = document.getElementById('clientsTableHeadRow');
     const tableBody = document.getElementById('clientsTableBody');
-    const selectedItem = type === 'short-events'
-        ? shortEvents.find(event => event.id === id)
-        : campsEvents.find(event => event.id === id);
 
-    if (!modal || !title || !tableHead || !tableBody || !selectedItem) return;
+    tableHead.innerHTML = `${schema.map(field => `<th data-col="${field.key}">${field.label}</th>`).join('')}<th>Actions</th>`;
+
+    tableBody.innerHTML = clients.map((client, index) => `
+        <tr data-client-id="${client.clientID || ''}">
+            ${schema.map(field => renderClientCell(field, client, index)).join('')}
+            <td><button class="delete-btn" onclick="deleteClientFromModal(${index})"><i class="fas fa-trash"></i> Delete</button></td>
+        </tr>
+    `).join('');
+}
+
+function addClientRowToModal() {
+    detailsContext.clients.push({
+        clientID: '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        email: '',
+        age: '',
+        birthday: '',
+        paid: false
+    });
+
+    renderClientsTable(getDetailsSchema(detailsContext.type), detailsContext.clients);
+}
+
+async function deleteClientFromModal(index) {
+    const client = detailsContext.clients[index];
+    if (!client) {
+        return;
+    }
+
+    try {
+        if (client.clientID) {
+            await apiRequest(`${CLIENT_API_URL}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    client_id: client.clientID
+                })
+            });
+        }
+
+        detailsContext.clients.splice(index, 1);
+        renderClientsTable(getDetailsSchema(detailsContext.type), detailsContext.clients);
+        showDashboardMessage('Client deleted', 'success');
+    } catch (error) {
+        showDashboardMessage(error.message || 'Failed to delete client');
+    }
+}
+
+async function openClientsDetails(type, id) {
+    const modal = document.getElementById('clientsDetailsModal');
+    const title = document.getElementById('clientsDetailsTitle');
+    const selectedItem = type === 'short-events'
+        ? shortEvents.find(eventItem => eventItem.id === id)
+        : campsEvents.find(eventItem => eventItem.id === id);
+
+    if (!modal || !title || !selectedItem) return;
 
     detailsContext.type = type;
     detailsContext.id = id;
     title.textContent = `${selectedItem.title} - Clients Details`;
 
-    const schema = getDetailsSchema(type);
-    const clients = getMockClientsForItem(type, id, selectedItem.title);
+    try {
+        detailsContext.clients = await fetchClientsForEntry(id);
+    } catch (error) {
+        detailsContext.clients = [];
+        showDashboardMessage(error.message || 'Failed to load clients');
+    }
 
-    tableHead.innerHTML = schema.map(field => `<th data-col="${field.key}">${field.label}</th>`).join('');
-
-    tableBody.innerHTML = clients.map((client, index) => `
-        <tr>
-            ${schema.map(field => renderClientCell(field, client, index)).join('')}
-        </tr>
-    `).join('');
-
+    renderClientsTable(getDetailsSchema(type), detailsContext.clients);
     modal.classList.add('active');
 }
 
@@ -833,37 +926,96 @@ function closeClientsDetails() {
 
     detailsContext.type = null;
     detailsContext.id = null;
+    detailsContext.clients = [];
 }
 
-function saveClientsDetails() {
+async function saveClientsDetails() {
     if (!detailsContext.type || !detailsContext.id) return;
 
     const rows = Array.from(document.querySelectorAll('#clientsTableBody tr'));
-    rows.forEach(row => {
-        const inputs = row.querySelectorAll('input, textarea');
-        inputs.forEach(input => {
-            if (input.type === 'checkbox') {
-                void input.checked;
-            } else {
-                void input.value;
-            }
-        });
-    });
 
-    closeClientsDetails();
+    try {
+        for (const row of rows) {
+            const clientID = row.getAttribute('data-client-id') || '';
+            const values = {
+                firstName: row.querySelector('[data-field="firstName"]')?.value ?? '',
+                lastName: row.querySelector('[data-field="lastName"]')?.value ?? '',
+                phone: row.querySelector('[data-field="phone"]')?.value ?? '',
+                email: row.querySelector('[data-field="email"]')?.value ?? '',
+                birthday: row.querySelector('[data-field="birthday"]')?.value ?? '',
+                age: row.querySelector('[data-field="age"]')?.value ?? '',
+                paid: row.querySelector('[data-field="paid"]')?.checked ?? false
+            };
+
+            if (!values.firstName || !values.lastName || !values.email || !values.phone) {
+                continue;
+            }
+
+            if (!clientID) {
+                await apiRequest(`${CLIENT_API_URL}/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        client: {
+                            calendar_id: detailsContext.id,
+                            first_name: values.firstName,
+                            last_name: values.lastName,
+                            email: values.email,
+                            phone: values.phone,
+                            paid: values.paid,
+                            birthday: values.birthday ? `${values.birthday}T00:00:00Z` : null,
+                            age: values.age === '' ? null : Number(values.age)
+                        }
+                    })
+                });
+            } else {
+                const updates = [
+                    { column: 'first_name', value: values.firstName },
+                    { column: 'last_name', value: values.lastName },
+                    { column: 'phone', value: values.phone },
+                    { column: 'email', value: values.email },
+                    { column: 'birthday', value: values.birthday ? `${values.birthday}T00:00:00Z` : '' },
+                    { column: 'age', value: values.age === '' ? '0' : String(values.age) },
+                    { column: 'paid', value: values.paid ? 'true' : 'false' },
+                    { column: 'calendar_id', value: detailsContext.id }
+                ];
+
+                for (const update of updates) {
+                    await apiRequest(`${CLIENT_API_URL}/update`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            client_id: clientID,
+                            column: update.column,
+                            value: update.value
+                        })
+                    });
+                }
+            }
+        }
+
+        detailsContext.clients = await fetchClientsForEntry(detailsContext.id);
+        renderClientsTable(getDetailsSchema(detailsContext.type), detailsContext.clients);
+        showDashboardMessage('Clients saved', 'success');
+    } catch (error) {
+        showDashboardMessage(error.message || 'Failed to save clients');
+    }
 }
 
 function getDetailsSchema(type) {
     if (type === 'camps') {
         return [
-            { key: 'camp', label: 'Select Camp', inputType: 'text' },
             { key: 'firstName', label: 'First Name', inputType: 'text' },
             { key: 'lastName', label: 'Last Name', inputType: 'text' },
-            { key: 'dob', label: 'Date of Birth', inputType: 'date' },
+            { key: 'birthday', label: 'Date of Birth', inputType: 'date' },
             { key: 'phone', label: 'Phone', inputType: 'text' },
             { key: 'email', label: 'Email', inputType: 'email' },
-            { key: 'paid', label: 'Paid', inputType: 'checkbox' },
-            { key: 'comment', label: 'Comment', inputType: 'textarea' }
+            { key: 'age', label: 'Age', inputType: 'number' },
+            { key: 'paid', label: 'Paid', inputType: 'checkbox' }
         ];
     }
 
@@ -872,9 +1024,9 @@ function getDetailsSchema(type) {
         { key: 'lastName', label: 'Last Name', inputType: 'text' },
         { key: 'phone', label: 'Phone', inputType: 'text' },
         { key: 'email', label: 'Email', inputType: 'email' },
+        { key: 'birthday', label: 'Date of Birth', inputType: 'date' },
         { key: 'age', label: 'Age', inputType: 'number' },
-        { key: 'paid', label: 'Paid', inputType: 'checkbox' },
-        { key: 'comment', label: 'Comment', inputType: 'textarea' }
+        { key: 'paid', label: 'Paid', inputType: 'checkbox' }
     ];
 }
 
@@ -901,55 +1053,7 @@ function escapeHtml(value) {
         .replaceAll("'", '&#39;');
 }
 
-function getMockClientsForItem(type, id, itemTitle) {
-    const baseSeed = Number(String(id).slice(-3)) || 1;
-    const day = String((baseSeed % 28) + 1).padStart(2, '0');
-    const month = String(((baseSeed + 3) % 12) + 1).padStart(2, '0');
-
-    if (type === 'camps') {
-        return [
-            {
-                camp: itemTitle || 'Camp Program',
-                firstName: `Client C${baseSeed}`,
-                lastName: 'Example',
-                dob: `2013-${month}-${day}`,
-                phone: '+389 70 111 111',
-                email: `clientc${baseSeed}@mail.com`,
-                paid: false,
-                comment: ''
-            },
-            {
-                camp: itemTitle || 'Camp Program',
-                firstName: `Client C${baseSeed + 1}`,
-                lastName: 'Sample',
-                dob: `2012-${month}-${day}`,
-                phone: '+389 70 222 222',
-                email: `clientc${baseSeed + 1}@mail.com`,
-                paid: true,
-                comment: 'Paid at desk'
-            }
-        ];
-    }
-
-    return [
-        {
-            firstName: `Client E${baseSeed}`,
-            lastName: 'Example',
-            phone: '+389 70 111 111',
-            email: `cliente${baseSeed}@mail.com`,
-            age: 10,
-            paid: false,
-            comment: ''
-        },
-        {
-            firstName: `Client E${baseSeed + 1}`,
-            lastName: 'Sample',
-            phone: '+389 70 222 222',
-            email: `cliente${baseSeed + 1}@mail.com`,
-            age: 11,
-            paid: true,
-            comment: 'Paid at desk'
-        }
-    ];
+function addClientFromModal() {
+    addClientRowToModal();
 }
 
