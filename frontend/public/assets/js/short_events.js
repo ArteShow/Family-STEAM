@@ -2,7 +2,6 @@
 	const root = document.getElementById('eventsRoot');
 	if(!root) return;
 
-	// Get eventId from URL if coming from calendar
 	const urlParams = new URLSearchParams(window.location.search);
 	const eventIdFromUrl = urlParams.get('eventId');
 
@@ -10,8 +9,8 @@
 		const tag = (event.tag || '').toLowerCase();
 		if (tag.includes('camp')) return true;
 
-		const start = new Date(event.starts_at);
-		const end = new Date(event.ends_at);
+		const start = new Date(event.starts_at || event.start_date);
+		const end = new Date(event.ends_at || event.end_date);
 		if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
 
 		const durationDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
@@ -19,19 +18,18 @@
 	}
 
 	try {
-		// Fetch all events from backend
 		const allEvents = await window.apiUtils.fetchAllEvents();
 		
 		const now = new Date();
+		now.setHours(0, 0, 0, 0);
 		const thirtyDaysLater = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 		
-		// Filter non-camp events within next 30 days
 		const upcoming = allEvents.filter(event => {
-			const eventDate = new Date(event.starts_at);
+			const eventDate = new Date(event.starts_at || event.start_date);
+			eventDate.setHours(0, 0, 0, 0);
 			return eventDate >= now && eventDate <= thirtyDaysLater && !isCampEvent(event);
 		});
 
-		// If opened from calendar, ensure selected event is included for deep-linking
 		if (eventIdFromUrl) {
 			const selected = allEvents.find(event => String(event.id) === String(eventIdFromUrl));
 			if (selected && !isCampEvent(selected) && !upcoming.some(event => String(event.id) === String(selected.id))) {
@@ -44,7 +42,6 @@
 			return;
 		}
 
-		// Format and render events
 		const events = await Promise.all(upcoming.map(e => window.apiUtils.formatEventFromBackend(e)));
 		const validEvents = events.filter(ev => !!ev);
 
@@ -132,7 +129,7 @@
 
 			const viewOnCalendar = document.createElement('a');
 			viewOnCalendar.className = 'see_more_btn';
-			viewOnCalendar.href = 'calender.html';
+			viewOnCalendar.href = `calender.html?date=${encodeURIComponent(ev.date)}`;
 			viewOnCalendar.textContent = 'View on Calendar';
 
 			actions.appendChild(register);
@@ -195,7 +192,6 @@
 			});
 		});
 
-		// If eventId was in URL, scroll to that event
 		if(eventIdFromUrl) {
 			setTimeout(() => {
 				const eventElement = document.getElementById('event-' + eventIdFromUrl);
@@ -206,12 +202,9 @@
 				}
 			}, 300);
 		}
-
 	} catch (error) {
 		console.error('Error loading events:', error);
 		root.innerHTML = '<p style="text-align:center;padding:2rem;color:#ff6b6b;">Failed to load events. Please refresh.</p>';
 	}
 
 })();
-
-

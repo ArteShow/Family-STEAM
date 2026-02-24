@@ -1,4 +1,4 @@
-const eventForm = document.getElementById("eventRegisterForm");
+const eventForm = document.getElementById('eventRegisterForm');
 const eventSelect = document.getElementById('eventSelect');
 const CLIENT_CREATE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/client/create`;
 
@@ -20,7 +20,7 @@ function isCampEvent(event) {
 }
 
 async function populateEventOptions() {
-    if (!eventSelect) return;
+    if (!eventSelect || !window.apiUtils) return;
 
     const selectedEventId = getQueryParam('eventId');
 
@@ -29,7 +29,7 @@ async function populateEventOptions() {
         const now = new Date();
         now.setHours(0, 0, 0, 0);
 
-        const upcomingEvents = allEvents
+        const events = allEvents
             .filter(event => {
                 const startDate = new Date(event.starts_at || event.start_date);
                 startDate.setHours(0, 0, 0, 0);
@@ -37,14 +37,14 @@ async function populateEventOptions() {
             })
             .sort((a, b) => new Date(a.starts_at || a.start_date) - new Date(b.starts_at || b.start_date));
 
-        if (upcomingEvents.length === 0) {
+        if (events.length === 0) {
             eventSelect.innerHTML = '<option value="" disabled selected>No events available</option>';
             return;
         }
 
         eventSelect.innerHTML = '<option value="" disabled>Select an event</option>';
 
-        upcomingEvents.forEach((eventItem) => {
+        events.forEach((eventItem) => {
             const startDate = new Date(eventItem.starts_at || eventItem.start_date);
             const formattedDate = Number.isNaN(startDate.getTime())
                 ? ''
@@ -71,7 +71,7 @@ async function populateEventOptions() {
 populateEventOptions();
 
 if (eventForm) {
-    eventForm.addEventListener("submit", async (event) => {
+    eventForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const eventId = eventSelect?.value || getQueryParam('eventId');
@@ -113,7 +113,7 @@ if (eventForm) {
             }
 
             alert('Registration submitted successfully.');
-            window.location.href = "../index.html";
+            window.location.href = '../index.html';
         } catch (error) {
             alert(error.message || 'Failed to submit registration. Please try again.');
         }

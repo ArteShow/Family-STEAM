@@ -2,7 +2,6 @@
 	const root = document.getElementById('campsRoot');
 	if(!root) return;
 
-	// Get eventId from URL if coming from calendar
 	const urlParams = new URLSearchParams(window.location.search);
 	const eventIdFromUrl = urlParams.get('eventId');
 
@@ -10,8 +9,8 @@
 		const tag = (event.tag || '').toLowerCase();
 		if (tag.includes('camp')) return true;
 
-		const start = new Date(event.starts_at);
-		const end = new Date(event.ends_at);
+		const start = new Date(event.starts_at || event.start_date);
+		const end = new Date(event.ends_at || event.end_date);
 		if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
 
 		const durationDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
@@ -19,15 +18,13 @@
 	}
 
 	try {
-		// Fetch all events from backend
 		const allEvents = await window.apiUtils.fetchAllEvents();
 		
 		const now = new Date();
 		now.setHours(0, 0, 0, 0);
 		
-		// Filter future camps
 		const futureEvents = allEvents.filter(event => {
-			const eventDate = new Date(event.starts_at);
+			const eventDate = new Date(event.starts_at || event.start_date);
 			eventDate.setHours(0, 0, 0, 0);
 			return eventDate >= now && isCampEvent(event);
 		});
@@ -37,7 +34,6 @@
 			return;
 		}
 
-		// Format and render camp cards
 		const camps = await Promise.all(futureEvents.map(e => window.apiUtils.formatEventFromBackend(e)));
 		const validCamps = camps.filter(camp => !!camp);
 
@@ -45,6 +41,7 @@
 			const card = document.createElement('article');
 			card.className = 'camp_card';
 			card.style.animationDelay = `${idx * 120}ms`;
+			card.id = 'camp-' + camp.id;
 
 			const carousel = document.createElement('div');
 			carousel.className = 'camp_carousel';
@@ -145,7 +142,6 @@
 			card.appendChild(carousel);
 			card.appendChild(info);
 			card.appendChild(descContainer);
-			card.id = 'camp-' + camp.id;
 			root.appendChild(card);
 
 			expandBtn.addEventListener('click', function() {

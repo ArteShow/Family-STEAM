@@ -40,7 +40,13 @@ async function fetchAllEvents() {
 // Fetch single event by ID
 async function fetchEventById(id) {
     try {
-        const response = await apiRequest(`${CALENDAR_API_URL}/getByID/${id}`);
+        const response = await apiRequest(`${CALENDAR_API_URL}/get`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ calender_entry_id: id })
+        });
         return response.calender_entry;
     } catch (error) {
         console.error('Failed to fetch event:', error);
@@ -70,7 +76,7 @@ async function getUpcomingEvents(days = 30) {
 // Get image URLs for event
 async function getEventImageUrls(imageIds = []) {
     if (!imageIds || imageIds.length === 0) {
-        return []; // Return empty array, no fallback
+        return [];
     }
     
     try {
@@ -105,7 +111,6 @@ async function getEventImageUrls(imageIds = []) {
 // Format event data from backend to frontend structure
 async function formatEventFromBackend(event) {
     try {
-        // Map backend field names to expected format
         const startDate = event.starts_at || event.start_date;
         const endDate = event.ends_at || event.end_date;
         const tag = event.tag || '';
@@ -116,25 +121,25 @@ async function formatEventFromBackend(event) {
         const durationHours = Math.ceil(durationMs / (1000 * 60 * 60));
         const durationDays = Math.ceil(durationMs / (1000 * 60 * 60 * 24));
         const isCamp = tag.toLowerCase().includes('camp') || durationDays >= 2;
-        
+
         const imageUrls = await getEventImageUrls(event.image_ids);
-        const durationText = durationHours < 24 
-            ? `${durationHours}h` 
+        const durationText = durationHours < 24
+            ? `${durationHours}h`
             : `${Math.ceil(durationHours / 24)} days`;
 
         return {
             id: event.id,
             title: event.title,
             date: startDate,
-            startDate: startDate,
-            endDate: endDate,
+            startDate,
+            endDate,
             place: event.location || 'TBA',
             price: event.price ? `€${event.price}` : 'TBA',
             duration: durationText,
             persons: event.amount || 'All ages',
             capacity: event.amount || 'All ages',
             tag: tag || 'Event',
-            tags: tags,
+            tags,
             description: event.description || 'No description available',
             shortDesc: event.description
                 ? event.description.substring(0, 150) + (event.description.length > 150 ? '...' : '')
@@ -144,7 +149,7 @@ async function formatEventFromBackend(event) {
                 ? `/forms/camp_register.html?eventId=${event.id}`
                 : `/forms/event_register.html?eventId=${event.id}`,
             type: isCamp ? 'camp' : 'event',
-            tag_names: tags
+            tag_names: tags,
         };
     } catch (error) {
         console.error('Error formatting event:', error);

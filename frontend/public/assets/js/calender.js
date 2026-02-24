@@ -15,15 +15,16 @@ let filteredEvents = []
 let selectedTag = ""
 
 function isCampEvent(event) {
-    const tag = (event.tag || '').toLowerCase();
-    if (tag.includes('camp')) return true;
+    const tag = (event.tag || '').toLowerCase()
+    if (tag.includes('camp')) return true
 
-    const start = new Date(event.starts_at);
-    const end = new Date(event.ends_at);
-    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
+    const start = new Date(event.starts_at || event.start_date)
+    const endRaw = event.ends_at || event.end_date || event.starts_at || event.start_date
+    const end = new Date(endRaw)
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false
 
-    const durationDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-    return durationDays >= 2;
+    const durationDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24))
+    return durationDays >= 2
 }
 
 function isSameDay(firstDate, secondDate) {
@@ -38,8 +39,13 @@ function isSameDayOnly(calendarDate, eventDateStr) {
 }
 
 function isEventOnDay(event, checkDate) {
-    const startDate = new Date(event.starts_at)
-    const endDate = new Date(event.ends_at)
+    const startDate = new Date(event.starts_at || event.start_date)
+    const endDateRaw = event.ends_at || event.end_date || event.starts_at || event.start_date
+    const endDate = new Date(endDateRaw)
+
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        return false
+    }
     
     startDate.setHours(0, 0, 0, 0)
     endDate.setHours(0, 0, 0, 0)
@@ -177,20 +183,21 @@ function showEvents(day, month, year) {
             const eventItem = document.createElement("div")
             eventItem.className = "event-item"
             
-            const startDate = new Date(event.starts_at)
-            const endDate = new Date(event.ends_at)
+            const startDate = new Date(event.starts_at || event.start_date)
+            const endDateRaw = event.ends_at || event.end_date || event.starts_at || event.start_date
+            const endDate = new Date(endDateRaw)
             const durationMs = endDate - startDate
             const durationHours = Math.ceil(durationMs / (1000 * 60 * 60))
-            const durationText = durationHours < 24 
-                ? `${durationHours}h` 
+            const normalizedDurationHours = durationHours > 0 ? durationHours : 1
+            const durationText = normalizedDurationHours < 24 
+                ? `${normalizedDurationHours}h` 
                 : `${Math.ceil(durationHours / 24)} days`
             
             const tag = event.tag || 'Event'
-            const eventId = event.id
             const isCamp = isCampEvent(event)
             const detailsLink = isCamp
-                ? `./camps.html?eventId=${encodeURIComponent(eventId)}#camp-${encodeURIComponent(eventId)}`
-                : `./short_events.html?eventId=${encodeURIComponent(eventId)}#event-${encodeURIComponent(eventId)}`
+                ? `./camps.html?eventId=${encodeURIComponent(event.id)}#camp-${encodeURIComponent(event.id)}`
+                : `./short_events.html?eventId=${encodeURIComponent(event.id)}#event-${encodeURIComponent(event.id)}`
             
             eventItem.innerHTML = `
                 <div class="event-card-content">
@@ -255,7 +262,7 @@ async function loadEvents() {
         const now = new Date()
         now.setHours(0, 0, 0, 0)
         allEvents = allEvents.filter(event => {
-            const eventDate = new Date(event.starts_at)
+            const eventDate = new Date(event.starts_at || event.start_date)
             eventDate.setHours(0, 0, 0, 0)
             return eventDate >= now
         })
