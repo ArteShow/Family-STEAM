@@ -2,6 +2,22 @@
 	const root = document.getElementById('campsRoot');
 	if(!root) return;
 
+	// Get eventId from URL if coming from calendar
+	const urlParams = new URLSearchParams(window.location.search);
+	const eventIdFromUrl = urlParams.get('eventId');
+
+	function isCampEvent(event) {
+		const tag = (event.tag || '').toLowerCase();
+		if (tag.includes('camp')) return true;
+
+		const start = new Date(event.starts_at);
+		const end = new Date(event.ends_at);
+		if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
+
+		const durationDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+		return durationDays >= 2;
+	}
+
 	try {
 		// Fetch all events from backend
 		const allEvents = await window.apiUtils.fetchAllEvents();
@@ -9,11 +25,11 @@
 		const now = new Date();
 		now.setHours(0, 0, 0, 0);
 		
-		// Filter events that start in future
+		// Filter future camps
 		const futureEvents = allEvents.filter(event => {
-			const eventDate = new Date(event.start_date);
+			const eventDate = new Date(event.starts_at);
 			eventDate.setHours(0, 0, 0, 0);
-			return eventDate >= now;
+			return eventDate >= now && isCampEvent(event);
 		});
 
 		if(futureEvents.length === 0){
@@ -21,10 +37,11 @@
 			return;
 		}
 
-		// Format and render all events as cards
+		// Format and render camp cards
 		const camps = await Promise.all(futureEvents.map(e => window.apiUtils.formatEventFromBackend(e)));
+		const validCamps = camps.filter(camp => !!camp);
 
-		camps.forEach((camp, idx) => {
+		validCamps.forEach((camp, idx) => {
 			const card = document.createElement('article');
 			card.className = 'camp_card';
 			card.style.animationDelay = `${idx * 120}ms`;
@@ -35,11 +52,11 @@
 			const track = document.createElement('div');
 			track.className = 'carousel_track';
 
-			if (!camp.images || camp.images.length === 0) {
-				camp.images = ['https://via.placeholder.com/800x500?text=Camp+Image'];
-			}
+			const campImages = (camp.images && camp.images.length > 0)
+				? camp.images
+				: ['../images/slider1.webp'];
 
-			camp.images.forEach(src => {
+			campImages.forEach(src => {
 				const slide = document.createElement('div');
 				slide.className = 'carousel_slide';
 				const img = document.createElement('img');
@@ -71,7 +88,7 @@
 
 			const shortDesc = document.createElement('p');
 			shortDesc.className = 'camp_short_desc';
-			shortDesc.textContent = camp.shortDesc;
+			shortDesc.textContent = camp.shortDesc || camp.description || 'No description available';
 
 			const icons = document.createElement('ul');
 			icons.className = 'camp_icons';
@@ -99,7 +116,7 @@
 
 			const registerBtn = document.createElement('a');
 			registerBtn.className = 'register_btn';
-			registerBtn.href = camp.registerUrl || '../../forms/camp_register.html';
+			registerBtn.href = camp.registerUrl || '/forms/camp_register.html';
 			registerBtn.textContent = camp.registerLabel || 'Register Now';
 
 			actions.appendChild(registerBtn);
@@ -128,6 +145,7 @@
 			card.appendChild(carousel);
 			card.appendChild(info);
 			card.appendChild(descContainer);
+			card.id = 'camp-' + camp.id;
 			root.appendChild(card);
 
 			expandBtn.addEventListener('click', function() {
@@ -138,7 +156,7 @@
 			});
 
 			let cur = 0;
-			const slidesCount = camp.images.length;
+			const slidesCount = campImages.length;
 			const trackEl = track;
 
 			function updateTrack() {
@@ -178,6 +196,17 @@
 				}
 			});
 		});
+
+		if(eventIdFromUrl) {
+			setTimeout(() => {
+				const campElement = document.getElementById('camp-' + eventIdFromUrl);
+				if(campElement) {
+					campElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+					campElement.style.border = '2px solid #2980b9';
+					campElement.style.boxShadow = '0 0 20px rgba(41, 128, 225, 0.5)';
+				}
+			}, 300);
+		}
 	} catch (error) {
 		console.error('Error loading camps:', error);
 		root.innerHTML = '<p style="text-align:center;padding:2rem;color:#ff6b6b;">Failed to load camps. Please refresh.</p>';

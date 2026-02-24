@@ -14,6 +14,18 @@ let allEvents = []
 let filteredEvents = []
 let selectedTag = ""
 
+function isCampEvent(event) {
+    const tag = (event.tag || '').toLowerCase();
+    if (tag.includes('camp')) return true;
+
+    const start = new Date(event.starts_at);
+    const end = new Date(event.ends_at);
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
+
+    const durationDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    return durationDays >= 2;
+}
+
 function isSameDay(firstDate, secondDate) {
     return firstDate.getFullYear() === secondDate.getFullYear()
         && firstDate.getMonth() === secondDate.getMonth()
@@ -26,8 +38,8 @@ function isSameDayOnly(calendarDate, eventDateStr) {
 }
 
 function isEventOnDay(event, checkDate) {
-    const startDate = new Date(event.start_date)
-    const endDate = new Date(event.end_date)
+    const startDate = new Date(event.starts_at)
+    const endDate = new Date(event.ends_at)
     
     startDate.setHours(0, 0, 0, 0)
     endDate.setHours(0, 0, 0, 0)
@@ -102,7 +114,11 @@ function renderCalendar(date) {
         
         if (dayEvents.length > 0) {
             cellContent += '<div class="event-tags">'
-            cellContent += `<span class="tag event-tag">${dayEvents.length} event${dayEvents.length > 1 ? 's' : ''}</span>`
+            if (dayEvents.length === 1) {
+                cellContent += '<span class="event-dot"></span>'
+            } else {
+                cellContent += `<span class="event-dot multiple">${dayEvents.length}</span>`
+            }
             cellContent += '</div>'
         }
 
@@ -161,30 +177,30 @@ function showEvents(day, month, year) {
             const eventItem = document.createElement("div")
             eventItem.className = "event-item"
             
-            const startDate = new Date(event.start_date)
-            const endDate = new Date(event.end_date)
+            const startDate = new Date(event.starts_at)
+            const endDate = new Date(event.ends_at)
             const durationMs = endDate - startDate
             const durationHours = Math.ceil(durationMs / (1000 * 60 * 60))
             const durationText = durationHours < 24 
                 ? `${durationHours}h` 
                 : `${Math.ceil(durationHours / 24)} days`
             
-            const tagDisplay = event.tag || 'Event'
+            const tag = event.tag || 'Event'
+            const eventId = event.id
+            const isCamp = isCampEvent(event)
+            const detailsLink = isCamp
+                ? `./camps.html?eventId=${encodeURIComponent(eventId)}#camp-${encodeURIComponent(eventId)}`
+                : `./short_events.html?eventId=${encodeURIComponent(eventId)}#event-${encodeURIComponent(eventId)}`
             
             eventItem.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
-                    <div style="flex-grow: 1;">
+                <div class="event-card-content">
+                    <div class="event-header">
                         <h3>${event.title}</h3>
-                        <p><strong>Duration:</strong> ${durationText}</p>
-                        <p><strong>Location:</strong> ${event.location || 'TBA'}</p>
-                        <p><strong>Price:</strong> ${event.price || 'TBA'}</p>
-                        <p style="margin-top: 0.5rem; color: #40507a; font-size: 0.9rem;">${event.description ? event.description.substring(0, 200) + '...' : 'No description'}</p>
+                        <span class="event-tag">${tag}</span>
                     </div>
-                    <div>
-                        <span class="tag event-tag">${tagDisplay}</span>
-                    </div>
+                    <p class="event-description">${event.description ? event.description.substring(0, 250) + (event.description.length > 250 ? '...' : '') : 'No description'}</p>
                 </div>
-                <a href="#" onclick="alert('Event details: ' + '${event.title}'); return false;" class="see_more_btn" style="margin-top: 1rem; display: inline-block;">See More</a>
+                <button class="see_more_btn" onclick="window.location.href='${detailsLink}'">See Details</button>
             `
             eventsList.appendChild(eventItem)
         })
@@ -239,7 +255,7 @@ async function loadEvents() {
         const now = new Date()
         now.setHours(0, 0, 0, 0)
         allEvents = allEvents.filter(event => {
-            const eventDate = new Date(event.start_date)
+            const eventDate = new Date(event.starts_at)
             eventDate.setHours(0, 0, 0, 0)
             return eventDate >= now
         })

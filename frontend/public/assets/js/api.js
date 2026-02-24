@@ -30,7 +30,7 @@ async function apiRequest(url, options = {}) {
 async function fetchAllEvents() {
     try {
         const response = await apiRequest(`${CALENDAR_API_URL}/getAll`);
-        return response.data || [];
+        return response.calender_entries || [];
     } catch (error) {
         console.error('Failed to fetch events:', error);
         return [];
@@ -41,7 +41,7 @@ async function fetchAllEvents() {
 async function fetchEventById(id) {
     try {
         const response = await apiRequest(`${CALENDAR_API_URL}/getByID/${id}`);
-        return response.data;
+        return response.calender_entry;
     } catch (error) {
         console.error('Failed to fetch event:', error);
         return null;
@@ -70,60 +70,86 @@ async function getUpcomingEvents(days = 30) {
 // Get image URLs for event
 async function getEventImageUrls(imageIds = []) {
     if (!imageIds || imageIds.length === 0) {
-        return ['assets/images/slider1.webp']; // fallback image
+        return []; // Return empty array, no fallback
     }
-
+    
     try {
-        const urls = [];
-        for (const imageId of imageIds.slice(0, 3)) {
-            urls.push(`${FILE_API_URL}/download/${imageId}`);
-        }
-        return urls.length > 0 ? urls : ['assets/images/slider1.webp'];
+        const results = await Promise.allSettled(
+            imageIds.slice(0, 3).map(async (imageId) => {
+                const response = await fetch(`${FILE_API_URL}/download`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ file_id: imageId })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Image fetch failed: ${response.status}`);
+                }
+
+                const blob = await response.blob();
+                return URL.createObjectURL(blob);
+            })
+        );
+
+        return results
+            .filter(result => result.status === 'fulfilled')
+            .map(result => result.value);
     } catch (error) {
         console.error('Failed to get image URLs:', error);
-        return ['assets/images/slider1.webp'];
+        return [];
     }
 }
 
 // Format event data from backend to frontend structure
 async function formatEventFromBackend(event) {
-    // Map backend field names to expected format
-    const startDate = event.starts_at || event.start_date;
-    const endDate = event.ends_at || event.end_date;
-    const tag = event.tag || '';
-    const tags = tag ? [tag] : [];
-    
-    const imageUrls = await getEventImageUrls(event.image_ids);
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const durationMs = end - start;
-    const durationHours = Math.ceil(durationMs / (1000 * 60 * 60));
-    const durationText = durationHours < 24 
-        ? `${durationHours}h` 
-        : `${Math.ceil(durationHours / 24)} days`;
+    try {
+        // Map backend field names to expected format
+        const startDate = event.starts_at || event.start_date;
+        const endDate = event.ends_at || event.end_date;
+        const tag = event.tag || '';
+        const tags = tag ? [tag] : [];
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const durationMs = end - start;
+        const durationHours = Math.ceil(durationMs / (1000 * 60 * 60));
+        const durationDays = Math.ceil(durationMs / (1000 * 60 * 60 * 24));
+        const isCamp = tag.toLowerCase().includes('camp') || durationDays >= 2;
+        
+        const imageUrls = await getEventImageUrls(event.image_ids);
+        const durationText = durationHours < 24 
+            ? `${durationHours}h` 
+            : `${Math.ceil(durationHours / 24)} days`;
 
-    return {
-        id: event.id,
-        title: event.title,
-        date: startDate,
-        startDate: startDate,
-        endDate: endDate,
-        place: event.location || 'TBA',
-        price: event.price ? `€${event.price}` : 'TBA',
-        duration: durationText,
-        persons: event.amount || 'All ages',
-        capacity: event.amount || 'All ages',
-        tag: tag || 'Event',
-        tags: tags,
-        description: event.description || 'No description available',
-        shortDesc: event.description
-            ? event.description.substring(0, 150) + (event.description.length > 150 ? '...' : '')
-            : 'No description available',
-        images: imageUrls,
-        registerUrl: `forms/event_register.html?eventId=${event.id}`,
-        type: 'event',
-        tag_names: tags
-    };
+        return {
+            id: event.id,
+            title: event.title,
+            date: startDate,
+            startDate: startDate,
+            endDate: endDate,
+            place: event.location || 'TBA',
+            price: event.price ? `€${event.price}` : 'TBA',
+            duration: durationText,
+            persons: event.amount || 'All ages',
+            capacity: event.amount || 'All ages',
+            tag: tag || 'Event',
+            tags: tags,
+            description: event.description || 'No description available',
+            shortDesc: event.description
+                ? event.description.substring(0, 150) + (event.description.length > 150 ? '...' : '')
+                : 'No description available',
+            images: imageUrls,
+            registerUrl: isCamp
+                ? `/forms/camp_register.html?eventId=${event.id}`
+                : `/forms/event_register.html?eventId=${event.id}`,
+            type: isCamp ? 'camp' : 'event',
+            tag_names: tags
+        };
+    } catch (error) {
+        console.error('Error formatting event:', error);
+        return null;
+    }
 }
 
 // Get all events and format them

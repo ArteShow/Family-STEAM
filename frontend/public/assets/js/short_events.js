@@ -2,6 +2,22 @@
 	const root = document.getElementById('eventsRoot');
 	if(!root) return;
 
+	// Get eventId from URL if coming from calendar
+	const urlParams = new URLSearchParams(window.location.search);
+	const eventIdFromUrl = urlParams.get('eventId');
+
+	function isCampEvent(event) {
+		const tag = (event.tag || '').toLowerCase();
+		if (tag.includes('camp')) return true;
+
+		const start = new Date(event.starts_at);
+		const end = new Date(event.ends_at);
+		if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
+
+		const durationDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+		return durationDays >= 2;
+	}
+
 	try {
 		// Fetch all events from backend
 		const allEvents = await window.apiUtils.fetchAllEvents();
@@ -9,11 +25,19 @@
 		const now = new Date();
 		const thirtyDaysLater = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 		
-		// Filter events within next 30 days
+		// Filter non-camp events within next 30 days
 		const upcoming = allEvents.filter(event => {
-			const eventDate = new Date(event.start_date);
-			return eventDate >= now && eventDate <= thirtyDaysLater;
+			const eventDate = new Date(event.starts_at);
+			return eventDate >= now && eventDate <= thirtyDaysLater && !isCampEvent(event);
 		});
+
+		// If opened from calendar, ensure selected event is included for deep-linking
+		if (eventIdFromUrl) {
+			const selected = allEvents.find(event => String(event.id) === String(eventIdFromUrl));
+			if (selected && !isCampEvent(selected) && !upcoming.some(event => String(event.id) === String(selected.id))) {
+				upcoming.push(selected);
+			}
+		}
 
 		if(upcoming.length === 0){
 			root.innerHTML = '<p style="text-align:center;padding:2rem;color:#333">No short events in the next 30 days.</p>';
@@ -22,11 +46,13 @@
 
 		// Format and render events
 		const events = await Promise.all(upcoming.map(e => window.apiUtils.formatEventFromBackend(e)));
+		const validEvents = events.filter(ev => !!ev);
 
-		events.forEach((ev, idx) => {
+		validEvents.forEach((ev, idx) => {
 			const row = document.createElement('section');
 			row.className = 'event_row' + (idx % 2 === 1 ? ' reverse' : '');
 			row.style.animationDelay = `${idx * 120}ms`;
+			row.id = 'event-' + ev.id;
 
 			const carousel = document.createElement('div');
 			carousel.className = 'event_carousel';
@@ -34,8 +60,11 @@
 			const track = document.createElement('div');
 			track.className = 'carousel_track';
 
-			if (!ev.images || ev.images.length === 0) ev.images = ['https://via.placeholder.com/800x500?text=No+Image'];
-			ev.images.forEach(src => {
+			const eventImages = (ev.images && ev.images.length > 0)
+				? ev.images
+				: ['../images/slider1.webp'];
+
+			eventImages.forEach(src => {
 				const slide = document.createElement('div');
 				slide.className = 'carousel_slide';
 				const sImg = document.createElement('img');
@@ -64,7 +93,7 @@
 
 			const register = document.createElement('a');
 			register.className = 'register_btn';
-			register.href = ev.registerUrl || '../../forms/event_register.html';
+			register.href = ev.registerUrl || '/forms/event_register.html';
 			register.textContent = 'Register';
 			
 			const title = document.createElement('h4');
@@ -127,7 +156,7 @@
 			});
 
 			let cur = 0;
-			const slidesCount = ev.images.length;
+			const slidesCount = eventImages.length;
 			const trackEl = track;
 			trackEl.style.transition = 'transform 420ms cubic-bezier(.22,.9,.3,1)';
 
@@ -165,6 +194,19 @@
 				}
 			});
 		});
+
+		// If eventId was in URL, scroll to that event
+		if(eventIdFromUrl) {
+			setTimeout(() => {
+				const eventElement = document.getElementById('event-' + eventIdFromUrl);
+				if(eventElement) {
+					eventElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+					eventElement.style.border = '2px solid #2980b9';
+					eventElement.style.boxShadow = '0 0 20px rgba(41, 128, 225, 0.5)';
+				}
+			}, 300);
+		}
+
 	} catch (error) {
 		console.error('Error loading events:', error);
 		root.innerHTML = '<p style="text-align:center;padding:2rem;color:#ff6b6b;">Failed to load events. Please refresh.</p>';

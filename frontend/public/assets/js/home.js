@@ -47,11 +47,19 @@ async function generateIncomingEvents() {
         const formattedEvents = await Promise.all(
             events.slice(0, 2).map(event => window.apiUtils.formatEventFromBackend(event))
         );
+        
+        // Keep all valid events even when images are missing
+        const validEvents = formattedEvents.filter(event => !!event);
 
-        // Build HTML with events and see-more button
-        let html = formattedEvents.map((event, index) => {
-            const imageUrl = event.images && event.images.length > 0 
-                ? event.images[0] 
+        if (validEvents.length === 0) {
+            incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #40507a;">No upcoming events. Check back soon!</p>';
+            return;
+        }
+
+        // Build HTML with events
+        let html = validEvents.map((event, index) => {
+            const imageUrl = (event.images && event.images.length > 0)
+                ? event.images[0]
                 : 'assets/images/slider1.webp';
 
             return `

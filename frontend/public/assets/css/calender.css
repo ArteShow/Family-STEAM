@@ -190,6 +190,28 @@ body {
     color: white;
 }
 
+.event-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.event-dot.multiple {
+    width: 18px;
+    height: 18px;
+    background: #FF9800;
+    font-size: 9px;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .camp-tag {
     background: linear-gradient(135deg, rgb(255, 180, 80), rgb(255, 150, 50));
     color: white;
@@ -287,16 +309,17 @@ main h3 {
 }
 
 .event-item {
-    padding: 15px;
-    margin-bottom: 12px;
-    background: linear-gradient(135deg, rgb(224, 242, 255), rgb(240, 248, 255));
-    border-left: 4px solid rgb(0, 119, 182);
-    border-radius: 6px;
+    padding: 1.2rem;
+        margin-bottom: 1rem;
+        background: white;
+        border-radius: 12px;
     animation: slideInLeft 0.5s ease;
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid rgb(41, 128, 225);
 }
 
 .event-item::before {
@@ -321,8 +344,8 @@ main h3 {
 
 .event-item h3 {
     color: rgb(24, 37, 110);
-    margin-bottom: 5px;
-    font-size: 16px;
+    margin-bottom: 0.75rem;
+        font-size: 1.1rem;
     font-weight: 600;
 }
 
@@ -338,17 +361,80 @@ main h3 {
     background: linear-gradient(135deg, rgb(24, 37, 110), rgb(41, 128, 225));
     color: white;
     text-decoration: none;
+    border: none;
     border-radius: 6px;
     font-size: 0.9rem;
     font-weight: 600;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(24, 37, 110, 0.2);
+    cursor: pointer;
+        font-family: 'Poppins', sans-serif;
 }
 
 .see_more_btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(24, 37, 110, 0.3);
     background: linear-gradient(135deg, rgb(41, 128, 225), rgb(24, 37, 110));
+}
+.event-card-content {
+    margin-bottom: 1rem;
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.event-header h3 {
+    margin: 0;
+    color: rgb(24, 37, 110);
+    font-size: 1.1rem;
+    flex: 1;
+}
+
+.event-header .event-tag {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.event-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.detail-item strong {
+    font-size: 0.85rem;
+    color: rgb(41, 128, 225);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-item p {
+    color: rgb(60, 60, 60);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.event-description {
+    color: rgb(100, 100, 100);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 1rem 0 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(220, 220, 220);
 }
 .close-btn {
     display: block;
