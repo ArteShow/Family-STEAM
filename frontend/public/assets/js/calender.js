@@ -7,8 +7,12 @@ const eventsCard = document.getElementById("eventsCard")
 const eventDate = document.getElementById("eventDate")
 const eventsList = document.getElementById("eventsList")
 const closeBtn = document.getElementById("closeBtn")
+const tagFilter = document.getElementById("tagFilter")
 
 let currentDate = new Date()
+let allEvents = []
+let filteredEvents = []
+let selectedTag = ""
 
 function isSameDay(firstDate, secondDate) {
     return firstDate.getFullYear() === secondDate.getFullYear()
@@ -16,55 +20,37 @@ function isSameDay(firstDate, secondDate) {
         && firstDate.getDate() === secondDate.getDate()
 }
 
-const multiDayEvents = camps.map(camp => ({
-    id: camp.id,
-    title: camp.title,
-    startDate: new Date(camp.startDate),
-    endDate: new Date(camp.endDate),
-    type: 'camp',
-    time: 'All day'
-}))
+function isSameDayOnly(calendarDate, eventDateStr) {
+    const eventDate = new Date(eventDateStr)
+    return isSameDay(calendarDate, eventDate)
+}
 
-const singleDayEvents = shortEvents.map(event => ({
-    id: event.id,
-    title: event.title,
-    date: new Date(event.date),
-    type: 'event',
-    time: event.time || event.duration || 'All day'
-}))
-
-function getQueryParam(param) {
-	const urlParams = new URLSearchParams(window.location.search);
-	return urlParams.get(param);
+function isEventOnDay(event, checkDate) {
+    const startDate = new Date(event.start_date)
+    const endDate = new Date(event.end_date)
+    
+    startDate.setHours(0, 0, 0, 0)
+    endDate.setHours(0, 0, 0, 0)
+    const dayCheck = new Date(checkDate)
+    dayCheck.setHours(0, 0, 0, 0)
+    
+    return dayCheck >= startDate && dayCheck <= endDate
 }
 
 function getEventsForDay(date) {
-	const events = [];
-
-    singleDayEvents.forEach(event => {
-        if (isSameDay(event.date, date)) {
+    const events = [];
+    
+    filteredEvents.forEach(event => {
+        if (isEventOnDay(event, date)) {
             events.push(event)
         }
     })
-
-	multiDayEvents.forEach(event => {
-		const eventStart = new Date(event.startDate);
-		const eventEnd = new Date(event.endDate);
-		eventStart.setHours(0, 0, 0, 0);
-		eventEnd.setHours(0, 0, 0, 0);
-		const checkDate = new Date(date);
-		checkDate.setHours(0, 0, 0, 0);
-		
-		if (checkDate >= eventStart && checkDate <= eventEnd) {
-			events.push(event);
-		}
-	});
-	
-	return events;
+    
+    return events;
 }
 
 function hasDayEvents(date) {
-	return getEventsForDay(date).length > 0;
+    return getEventsForDay(date).length > 0;
 }
 
 function renderCalendar(date) {
@@ -115,15 +101,8 @@ function renderCalendar(date) {
         const dayEvents = getEventsForDay(dayDate);
         
         if (dayEvents.length > 0) {
-            const eventTypes = new Set(dayEvents.map(e => e.type))
-            
             cellContent += '<div class="event-tags">'
-            if (eventTypes.has("event")) {
-                cellContent += '<span class="tag event-tag">Event</span>'
-            }
-            if (eventTypes.has("camp")) {
-                cellContent += '<span class="tag camp-tag">Camp</span>'
-            }
+            cellContent += `<span class="tag event-tag">${dayEvents.length} event${dayEvents.length > 1 ? 's' : ''}</span>`
             cellContent += '</div>'
         }
 
@@ -176,36 +155,36 @@ function showEvents(day, month, year) {
     eventsList.innerHTML = ""
 
     if (events.length === 0) {
-        eventsList.innerHTML = '<p style="text-align: center; color: rgb(100, 100, 100);">No events planned for this day.</p>'
+        eventsList.innerHTML = '<p style="text-align: center; color: #40507a; padding: 2rem;">No events planned for this day.</p>'
     } else {
-        events.forEach((event, index) => {
+        events.forEach((event) => {
             const eventItem = document.createElement("div")
             eventItem.className = "event-item"
-            const tagClass = event.type === "camp" ? "camp-tag" : "event-tag"
-            const tagText = event.type.charAt(0).toUpperCase() + event.type.slice(1)
             
-            let eventDetails = `<h3>${event.title}</h3><p>${event.time || 'All day'}</p>`;
-            let seeMoreLink = "#";
-
-			if (event.startDate && event.endDate) {
-                const startStr = new Date(event.startDate).toLocaleDateString();
-                const endStr = new Date(event.endDate).toLocaleDateString();
-				eventDetails = `<h3>${event.title}</h3><p>${startStr} - ${endStr}</p>`;
-				seeMoreLink = `camps.html#camp-${event.id}`;
-			} else if (event.type === 'camp') {
-				seeMoreLink = `camps.html#camp-${event.id}`;
-			} else if (event.type === 'event') {
-				seeMoreLink = `short_events.html#event-${event.id}`;
-			}
+            const startDate = new Date(event.start_date)
+            const endDate = new Date(event.end_date)
+            const durationMs = endDate - startDate
+            const durationHours = Math.ceil(durationMs / (1000 * 60 * 60))
+            const durationText = durationHours < 24 
+                ? `${durationHours}h` 
+                : `${Math.ceil(durationHours / 24)} days`
+            
+            const tagDisplay = event.tag || 'Event'
             
             eventItem.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
                     <div style="flex-grow: 1;">
-                        ${eventDetails}
+                        <h3>${event.title}</h3>
+                        <p><strong>Duration:</strong> ${durationText}</p>
+                        <p><strong>Location:</strong> ${event.location || 'TBA'}</p>
+                        <p><strong>Price:</strong> ${event.price || 'TBA'}</p>
+                        <p style="margin-top: 0.5rem; color: #40507a; font-size: 0.9rem;">${event.description ? event.description.substring(0, 200) + '...' : 'No description'}</p>
                     </div>
-                    <span class="tag ${tagClass}">${tagText}</span>
+                    <div>
+                        <span class="tag event-tag">${tagDisplay}</span>
+                    </div>
                 </div>
-                <a href="${seeMoreLink}" class="see_more_btn" style="margin-top: 1rem; display: inline-block;">See More</a>
+                <a href="#" onclick="alert('Event details: ' + '${event.title}'); return false;" class="see_more_btn" style="margin-top: 1rem; display: inline-block;">See More</a>
             `
             eventsList.appendChild(eventItem)
         })
@@ -222,19 +201,77 @@ closeBtn.addEventListener("click", () => {
     eventsCard.classList.remove("show")
 })
 
+async function initializeTags() {
+    try {
+        const tags = await window.apiUtils.getAllTags()
+        tagFilter.innerHTML = '<option value="">All Events</option>'
+        tags.forEach(tag => {
+            const option = document.createElement('option')
+            option.value = tag
+            option.textContent = tag
+            tagFilter.appendChild(option)
+        })
+    } catch (error) {
+        console.error('Error loading tags:', error)
+    }
+}
+
+tagFilter.addEventListener("change", async (e) => {
+    selectedTag = e.target.value
+    
+    if (selectedTag === "") {
+        filteredEvents = [...allEvents]
+    } else {
+        // Backend returns 'tag' as a single string field
+        filteredEvents = allEvents.filter(event => 
+            event.tag === selectedTag
+        )
+    }
+    
+    renderCalendar(currentDate)
+})
+
+async function loadEvents() {
+    try {
+        allEvents = await window.apiUtils.fetchAllEvents()
+        
+        // Filter out past events
+        const now = new Date()
+        now.setHours(0, 0, 0, 0)
+        allEvents = allEvents.filter(event => {
+            const eventDate = new Date(event.start_date)
+            eventDate.setHours(0, 0, 0, 0)
+            return eventDate >= now
+        })
+        
+        filteredEvents = [...allEvents]
+        
+        await initializeTags()
+        renderCalendar(currentDate)
+    } catch (error) {
+        console.error('Error loading events:', error)
+        calendarBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #ff6b6b;">Failed to load events. Please refresh the page.</td></tr>'
+    }
+}
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
 window.addEventListener('load', () => {
-    const dateParam = getQueryParam('date') || getQueryParam('startDate');
-    if (!dateParam) return;
+    loadEvents().then(() => {
+        const dateParam = getQueryParam('date') || getQueryParam('startDate');
+        if (!dateParam) return;
 
-    const targetDate = new Date(dateParam);
-    if (Number.isNaN(targetDate.getTime())) return;
+        const targetDate = new Date(dateParam);
+        if (Number.isNaN(targetDate.getTime())) return;
 
-    currentDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
-    renderCalendar(currentDate);
+        currentDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
+        renderCalendar(currentDate);
 
-    setTimeout(() => {
-        showEvents(targetDate.getDate(), targetDate.getMonth(), targetDate.getFullYear());
-    }, 100);
+        setTimeout(() => {
+            showEvents(targetDate.getDate(), targetDate.getMonth(), targetDate.getFullYear());
+        }, 100);
+    });
 });
-
-renderCalendar(currentDate)

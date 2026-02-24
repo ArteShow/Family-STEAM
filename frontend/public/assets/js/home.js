@@ -31,36 +31,61 @@ faqItems.forEach(item => {
     });
 });
 
-function generateIncomingEvents() {
+async function generateIncomingEvents() {
     const incomingRoot = document.getElementById('incomingRoot');
-    const incomingEvents = getIncomingEvents();
+    
+    try {
+        // Fetch upcoming events from backend (next 30 days)
+        const events = await window.apiUtils.getUpcomingEvents(30);
 
-    if (incomingEvents.length === 0) {
-        incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #40507a;">No upcoming events. Check back soon!</p>';
-        return;
-    }
+        if (events.length === 0) {
+            incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #40507a;">No upcoming events. Check back soon!</p>';
+            return;
+        }
 
-    incomingRoot.innerHTML = incomingEvents.slice(0, 4).map((event, index) => {
-        const eventDate = new Date(event.date);
-        const dateParam = encodeURIComponent(eventDate.toISOString());
-        const detailsLink = `assets/html/calender.html?date=${dateParam}`;
-        const eventClass = 'incoming_event';
+        // Format events for display
+        const formattedEvents = await Promise.all(
+            events.slice(0, 2).map(event => window.apiUtils.formatEventFromBackend(event))
+        );
 
-        return `
-            <div class="${eventClass}" style="animation-delay: ${index * 0.1}s;">
-                <div class="event_image_container">
-                    <img src="assets/images/slider1.webp" alt="${event.title}">
-                </div>
-                <div class="incoming_event_details">
-                    <h5>${event.title}</h5>
-                    <p class="event_description">${event.shortDesc || event.description?.substring(0, 150) + '...'}</p>
-                    <div class="event_footer single">
-                        <a href="${detailsLink}" class="see_details_btn">See More Details</a>
+        // Build HTML with events and see-more button
+        let html = formattedEvents.map((event, index) => {
+            const imageUrl = event.images && event.images.length > 0 
+                ? event.images[0] 
+                : 'assets/images/slider1.webp';
+
+            return `
+                <div class="incoming_event" style="animation-delay: ${index * 0.1}s;">
+                    <div class="event_image_container">
+                        <img src="${imageUrl}" alt="${event.title}" onerror="this.src='assets/images/slider1.webp'">
+                    </div>
+                    <div class="incoming_event_details">
+                        <h5>${event.title}</h5>
+                        <p class="event_description">${event.shortDesc}</p>
+                        <div class="event_footer single">
+                            <a href="assets/html/calender.html" class="see_details_btn">See More Details</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+
+        // Add see-more button if there are more events
+        if (events.length > 2) {
+            html += `
+                <div class="incoming_event" style="animation-delay: ${2 * 0.1}s;">
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 2rem; text-align: center; background: rgba(41, 128, 225, 0.08); border-radius: 1rem; border: 2px dashed rgb(41, 128, 225);">
+                        <a href="assets/html/calender.html" class="see_details_btn" style="margin: 0;">See All Events →</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        incomingRoot.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading events:', error);
+        incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ff6b6b;">Failed to load events</p>';
+    }
 }
 
 if (document.readyState === 'loading') {

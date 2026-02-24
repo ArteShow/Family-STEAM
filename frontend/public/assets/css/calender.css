@@ -19,6 +19,51 @@ body {
     padding-bottom: 50px;
 }
 
+.tag-filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.tag-filter-container label {
+    font-weight: 600;
+    color: rgb(24, 37, 110);
+    font-size: 0.95rem;
+}
+
+.tag-filter-select {
+    padding: 0.6rem 1rem;
+    border: 2px solid rgb(41, 128, 225);
+    border-radius: 0.5rem;
+    background: white;
+    color: rgb(24, 37, 110);
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.tag-filter-select:hover {
+    border-color: rgb(30, 100, 180);
+    background: rgba(41, 128, 225, 0.05);
+}
+
+.tag-filter-select:focus {
+    outline: none;
+    border-color: rgb(30, 100, 180);
+    box-shadow: 0 0 0 3px rgba(41, 128, 225, 0.2);
+}
+
+.tag-filter-select option {
+    background: white;
+    color: rgb(24, 37, 110);
+    padding: 0.5rem;
+}
 .calendar-header {
     display: flex;
     justify-content: center;

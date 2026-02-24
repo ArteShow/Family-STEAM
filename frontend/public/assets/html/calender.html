@@ -30,6 +30,14 @@
 
     <main class="calendar-container">
         <h3>Calender</h3>
+        <!-- Tag Filter Section -->
+        <div class="tag-filter-container">
+            <label for="tagFilter">Filter by Tag:</label>
+            <select id="tagFilter" class="tag-filter-select">
+                <option value="">All Events</option>
+            </select>
+        </div>
+
         <div class="calendar-header">
             <button id="prevMonth"><i class="fa-solid fa-chevron-left"></i></button>
             <h1 id="monthYear"></h1>
@@ -124,8 +132,9 @@
         </div>
     </footer>
 
+    <script src="../js/api.js"></script>
     <script src="../js/data.js"></script>
-    <script src="../js/calender.js"></script>
+    <script src="../js/calender.js?v=1"></script>
     <script src="https://kit.fontawesome.com/d9e39d51d2.js" crossorigin="anonymous"></script>
     <script src="../js/nav.js"></script>
 </body>
