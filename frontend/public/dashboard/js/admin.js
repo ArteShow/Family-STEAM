@@ -11,7 +11,8 @@ let pendingDelete = {
 let detailsContext = {
     type: null,
     id: null,
-    clients: []
+	clients: [],
+    snapshot: ''
 };
 
 const AUTH_VERIFY_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/auth/verify`;
@@ -320,6 +321,38 @@ function initializeNavigation() {
             
             navigateTo(pageName);
         });
+    });
+
+    initializeAdminMenuToggle();
+}
+
+function initializeAdminMenuToggle() {
+    const menuToggle = document.getElementById('adminMenuToggle');
+    const navMenu = document.querySelector('.admin-nav');
+
+    if (!menuToggle || !navMenu) {
+        return;
+    }
+
+    menuToggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        menuToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+
+    const navLinks = navMenu.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.admin-header')) {
+            menuToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+        }
     });
 }
 
@@ -775,7 +808,7 @@ function initializeFormInteractions() {
     if (detailsModal) {
         detailsModal.addEventListener('click', (e) => {
             if (e.target === detailsModal) {
-                closeClientsDetails();
+                attemptCloseClientsDetails();
             }
         });
     }
@@ -836,9 +869,33 @@ function renderClientsTable(schema, clients) {
     tableBody.innerHTML = clients.map((client, index) => `
         <tr data-client-id="${client.clientID || ''}">
             ${schema.map(field => renderClientCell(field, client, index)).join('')}
-            <td><button class="delete-btn" onclick="deleteClientFromModal(${index})"><i class="fas fa-trash"></i> Delete</button></td>
+            <td><button class="client-delete-btn" onclick="deleteClientFromModal(${index})"><i class="fas fa-trash"></i> Delete</button></td>
         </tr>
     `).join('');
+}
+
+function buildClientsSnapshot() {
+    const rows = Array.from(document.querySelectorAll('#clientsTableBody tr'));
+    const normalized = rows.map((row) => ({
+        clientID: row.getAttribute('data-client-id') || '',
+        firstName: row.querySelector('[data-field="firstName"]')?.value ?? '',
+        lastName: row.querySelector('[data-field="lastName"]')?.value ?? '',
+        phone: row.querySelector('[data-field="phone"]')?.value ?? '',
+        email: row.querySelector('[data-field="email"]')?.value ?? '',
+        birthday: row.querySelector('[data-field="birthday"]')?.value ?? '',
+        age: row.querySelector('[data-field="age"]')?.value ?? '',
+        paid: row.querySelector('[data-field="paid"]')?.checked ?? false
+    }));
+
+    return JSON.stringify(normalized);
+}
+
+function refreshClientsSnapshot() {
+    detailsContext.snapshot = buildClientsSnapshot();
+}
+
+function hasUnsavedClientsChanges() {
+    return buildClientsSnapshot() !== detailsContext.snapshot;
 }
 
 function addClientRowToModal() {
@@ -877,6 +934,7 @@ async function deleteClientFromModal(index) {
 
         detailsContext.clients.splice(index, 1);
         renderClientsTable(getDetailsSchema(detailsContext.type), detailsContext.clients);
+        refreshClientsSnapshot();
         showDashboardMessage('Client deleted', 'success');
     } catch (error) {
         showDashboardMessage(error.message || 'Failed to delete client');
@@ -904,10 +962,16 @@ async function openClientsDetails(type, id) {
     }
 
     renderClientsTable(getDetailsSchema(type), detailsContext.clients);
+    refreshClientsSnapshot();
     modal.classList.add('active');
 }
 
-function closeClientsDetails() {
+function closeClientsDetails(force = false) {
+    if (!force && hasUnsavedClientsChanges()) {
+        openUnsavedClientsModal();
+        return;
+    }
+
     const modal = document.getElementById('clientsDetailsModal');
     const tableHead = document.getElementById('clientsTableHeadRow');
     const tableBody = document.getElementById('clientsTableBody');
@@ -927,9 +991,38 @@ function closeClientsDetails() {
     detailsContext.type = null;
     detailsContext.id = null;
     detailsContext.clients = [];
+    detailsContext.snapshot = '';
 }
 
-async function saveClientsDetails() {
+function attemptCloseClientsDetails() {
+    closeClientsDetails(false);
+}
+
+function openUnsavedClientsModal() {
+    const unsavedModal = document.getElementById('unsavedClientsModal');
+    if (unsavedModal) {
+        unsavedModal.classList.add('active');
+    }
+}
+
+function closeUnsavedClientsModal() {
+    const unsavedModal = document.getElementById('unsavedClientsModal');
+    if (unsavedModal) {
+        unsavedModal.classList.remove('active');
+    }
+}
+
+async function saveAndCloseClientsModal() {
+    closeUnsavedClientsModal();
+    await saveClientsDetails(true);
+}
+
+function discardClientsChangesAndClose() {
+    closeUnsavedClientsModal();
+    closeClientsDetails(true);
+}
+
+async function saveClientsDetails(closeAfterSave = true) {
     if (!detailsContext.type || !detailsContext.id) return;
 
     const rows = Array.from(document.querySelectorAll('#clientsTableBody tr'));
@@ -1000,7 +1093,12 @@ async function saveClientsDetails() {
 
         detailsContext.clients = await fetchClientsForEntry(detailsContext.id);
         renderClientsTable(getDetailsSchema(detailsContext.type), detailsContext.clients);
+        refreshClientsSnapshot();
         showDashboardMessage('Clients saved', 'success');
+
+        if (closeAfterSave) {
+            closeClientsDetails(true);
+        }
     } catch (error) {
         showDashboardMessage(error.message || 'Failed to save clients');
     }

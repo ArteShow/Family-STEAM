@@ -6,7 +6,7 @@
 
 body {
     background: rgb(245, 247, 250);
-    padding-top: 70px;
+    padding-top: 96px;
 }
 
 .admin-header {
@@ -113,6 +113,34 @@ body {
     transform: translateY(-2px);
 }
 
+.admin-menu-toggle {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.admin-menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: rgb(255, 239, 170);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.admin-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(8px, 8px);
+}
+
+.admin-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.admin-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(8px, -8px);
+}
 /* Main Layout */
 .admin-container {
     display: flex;
@@ -680,6 +708,22 @@ body {
     font-size: 0.9rem;
 }
 
+#unsavedClientsModal {
+    z-index: 2200;
+}
+
+#unsavedClientsModal .delete-modal-content {
+    max-width: 620px;
+}
+
+#unsavedClientsModal .delete-modal-actions {
+    flex-wrap: wrap;
+}
+
+#unsavedClientsModal .delete-modal-actions button {
+    flex: 1 1 170px;
+    min-width: 150px;
+}
 /* Form Actions */
 .form-actions {
     display: flex;
@@ -978,6 +1022,28 @@ body {
     gap: 0.75rem;
     margin-top: 1rem;
 }
+.client-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid #ff6b6b;
+    border-radius: 0.5rem;
+    background: #fff0f0;
+    color: #d94a4a;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.client-delete-btn:hover {
+    background: #ff6b6b;
+    color: #fff;
+    transform: translateY(-1px);
+}
 .empty-state {
     grid-column: 1 / -1;
     text-align: center;
@@ -1018,8 +1084,81 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    body {
+            padding-top: 86px;
+        }
+    
+        .admin-header {
+            padding: 0.75rem 1.25rem;
+        }
+    
+        .header-container {
+            position: relative;
+            gap: 0.75rem;
+            justify-content: space-between;
+        }
+    
+        .admin-menu-toggle {
+            display: flex;
+            order: 2;
+        }
+    
+        .admin-nav {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0.9rem;
+            border-radius: 0.9rem;
+            background: rgba(30, 100, 180, 0.97);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 20;
+        }
+    
+        .admin-nav.active {
+            display: flex;
+        }
+    
+        .admin-nav .nav-link {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.95rem;
+            border-bottom: none;
+            background: rgba(255, 255, 255, 0.08);
+        }
+    
+        .admin-nav .nav-link:hover {
+            transform: none;
+            background: rgba(255, 239, 170, 0.2);
+    
+        }
+    
+        #unsavedClientsModal .delete-modal-content {
+            padding: 1.5rem;
+            max-height: 90vh;
+            overflow: auto;
+        }
+    
+        #unsavedClientsModal .delete-modal-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+    
+        #unsavedClientsModal .delete-modal-actions button {
+            width: 100%;
+            min-width: 0;
+        }
+    
+        .logout {
+            order: 3;
+            margin-left: auto;
+        }
     .dashboard-main {
-        padding: 1.5rem;
+        padding: 2rem 1.25rem 1.25rem;
     }
 
     .page-header h1 {
@@ -1050,19 +1189,15 @@ body {
         width: 100%;
     }
 
-    .admin-nav {
-        flex-wrap: wrap;
-    }
-
-    .admin-nav .nav-link {
-        font-size: 0.85rem;
-        padding: 0.6rem 1rem;
-    }
 }
 
 @media (max-width: 600px) {
+    body {
+        padding-top: 82px;
+    }
+
     .dashboard-main {
-        padding: 1rem;
+        padding: 1.85rem 1rem 1rem;
     }
 
     .page-header h1 {
@@ -1080,12 +1215,6 @@ body {
     .admin-logo {
         width: 2.5rem;
         height: 2.5rem;
-    }
-
-    .admin-nav .nav-link {
-        font-size: 0.75rem;
-        padding: 0.5rem 0.75rem;
-        gap: 0.25rem;
     }
 
     .logout {
@@ -1128,8 +1257,11 @@ body {
 }
 
 @media (max-width: 480px) {
+    body {
+            padding-top: 78px;
+        }
     .dashboard-main {
-        padding: 0.75rem;
+        padding: 1.75rem 0.75rem 0.75rem;
     }
 
     .page-header {
