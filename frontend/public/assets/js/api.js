@@ -1,5 +1,19 @@
 // Shared API utility for all frontend pages
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+function resolveApiBaseUrl() {
+    const fromWindow = window.__API_BASE_URL__;
+    if (typeof fromWindow === 'string' && fromWindow.trim() !== '') {
+        return fromWindow.replace(/\/$/, '');
+    }
+
+    const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+    if (isLocalHost) {
+        return 'http://localhost:8000/api/v1';
+    }
+
+    return `${window.location.origin}/api/v1`;
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 const FILE_API_URL = `${API_BASE_URL}/file`;
 const CALENDAR_API_URL = `${API_BASE_URL}/calender`;
 
