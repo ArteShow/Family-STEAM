@@ -25,6 +25,19 @@ function isSameDayOnly(calendarDate, eventDateStr) {
     return isSameDay(calendarDate, eventDate)
 }
 
+function isCampEvent(event) {
+    const tag = (event.tag || '').toLowerCase()
+    if (tag.includes('camp')) return true
+
+    const start = new Date(event.starts_at || event.start_date)
+    const endRaw = event.ends_at || event.end_date || event.starts_at || event.start_date
+    const end = new Date(endRaw)
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false
+
+    const durationDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24))
+    return durationDays >= 2
+}
+
 function isEventOnDay(event, checkDate) {
     const startDate = new Date(event.starts_at || event.start_date)
     const endDateRaw = event.ends_at || event.end_date || event.starts_at || event.start_date
@@ -177,6 +190,10 @@ function showEvents(day, month, year) {
                 : `${Math.ceil(durationHours / 24)} days`
             
             const tagDisplay = event.tag || 'Event'
+            const isCamp = isCampEvent(event)
+            const detailsLink = isCamp
+                ? `./camps.html?eventId=${encodeURIComponent(event.id)}#camp-${encodeURIComponent(event.id)}`
+                : `./short_events.html?eventId=${encodeURIComponent(event.id)}#event-${encodeURIComponent(event.id)}`
             
             eventItem.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
@@ -191,7 +208,7 @@ function showEvents(day, month, year) {
                         <span class="tag event-tag">${tagDisplay}</span>
                     </div>
                 </div>
-                <a href="#" onclick="alert('Event details: ' + '${event.title}'); return false;" class="see_more_btn" style="margin-top: 1rem; display: inline-block;">See More</a>
+                <a href="${detailsLink}" class="see_more_btn" style="margin-top: 1rem; display: inline-block;">See More</a>
             `
             eventsList.appendChild(eventItem)
         })
