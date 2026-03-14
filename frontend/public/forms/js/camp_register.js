@@ -1,6 +1,9 @@
 const campSelect = document.getElementById("campSelect");
 const campForm = document.getElementById("campRegisterForm");
 const CLIENT_CREATE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/client/create`;
+const t = (key, fallback) => (window.i18n && typeof window.i18n.t === 'function')
+    ? window.i18n.t(key, fallback)
+    : fallback;
 
 function isCampEvent(event) {
     const tag = (event.tag || '').toLowerCase();
@@ -34,11 +37,11 @@ async function populateCampOptions() {
             .sort((a, b) => new Date(a.starts_at || a.start_date) - new Date(b.starts_at || b.start_date));
 
         if (camps.length === 0) {
-            campSelect.innerHTML = '<option value="" disabled selected>No camps available</option>';
+            campSelect.innerHTML = `<option value="" disabled selected>${t('dynamic.noCampsAvailable', 'No camps available')}</option>`;
             return;
         }
 
-        campSelect.innerHTML = '<option value="" disabled>Select a camp</option>';
+        campSelect.innerHTML = `<option value="" disabled>${t('dynamic.selectCamp', 'Select a camp')}</option>`;
 
         camps.forEach((camp) => {
             const startDate = new Date(camp.starts_at || camp.start_date);
@@ -60,7 +63,7 @@ async function populateCampOptions() {
         }
     } catch (error) {
         console.error('Failed to load camps:', error);
-        campSelect.innerHTML = '<option value="" disabled selected>Failed to load camps</option>';
+        campSelect.innerHTML = `<option value="" disabled selected>${t('dynamic.failedLoadCampsOption', 'Failed to load camps')}</option>`;
     }
 }
 
@@ -72,7 +75,7 @@ if (campForm) {
 
         const selectedCampId = campSelect?.value;
         if (!selectedCampId) {
-            alert('Please select a camp.');
+            alert(t('dynamic.selectCampAlert', 'Please select a camp.'));
             return;
         }
 
@@ -107,10 +110,10 @@ if (campForm) {
                 throw new Error(errorText || `Request failed with status ${response.status}`);
             }
 
-            alert('Registration submitted successfully.');
+            alert(t('dynamic.registrationSuccess', 'Registration submitted successfully.'));
             window.location.href = "../index.html";
         } catch (error) {
-            alert(error.message || 'Failed to submit registration. Please try again.');
+            alert(error.message || t('dynamic.registrationFailed', 'Failed to submit registration. Please try again.'));
         }
     });
 }

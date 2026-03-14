@@ -1,6 +1,9 @@
 const eventForm = document.getElementById('eventRegisterForm');
 const eventSelect = document.getElementById('eventSelect');
 const CLIENT_CREATE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/client/create`;
+const t = (key, fallback) => (window.i18n && typeof window.i18n.t === 'function')
+    ? window.i18n.t(key, fallback)
+    : fallback;
 
 function getQueryParam(param) {
     const params = new URLSearchParams(window.location.search);
@@ -38,11 +41,11 @@ async function populateEventOptions() {
             .sort((a, b) => new Date(a.starts_at || a.start_date) - new Date(b.starts_at || b.start_date));
 
         if (events.length === 0) {
-            eventSelect.innerHTML = '<option value="" disabled selected>No events available</option>';
+            eventSelect.innerHTML = `<option value="" disabled selected>${t('dynamic.noEventsAvailable', 'No events available')}</option>`;
             return;
         }
 
-        eventSelect.innerHTML = '<option value="" disabled>Select an event</option>';
+        eventSelect.innerHTML = `<option value="" disabled>${t('dynamic.selectEvent', 'Select an event')}</option>`;
 
         events.forEach((eventItem) => {
             const startDate = new Date(eventItem.starts_at || eventItem.start_date);
@@ -64,7 +67,7 @@ async function populateEventOptions() {
         }
     } catch (error) {
         console.error('Failed to load events:', error);
-        eventSelect.innerHTML = '<option value="" disabled selected>Failed to load events</option>';
+        eventSelect.innerHTML = `<option value="" disabled selected>${t('dynamic.failedLoadEventsOption', 'Failed to load events')}</option>`;
     }
 }
 
@@ -76,7 +79,7 @@ if (eventForm) {
 
         const eventId = eventSelect?.value || getQueryParam('eventId');
         if (!eventId) {
-            alert('Please select an event.');
+            alert(t('dynamic.selectEventAlert', 'Please select an event.'));
             return;
         }
 
@@ -112,10 +115,10 @@ if (eventForm) {
                 throw new Error(errorText || `Request failed with status ${response.status}`);
             }
 
-            alert('Registration submitted successfully.');
+            alert(t('dynamic.registrationSuccess', 'Registration submitted successfully.'));
             window.location.href = '../index.html';
         } catch (error) {
-            alert(error.message || 'Failed to submit registration. Please try again.');
+            alert(error.message || t('dynamic.registrationFailed', 'Failed to submit registration. Please try again.'));
         }
     });
 }

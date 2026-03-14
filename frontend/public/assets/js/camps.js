@@ -1,6 +1,9 @@
 (async function(){
 	const root = document.getElementById('campsRoot');
 	if(!root) return;
+	const t = (key, fallback) => (window.i18n && typeof window.i18n.t === 'function')
+		? window.i18n.t(key, fallback)
+		: fallback;
 
 	const urlParams = new URLSearchParams(window.location.search);
 	const eventIdFromUrl = urlParams.get('eventId');
@@ -30,7 +33,7 @@
 		});
 
 		if(futureEvents.length === 0){
-			root.innerHTML = '<p style="text-align:center;padding:2rem;color:#333">No camps available at the moment.</p>';
+			root.innerHTML = `<p style="text-align:center;padding:2rem;color:#333">${t('dynamic.noCamps', 'No camps available at the moment.')}</p>`;
 			return;
 		}
 
@@ -85,7 +88,7 @@
 
 			const shortDesc = document.createElement('p');
 			shortDesc.className = 'camp_short_desc';
-			shortDesc.textContent = camp.shortDesc || camp.description || 'No description available';
+			shortDesc.textContent = camp.shortDesc || camp.description || t('dynamic.noDescription', 'No description available');
 
 			const icons = document.createElement('ul');
 			icons.className = 'camp_icons';
@@ -99,7 +102,7 @@
 			icons.innerHTML = `
 				<li><i class="fa-solid fa-location-dot"></i> <span>${camp.place}</span></li>
 				<li><i class="fa-solid fa-euro-sign"></i> <span>${camp.price}</span></li>
-				<li><i class="fa-regular fa-calendar"></i> <span>${dayCount} days</span></li>
+				<li><i class="fa-regular fa-calendar"></i> <span>${dayCount} ${t('dynamic.days', 'days')}</span></li>
 				<li><i class="fa-solid fa-users"></i> <span>${camp.persons}</span></li>
 			`;
 
@@ -114,7 +117,9 @@
 			const registerBtn = document.createElement('a');
 			registerBtn.className = 'register_btn';
 			registerBtn.href = camp.registerUrl || '/forms/camp_register.html';
-			registerBtn.textContent = camp.registerLabel || 'Register Now';
+			registerBtn.textContent = camp.registerLabel || t('dynamic.registerNow', 'Register Now');
+
+			const viewCalendarLabel = t('dynamic.viewOnCalendar', 'View on Calendar');
 
 			actions.appendChild(registerBtn);
 			actions.appendChild(viewCalendarBtn);
@@ -134,7 +139,8 @@
 
 			const descContent = document.createElement('div');
 			descContent.className = 'camp_desc_content';
-			descContent.innerHTML = `<p>${camp.description || 'No description available'}</p>`;
+			descContent.innerHTML = `<p>${camp.description || t('dynamic.noDescription', 'No description available')}</p>`;
+			viewCalendarBtn.textContent = viewCalendarLabel;
 
 			descContainer.appendChild(expandBtn);
 			descContainer.appendChild(descContent);
@@ -205,7 +211,7 @@
 		}
 	} catch (error) {
 		console.error('Error loading camps:', error);
-		root.innerHTML = '<p style="text-align:center;padding:2rem;color:#ff6b6b;">Failed to load camps. Please refresh.</p>';
+		root.innerHTML = `<p style="text-align:center;padding:2rem;color:#ff6b6b;">${t('dynamic.failedLoadCampsRefresh', 'Failed to load camps. Please refresh.')}</p>`;
 	}
 
 })();

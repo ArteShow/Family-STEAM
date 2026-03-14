@@ -1,6 +1,9 @@
 (async function(){
 	const root = document.getElementById('eventsRoot');
 	if(!root) return;
+	const t = (key, fallback) => (window.i18n && typeof window.i18n.t === 'function')
+		? window.i18n.t(key, fallback)
+		: fallback;
 
 	const urlParams = new URLSearchParams(window.location.search);
 	const eventIdFromUrl = urlParams.get('eventId');
@@ -38,7 +41,7 @@
 		}
 
 		if(upcoming.length === 0){
-			root.innerHTML = '<p style="text-align:center;padding:2rem;color:#333">No short events in the next 30 days.</p>';
+			root.innerHTML = `<p style="text-align:center;padding:2rem;color:#333">${t('dynamic.noShortEvents', 'No short events in the next 30 days.')}</p>`;
 			return;
 		}
 
@@ -91,7 +94,7 @@
 			const register = document.createElement('a');
 			register.className = 'register_btn';
 			register.href = ev.registerUrl || '/forms/event_register.html';
-			register.textContent = 'Register';
+			register.textContent = t('dynamic.register', 'Register');
 			
 			const title = document.createElement('h4');
 			title.textContent = ev.title + ' — ' + (new Date(ev.date)).toLocaleDateString();
@@ -107,7 +110,7 @@
 
 			const resp = document.createElement('p');
 			resp.className = 'event_responsibility';
-			resp.innerHTML = `<strong>Tags:</strong> ${ev.tags.join(', ') || 'Event'}`;
+			resp.innerHTML = `<strong>Tags:</strong> ${ev.tags.join(', ') || t('dynamic.allEvents', 'Event')}`;
 
 			const descContainer = document.createElement('div');
 			descContainer.className = 'event_desc_container';
@@ -119,7 +122,7 @@
 
 			const descContent = document.createElement('div');
 			descContent.className = 'event_desc_content';
-			descContent.innerHTML = `<p>${ev.description || 'No description available'}</p>`;
+			descContent.innerHTML = `<p>${ev.description || t('dynamic.noDescription', 'No description available')}</p>`;
 
 			descContainer.appendChild(expandBtn);
 			descContainer.appendChild(descContent);
@@ -130,7 +133,7 @@
 			const viewOnCalendar = document.createElement('a');
 			viewOnCalendar.className = 'see_more_btn';
 			viewOnCalendar.href = `calender.html?date=${encodeURIComponent(ev.date)}`;
-			viewOnCalendar.textContent = 'View on Calendar';
+			viewOnCalendar.textContent = t('dynamic.viewOnCalendar', 'View on Calendar');
 
 			actions.appendChild(register);
 			actions.appendChild(viewOnCalendar);
@@ -204,7 +207,7 @@
 		}
 	} catch (error) {
 		console.error('Error loading events:', error);
-		root.innerHTML = '<p style="text-align:center;padding:2rem;color:#ff6b6b;">Failed to load events. Please refresh.</p>';
+		root.innerHTML = `<p style="text-align:center;padding:2rem;color:#ff6b6b;">${t('dynamic.failedLoadEventsRefresh', 'Failed to load events. Please refresh.')}</p>`;
 	}
 
 })();

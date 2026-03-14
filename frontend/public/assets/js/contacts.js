@@ -1,5 +1,8 @@
 
 const contactForm = document.getElementById('contactForm');
+const t = (key, fallback) => (window.i18n && typeof window.i18n.t === 'function')
+    ? window.i18n.t(key, fallback)
+    : fallback;
 
 if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
@@ -12,17 +15,17 @@ if (contactForm) {
         const message = this.querySelector('textarea').value;
 
         if (!name || !email || !message) {
-            alert('Please fill in all required fields');
+            alert(t('dynamic.contactFillRequired', 'Please fill in all required fields'));
             return;
         }
 
-        alert('Thank you for your message! We will get back to you soon.');
+        alert(t('dynamic.contactThanks', 'Thank you for your message! We will get back to you soon.'));
 
         this.reset();
 
         const btn = this.querySelector('.submit_btn');
         const originalText = btn.textContent;
-        btn.textContent = 'Message Sent!';
+        btn.textContent = t('dynamic.contactSent', 'Message Sent!');
         btn.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
 
         setTimeout(() => {

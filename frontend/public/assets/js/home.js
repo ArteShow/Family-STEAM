@@ -4,6 +4,10 @@ const images = [
     "assets/images/slider3.jpg"
 ];
 
+const t = (key, fallback) => (window.i18n && typeof window.i18n.t === 'function')
+    ? window.i18n.t(key, fallback)
+    : fallback;
+
 let index = 0;
 const slider = document.querySelector(".background_slider");
 
@@ -39,7 +43,7 @@ async function generateIncomingEvents() {
         const events = await window.apiUtils.getUpcomingEvents(30);
 
         if (events.length === 0) {
-            incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #40507a;">No upcoming events. Check back soon!</p>';
+            incomingRoot.innerHTML = `<p style="text-align: center; padding: 2rem; color: #40507a;">${t('dynamic.noUpcomingEvents', 'No upcoming events. Check back soon!')}</p>`;
             return;
         }
 
@@ -52,7 +56,7 @@ async function generateIncomingEvents() {
         const validEvents = formattedEvents.filter(event => !!event);
 
         if (validEvents.length === 0) {
-            incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #40507a;">No upcoming events. Check back soon!</p>';
+            incomingRoot.innerHTML = `<p style="text-align: center; padding: 2rem; color: #40507a;">${t('dynamic.noUpcomingEvents', 'No upcoming events. Check back soon!')}</p>`;
             return;
         }
 
@@ -71,7 +75,7 @@ async function generateIncomingEvents() {
                         <h5>${event.title}</h5>
                         <p class="event_description">${event.shortDesc}</p>
                         <div class="event_footer single">
-                            <a href="assets/html/calender.html" class="see_details_btn">See More Details</a>
+                            <a href="assets/html/calender.html" class="see_details_btn">${t('dynamic.seeMoreDetails', 'See More Details')}</a>
                         </div>
                     </div>
                 </div>
@@ -83,7 +87,7 @@ async function generateIncomingEvents() {
             html += `
                 <div class="incoming_event" style="animation-delay: ${2 * 0.1}s;">
                     <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 2rem; text-align: center; background: rgba(41, 128, 225, 0.08); border-radius: 1rem; border: 2px dashed rgb(41, 128, 225);">
-                        <a href="assets/html/calender.html" class="see_details_btn" style="margin: 0;">See All Events →</a>
+                        <a href="assets/html/calender.html" class="see_details_btn" style="margin: 0;">${t('dynamic.seeAllEvents', 'See All Events →')}</a>
                     </div>
                 </div>
             `;
@@ -92,7 +96,7 @@ async function generateIncomingEvents() {
         incomingRoot.innerHTML = html;
     } catch (error) {
         console.error('Error loading events:', error);
-        incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ff6b6b;">Failed to load events</p>';
+        incomingRoot.innerHTML = `<p style="text-align: center; padding: 2rem; color: #ff6b6b;">${t('dynamic.failedLoadEvents', 'Failed to load events')}</p>`;
     }
 }
 

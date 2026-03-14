@@ -7,6 +7,10 @@ document.getElementById('registerTab').addEventListener('click', function() {
     switchForm('register');
 });
 
+const t = (key, fallback) => (window.i18n && typeof window.i18n.t === 'function')
+    ? window.i18n.t(key, fallback)
+    : fallback;
+
 function switchForm(formType) {
     // Hide all forms
     const loginForm = document.getElementById('loginForm');
@@ -111,14 +115,14 @@ async function handleLogin(event) {
         });
 
         if (!data || !data.token) {
-            throw new Error('Missing token in login response');
+            throw new Error(t('dynamic.missingToken', 'Missing token in login response'));
         }
 
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('currentUser', username);
         window.location.href = 'html/main.html';
     } catch (error) {
-        showMessage(error.message || 'Login failed');
+        showMessage(error.message || t('dynamic.loginFailed', 'Login failed'));
     }
 }
 
@@ -131,7 +135,7 @@ async function handleRegister(event) {
     const jwtToken = document.getElementById('jwtToken').value;
 
     if (!jwtToken.trim()) {
-        showMessage('JWT token is required for registration');
+        showMessage(t('dynamic.jwtRequired', 'JWT token is required for registration'));
         return;
     }
 
@@ -147,11 +151,11 @@ async function handleRegister(event) {
             })
         });
 
-        showMessage('Registration successful. Please login.', 'success');
+        showMessage(t('dynamic.registrationOkLogin', 'Registration successful. Please login.'), 'success');
         switchForm('login');
         document.getElementById('loginUsername').value = username;
         document.getElementById('loginPassword').value = '';
     } catch (error) {
-        showMessage(error.message || 'Registration failed');
+        showMessage(error.message || t('dynamic.registrationFailedShort', 'Registration failed'));
     }
 }

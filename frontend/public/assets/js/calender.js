@@ -9,6 +9,14 @@ const eventsList = document.getElementById("eventsList")
 const closeBtn = document.getElementById("closeBtn")
 const tagFilter = document.getElementById("tagFilter")
 
+const t = (key, fallback) => (window.i18n && typeof window.i18n.t === 'function')
+    ? window.i18n.t(key, fallback)
+    : fallback
+
+const locale = () => (window.i18n && typeof window.i18n.getLocale === 'function')
+    ? window.i18n.getLocale()
+    : 'en-US'
+
 let currentDate = new Date()
 let allEvents = []
 let filteredEvents = []
@@ -83,12 +91,10 @@ function renderCalendar(date) {
     const firstDayIndex = (firstDay.getDay() + 6) % 7
     const totalDays = lastDay.getDate()
 
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ]
-
-    monthYear.textContent = monthNames[month] + " " + year
+    monthYear.textContent = new Date(year, month, 1).toLocaleDateString(locale(), {
+        month: 'long',
+        year: 'numeric'
+    })
 
     let row = document.createElement("tr")
 
@@ -163,12 +169,11 @@ todayBtn.addEventListener("click", () => {
 })
 
 function showEvents(day, month, year) {
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ]
-
-    const dateStr = `${monthNames[month]} ${day}, ${year}`
+    const dateStr = new Date(year, month, day).toLocaleDateString(locale(), {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    })
     eventDate.textContent = dateStr
 
     const dayDate = new Date(year, month, day);
@@ -177,7 +182,7 @@ function showEvents(day, month, year) {
     eventsList.innerHTML = ""
 
     if (events.length === 0) {
-        eventsList.innerHTML = '<p style="text-align: center; color: #40507a; padding: 2rem;">No events planned for this day.</p>'
+        eventsList.innerHTML = `<p style="text-align: center; color: #40507a; padding: 2rem;">${t('dynamic.noEventsForDay', 'No events planned for this day.')}</p>`
     } else {
         events.forEach((event) => {
             const eventItem = document.createElement("div")
@@ -191,9 +196,9 @@ function showEvents(day, month, year) {
             const normalizedDurationHours = durationHours > 0 ? durationHours : 1
             const durationText = normalizedDurationHours < 24 
                 ? `${normalizedDurationHours}h` 
-                : `${Math.ceil(durationHours / 24)} days`
+                : `${Math.ceil(durationHours / 24)} ${t('dynamic.days', 'days')}`
             
-            const tag = event.tag || 'Event'
+            const tag = event.tag || t('dynamic.allEvents', 'Event')
             const isCamp = isCampEvent(event)
             const detailsLink = isCamp
                 ? `./camps.html?eventId=${encodeURIComponent(event.id)}#camp-${encodeURIComponent(event.id)}`
@@ -205,9 +210,9 @@ function showEvents(day, month, year) {
                         <h3>${event.title}</h3>
                         <span class="event-tag">${tag}</span>
                     </div>
-                    <p class="event-description">${event.description ? event.description.substring(0, 250) + (event.description.length > 250 ? '...' : '') : 'No description'}</p>
+                    <p class="event-description">${event.description ? event.description.substring(0, 250) + (event.description.length > 250 ? '...' : '') : t('dynamic.noDescription', 'No description')}</p>
                 </div>
-                <button class="see_more_btn" onclick="window.location.href='${detailsLink}'">See Details</button>
+                <button class="see_more_btn" onclick="window.location.href='${detailsLink}'">${t('dynamic.seeDetails', 'See Details')}</button>
             `
             eventsList.appendChild(eventItem)
         })
@@ -227,7 +232,7 @@ closeBtn.addEventListener("click", () => {
 async function initializeTags() {
     try {
         const tags = await window.apiUtils.getAllTags()
-        tagFilter.innerHTML = '<option value="">All Events</option>'
+        tagFilter.innerHTML = `<option value="">${t('dynamic.allEvents', 'All Events')}</option>`
         tags.forEach(tag => {
             const option = document.createElement('option')
             option.value = tag
@@ -273,7 +278,7 @@ async function loadEvents() {
         renderCalendar(currentDate)
     } catch (error) {
         console.error('Error loading events:', error)
-        calendarBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #ff6b6b;">Failed to load events. Please refresh the page.</td></tr>'
+        calendarBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #ff6b6b;">${t('dynamic.failedLoadEventsPage', 'Failed to load events. Please refresh the page.')}</td></tr>`
     }
 }
 
