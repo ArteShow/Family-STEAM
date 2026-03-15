@@ -136,6 +136,10 @@ async function formatEventFromBackend(event) {
         const durationDays = Math.ceil(durationMs / (1000 * 60 * 60 * 24));
         const isCamp = tag.toLowerCase().includes('camp') || durationDays >= 2;
 
+        const lang = (window.i18n && typeof window.i18n.getLang === 'function') ? window.i18n.getLang() : 'en';
+        const title = event[`title_${lang}`] || event.title_en || event.title || '';
+        const description = event[`description_${lang}`] || event.description_en || event.description || '';
+
         const imageUrls = await getEventImageUrls(event.image_ids);
         const durationText = durationHours < 24
             ? `${durationHours}h`
@@ -143,7 +147,7 @@ async function formatEventFromBackend(event) {
 
         return {
             id: event.id,
-            title: event.title,
+            title,
             date: startDate,
             startDate,
             endDate,
@@ -154,9 +158,9 @@ async function formatEventFromBackend(event) {
             capacity: event.amount || 'All ages',
             tag: tag || 'Event',
             tags,
-            description: event.description || 'No description available',
-            shortDesc: event.description
-                ? event.description.substring(0, 150) + (event.description.length > 150 ? '...' : '')
+            description: description || 'No description available',
+            shortDesc: description
+                ? description.substring(0, 150) + (description.length > 150 ? '...' : '')
                 : 'No description available',
             images: imageUrls,
             registerUrl: isCamp

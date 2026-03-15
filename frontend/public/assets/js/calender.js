@@ -168,6 +168,11 @@ todayBtn.addEventListener("click", () => {
     renderCalendar(currentDate)
 })
 
+function getLocalizedField(event, field) {
+    const lang = (window.i18n && typeof window.i18n.getLang === 'function') ? window.i18n.getLang() : 'en'
+    return event[`${field}_${lang}`] || event[`${field}_en`] || event[field] || ''
+}
+
 function showEvents(day, month, year) {
     const dateStr = new Date(year, month, day).toLocaleDateString(locale(), {
         year: 'numeric',
@@ -203,14 +208,17 @@ function showEvents(day, month, year) {
             const detailsLink = isCamp
                 ? `./camps.html?eventId=${encodeURIComponent(event.id)}#camp-${encodeURIComponent(event.id)}`
                 : `./short_events.html?eventId=${encodeURIComponent(event.id)}#event-${encodeURIComponent(event.id)}`
-            
+
+            const eventTitle = getLocalizedField(event, 'title')
+            const eventDescription = getLocalizedField(event, 'description')
+
             eventItem.innerHTML = `
                 <div class="event-card-content">
                     <div class="event-header">
-                        <h3>${event.title}</h3>
+                        <h3>${eventTitle}</h3>
                         <span class="event-tag">${tag}</span>
                     </div>
-                    <p class="event-description">${event.description ? event.description.substring(0, 250) + (event.description.length > 250 ? '...' : '') : t('dynamic.noDescription', 'No description')}</p>
+                    <p class="event-description">${eventDescription ? eventDescription.substring(0, 250) + (eventDescription.length > 250 ? '...' : '') : t('dynamic.noDescription', 'No description')}</p>
                 </div>
                 <button class="see_more_btn" onclick="window.location.href='${detailsLink}'">${t('dynamic.seeDetails', 'See Details')}</button>
             `

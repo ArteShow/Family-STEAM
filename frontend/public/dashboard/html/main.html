@@ -9,6 +9,11 @@
     <link rel="icon" href="../../assets/images/favicon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .language-switcher {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
     <header class="admin-header">
@@ -98,8 +103,16 @@
                         </div>
                         <form id="shortEventForm" onsubmit="handleShortEventSubmit(event)">
                             <div class="form-group">
-                                <label for="eventTitle">Event Title</label>
-                                <input type="text" id="eventTitle" name="title" placeholder="Enter event title" required>
+                                <label for="eventTitleEn">Event Title (English)</label>
+                                <input type="text" id="eventTitleEn" name="title_en" placeholder="Enter event title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventTitleDe">Titel (Deutsch)</label>
+                                    <input type="text" id="eventTitleDe" name="title_de" placeholder="Veranstaltungstitel" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventTitleRu">Название (Русский)</label>
+                                    <input type="text" id="eventTitleRu" name="title_ru" placeholder="Название мероприятия" required>
                             </div>
     
                             <div class="form-row">
@@ -145,9 +158,19 @@
                             </div>
     
                             <div class="form-group">
-                                <label for="eventDescription">Description</label>
-                                <textarea id="eventDescription" name="description" placeholder="Enter event description"
-                                    rows="4" required></textarea>
+                                <label for="eventDescriptionEn">Description (English)</label>
+                                <textarea id="eventDescriptionEn" name="description_en" placeholder="Enter event description" rows="3"
+                                    required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventDescriptionDe">Beschreibung (Deutsch)</label>
+                                    <textarea id="eventDescriptionDe" name="description_de" placeholder="Veranstaltungsbeschreibung" rows="3"
+                                        required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventDescriptionRu">Описание (Русский)</label>
+                                    <textarea id="eventDescriptionRu" name="description_ru" placeholder="Описание мероприятия" rows="3"
+                                        required></textarea>
                             </div>
     
                             <div class="form-group">
@@ -202,14 +225,30 @@
                         </div>
                         <form id="campsEventForm" onsubmit="handleCampsEventSubmit(event)">
                             <div class="form-group">
-                                <label for="campTitle">Camp Title</label>
-                                <input type="text" id="campTitle" name="title" placeholder="Enter camp title" required>
+                                <label for="campTitleEn">Camp Title (English)</label>
+                                <input type="text" id="campTitleEn" name="title_en" placeholder="Enter camp title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="campTitleDe">Titel (Deutsch)</label>
+                                    <input type="text" id="campTitleDe" name="title_de" placeholder="Camp-Titel" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="campTitleRu">Название (Русский)</label>
+                                    <input type="text" id="campTitleRu" name="title_ru" placeholder="Название лагеря" required>
                             </div>
     
                             <div class="form-group">
-                                <label for="campDescription">Description</label>
-                                <textarea id="campDescription" name="description" placeholder="Enter camp description"
-                                    rows="4" required></textarea>
+                                <label for="campDescriptionEn">Description (English)</label>
+                                <textarea id="campDescriptionEn" name="description_en" placeholder="Enter camp description" rows="3"
+                                    required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="campDescriptionDe">Beschreibung (Deutsch)</label>
+                                    <textarea id="campDescriptionDe" name="description_de" placeholder="Camp-Beschreibung" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="campDescriptionRu">Описание (Русский)</label>
+                                    <textarea id="campDescriptionRu" name="description_ru" placeholder="Описание лагеря" rows="3" required></textarea>
                             </div>
     
                             <div class="form-row">
