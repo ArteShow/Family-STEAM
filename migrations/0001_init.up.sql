@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS calendar (
     price INT NOT NULL,
     tag TEXT NOT NULL,
     image_ids TEXT[] NOT NULL,
-    amount INT NOT NULL,
+    amount TEXT NOT NULL,
     title_en TEXT NOT NULL DEFAULT '',
     title_de TEXT NOT NULL DEFAULT '',
     title_ru TEXT NOT NULL DEFAULT '',

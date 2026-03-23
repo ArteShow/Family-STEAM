@@ -15,6 +15,14 @@ let detailsContext = {
     snapshot: ''
 };
 
+let eventEditContext = {
+    type: null,
+    id: null,
+    isEditing: false,
+    snapshot: '',
+    originalData: null
+};
+
 const AUTH_VERIFY_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/auth/verify`;
 const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1`;
 const CALENDER_API_URL = `${API_BASE_URL}/calender`;
@@ -395,20 +403,169 @@ function navigateTo(page) {
 
 // Form Management
 function showForm(type) {
-    let modalId;
-    if (type === 'short-events') {
-        modalId = 'short-events-form-modal';
-    } else if (type === 'camps') {
-        modalId = 'camps-form-modal';
+    openEventForm(type, null);
+}
+
+function openEventForm(type, eventData) {
+    eventEditContext.type = type;
+    eventEditContext.id = eventData?.id || null;
+    eventEditContext.isEditing = !!eventData;
+    eventEditContext.originalData = eventData || null;
+
+    const isShort = type === 'short-events';
+    const modalId = isShort ? 'short-events-form-modal' : 'camps-form-modal';
+    const formId = isShort ? 'shortEventForm' : 'campsEventForm';
+    const headerText = isShort ? document.getElementById('shortEventFormHeader') : document.getElementById('campFormHeader');
+    const submitButton = isShort ? document.getElementById('shortEventFormSubmit') : document.getElementById('campsEventFormSubmit');
+
+    if (headerText) {
+        headerText.textContent = eventEditContext.isEditing ? `Edit ${isShort ? 'Short Event' : 'Camp'}` : `Create ${isShort ? 'Short Event' : 'Camp'}`;
     }
-    
+
+    if (submitButton) {
+        submitButton.textContent = eventEditContext.isEditing ? 'Save Changes' : (isShort ? 'Create Event' : 'Create Camp');
+    }
+
+    if (!eventEditContext.isEditing) {
+        const form = document.getElementById(formId);
+        if (form) {
+            form.reset();
+        }
+    } else if (eventData) {
+        populateEventForm(type, eventData);
+    }
+
+    eventEditContext.snapshot = buildEventFormSnapshot(type);
+
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.classList.add('active');
     }
 }
 
-function closeForm(type) {
+function populateEventForm(type, eventData) {
+    if (!eventData) return;
+
+    if (type === 'short-events') {
+        document.getElementById('eventTitleEn').value = eventData.title_en || eventData.title || '';
+        document.getElementById('eventTitleDe').value = eventData.title_de || '';
+        document.getElementById('eventTitleRu').value = eventData.title_ru || '';
+        document.getElementById('eventDate').value = eventData.date || eventData.startDate || '';
+        document.getElementById('eventPlace').value = eventData.place || '';
+        document.getElementById('eventPrice').value = eventData.price || '';
+        document.getElementById('eventDuration').value = eventData.duration || '';
+        document.getElementById('eventPersons').value = eventData.persons || '';
+        document.getElementById('eventTag').value = eventData.tag || '';
+        document.getElementById('eventResponsibility').value = eventData.responsibility || '';
+        document.getElementById('eventDescriptionEn').value = eventData.description_en || eventData.description || '';
+        document.getElementById('eventDescriptionDe').value = eventData.description_de || '';
+        document.getElementById('eventDescriptionRu').value = eventData.description_ru || '';
+    } else {
+        document.getElementById('campTitleEn').value = eventData.title_en || eventData.title || '';
+        document.getElementById('campTitleDe').value = eventData.title_de || '';
+        document.getElementById('campTitleRu').value = eventData.title_ru || '';
+        document.getElementById('campStartDate').value = eventData.startDate || '';
+        document.getElementById('campEndDate').value = eventData.endDate || '';
+        document.getElementById('campLocation').value = eventData.place || '';
+        document.getElementById('campPrice').value = eventData.price || '';
+        document.getElementById('campCapacity').value = eventData.capacity || '';
+        document.getElementById('campTag').value = eventData.tag || '';
+        document.getElementById('campDescriptionEn').value = eventData.description_en || eventData.description || '';
+        document.getElementById('campDescriptionDe').value = eventData.description_de || '';
+        document.getElementById('campDescriptionRu').value = eventData.description_ru || '';
+    }
+}
+
+function isFormEventType(type) {
+    return type === 'short-events' || type === 'camps';
+}
+
+function buildEventFormSnapshot(type) {
+    if (type !== eventEditContext.type) return '';
+
+    if (type === 'short-events') {
+        return JSON.stringify({
+            title_en: document.getElementById('eventTitleEn')?.value || '',
+            title_de: document.getElementById('eventTitleDe')?.value || '',
+            title_ru: document.getElementById('eventTitleRu')?.value || '',
+            date: document.getElementById('eventDate')?.value || '',
+            place: document.getElementById('eventPlace')?.value || '',
+            price: document.getElementById('eventPrice')?.value || '',
+            duration: document.getElementById('eventDuration')?.value || '',
+            persons: document.getElementById('eventPersons')?.value || '',
+            tag: document.getElementById('eventTag')?.value || '',
+            responsibility: document.getElementById('eventResponsibility')?.value || '',
+            description_en: document.getElementById('eventDescriptionEn')?.value || '',
+            description_de: document.getElementById('eventDescriptionDe')?.value || '',
+            description_ru: document.getElementById('eventDescriptionRu')?.value || ''
+        });
+    }
+
+    return JSON.stringify({
+        title_en: document.getElementById('campTitleEn')?.value || '',
+        title_de: document.getElementById('campTitleDe')?.value || '',
+        title_ru: document.getElementById('campTitleRu')?.value || '',
+        startDate: document.getElementById('campStartDate')?.value || '',
+        endDate: document.getElementById('campEndDate')?.value || '',
+        place: document.getElementById('campLocation')?.value || '',
+        price: document.getElementById('campPrice')?.value || '',
+        capacity: document.getElementById('campCapacity')?.value || '',
+        tag: document.getElementById('campTag')?.value || '',
+        description_en: document.getElementById('campDescriptionEn')?.value || '',
+        description_de: document.getElementById('campDescriptionDe')?.value || '',
+        description_ru: document.getElementById('campDescriptionRu')?.value || ''
+    });
+}
+
+function hasUnsavedEventChanges() {
+    if (!isFormEventType(eventEditContext.type)) {
+        return false;
+    }
+    if (!eventEditContext.snapshot) {
+        return false;
+    }
+    return buildEventFormSnapshot(eventEditContext.type) !== eventEditContext.snapshot;
+}
+
+function openUnsavedEventModal() {
+    const unsavedModal = document.getElementById('unsavedEventModal');
+    if (unsavedModal) {
+        unsavedModal.classList.add('active');
+    }
+}
+
+function closeUnsavedEventModal() {
+    const unsavedModal = document.getElementById('unsavedEventModal');
+    if (unsavedModal) {
+        unsavedModal.classList.remove('active');
+    }
+}
+
+async function saveAndCloseEventModal() {
+    closeUnsavedEventModal();
+    await saveEventDetails();
+}
+
+function discardEventChangesAndClose() {
+    closeUnsavedEventModal();
+    closeForm(eventEditContext.type, true);
+}
+
+async function saveEventDetails() {
+    if (eventEditContext.type === 'short-events') {
+        await handleShortEventSubmit({ preventDefault: () => {} });
+    } else if (eventEditContext.type === 'camps') {
+        await handleCampsEventSubmit({ preventDefault: () => {} });
+    }
+}
+
+
+function closeForm(type, force = false) {
+    if (!force && hasUnsavedEventChanges()) {
+        openUnsavedEventModal();
+        return;
+    }
+
     let modalId, formId, previewContainerId, previewTextId, fileInputId;
     
     if (type === 'short-events') {
@@ -446,7 +603,16 @@ function closeForm(type) {
         const fileInput = document.getElementById(fileInputId);
         if (fileInput) fileInput.value = '';
     }
+
+    if (eventEditContext.type === type) {
+        eventEditContext.type = null;
+        eventEditContext.id = null;
+        eventEditContext.isEditing = false;
+        eventEditContext.snapshot = '';
+        eventEditContext.originalData = null;
+    }
 }
+
 
 // Handle Short Event Form Submission
 async function handleShortEventSubmit(event) {
@@ -455,31 +621,61 @@ async function handleShortEventSubmit(event) {
     const formData = new FormData(document.getElementById('shortEventForm'));
     const imageFiles = Array.from(document.getElementById('eventImage').files || []);
 
+    const calenderEntry = {
+        id: eventEditContext.id,
+        location: formData.get('place'),
+        price: parseNumberFromText(formData.get('price'), 0),
+        tag: formData.get('tag'),
+        image_ids: eventEditContext.originalData?.imageIDs || [],
+        amount: parseNumberFromText(formData.get('persons'), 0),
+        title_en: formData.get('title_en'),
+        title_de: formData.get('title_de'),
+        title_ru: formData.get('title_ru'),
+        description_en: formData.get('description_en'),
+        description_de: formData.get('description_de'),
+        description_ru: formData.get('description_ru'),
+        responsibility: formData.get('responsibility'),
+        starts_at: parseDateToISO(formData.get('date')),
+        ends_at: null,
+        duration: formData.get('duration')
+    };
+
     try {
+        if (eventEditContext.isEditing && eventEditContext.type === 'short-events' && eventEditContext.id) {
+            await apiRequest(`${CALENDER_API_URL}/update`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ calender_entry: calenderEntry })
+            });
+
+            if (imageFiles.length > 0) {
+                const imageIDs = await uploadImagesForEntry(eventEditContext.id, imageFiles);
+                await apiRequest(`${CALENDER_API_URL}/update-images`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        calender_entry_id: eventEditContext.id,
+                        image_ids: imageIDs
+                    })
+                });
+            }
+
+            closeForm('short-events', true);
+            await reloadDashboardData();
+            showDashboardMessage('Short event updated successfully', 'success');
+            return;
+        }
+
         const createResponse = await apiRequest(`${CALENDER_API_URL}/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                calender_entry: {
-                    location: formData.get('place'),
-                    price: parseNumberFromText(formData.get('price'), 0),
-                    tag: formData.get('tag'),
-                    image_ids: [],
-                    amount: parseNumberFromText(formData.get('persons'), 0),
-                    title_en: formData.get('title_en'),
-                    title_de: formData.get('title_de'),
-                    title_ru: formData.get('title_ru'),
-                    description_en: formData.get('description_en'),
-                    description_de: formData.get('description_de'),
-                    description_ru: formData.get('description_ru'),
-                    responsibility: formData.get('responsibility'),
-                    starts_at: parseDateToISO(formData.get('date')),
-                    ends_at: null,
-                    duration: formData.get('duration')
-                }
-            })
+            body: JSON.stringify({ calender_entry: calenderEntry })
         });
 
         const created = await createResponse.json();
@@ -502,11 +698,11 @@ async function handleShortEventSubmit(event) {
             });
         }
 
-        closeForm('short-events');
+        closeForm('short-events', true);
         await reloadDashboardData();
         showDashboardMessage('Short event created successfully', 'success');
     } catch (error) {
-        showDashboardMessage(error.message || 'Failed to create short event');
+        showDashboardMessage(error.message || (eventEditContext.isEditing ? 'Failed to update short event' : 'Failed to create short event'));
     }
 }
 
@@ -517,31 +713,61 @@ async function handleCampsEventSubmit(event) {
     const formData = new FormData(document.getElementById('campsEventForm'));
     const imageFiles = Array.from(document.getElementById('campImage').files || []);
 
+    const calenderEntry = {
+        id: eventEditContext.id,
+        location: formData.get('place'),
+        price: parseNumberFromText(formData.get('price'), 0),
+        tag: formData.get('tag'),
+        image_ids: eventEditContext.originalData?.imageIDs || [],
+        amount: parseNumberFromText(formData.get('capacity'), 0),
+        title_en: formData.get('title_en'),
+        title_de: formData.get('title_de'),
+        title_ru: formData.get('title_ru'),
+        description_en: formData.get('description_en'),
+        description_de: formData.get('description_de'),
+        description_ru: formData.get('description_ru'),
+        responsibility: null,
+        starts_at: parseDateToISO(formData.get('startDate')),
+        ends_at: parseDateToISO(formData.get('endDate')),
+        duration: null
+    };
+
     try {
+        if (eventEditContext.isEditing && eventEditContext.type === 'camps' && eventEditContext.id) {
+            await apiRequest(`${CALENDER_API_URL}/update`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ calender_entry: calenderEntry })
+            });
+
+            if (imageFiles.length > 0) {
+                const imageIDs = await uploadImagesForEntry(eventEditContext.id, imageFiles);
+                await apiRequest(`${CALENDER_API_URL}/update-images`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        calender_entry_id: eventEditContext.id,
+                        image_ids: imageIDs
+                    })
+                });
+            }
+
+            closeForm('camps', true);
+            await reloadDashboardData();
+            showDashboardMessage('Camp updated successfully', 'success');
+            return;
+        }
+
         const createResponse = await apiRequest(`${CALENDER_API_URL}/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                calender_entry: {
-                    location: formData.get('place'),
-                    price: parseNumberFromText(formData.get('price'), 0),
-                    tag: formData.get('tag'),
-                    image_ids: [],
-                    amount: parseNumberFromText(formData.get('capacity'), 0),
-                    title_en: formData.get('title_en'),
-                    title_de: formData.get('title_de'),
-                    title_ru: formData.get('title_ru'),
-                    description_en: formData.get('description_en'),
-                    description_de: formData.get('description_de'),
-                    description_ru: formData.get('description_ru'),
-                    responsibility: null,
-                    starts_at: parseDateToISO(formData.get('startDate')),
-                    ends_at: parseDateToISO(formData.get('endDate')),
-                    duration: null
-                }
-            })
+            body: JSON.stringify({ calender_entry: calenderEntry })
         });
 
         const created = await createResponse.json();
@@ -564,11 +790,11 @@ async function handleCampsEventSubmit(event) {
             });
         }
 
-        closeForm('camps');
+        closeForm('camps', true);
         await reloadDashboardData();
         showDashboardMessage('Camp created successfully', 'success');
     } catch (error) {
-        showDashboardMessage(error.message || 'Failed to create camp');
+        showDashboardMessage(error.message || (eventEditContext.isEditing ? 'Failed to update camp' : 'Failed to create camp'));
     }
 }
 
@@ -612,6 +838,9 @@ function renderShortEvents() {
                 </div>
                 <p class="event-description">${event.description}</p>
                 <div class="event-actions">
+                    <button class="edit-btn" onclick="editEvent('short-events', '${event.id}')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
                     <button class="details-btn" onclick="openClientsDetails('short-events', '${event.id}')">
                         <i class="fas fa-users"></i> See details
                     </button>
@@ -660,6 +889,9 @@ function renderCampsEvents() {
                 </div>
                 <p class="event-description">${event.description}</p>
                 <div class="event-actions">
+                    <button class="edit-btn" onclick="editEvent('camps', '${event.id}')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
                     <button class="details-btn" onclick="openClientsDetails('camps', '${event.id}')">
                         <i class="fas fa-users"></i> See details
                     </button>
@@ -978,6 +1210,22 @@ async function openClientsDetails(type, id) {
     renderClientsTable(getDetailsSchema(type), detailsContext.clients);
     refreshClientsSnapshot();
     modal.classList.add('active');
+}
+
+function getEventById(type, id) {
+    if (type === 'short-events') {
+        return shortEvents.find(e => e.id === id);
+    }
+    return campsEvents.find(e => e.id === id);
+}
+
+function editEvent(type, id) {
+    const eventData = getEventById(type, id);
+    if (!eventData) {
+        showDashboardMessage('Event not found for editing');
+        return;
+    }
+    openEventForm(type, eventData);
 }
 
 function closeClientsDetails(force = false) {

@@ -96,7 +96,7 @@
                 <div id="short-events-form-modal" class="form-modal">
                     <div class="form-container">
                         <div class="form-header">
-                            <h2>Create Short Event</h2>
+                            <h2 id="shortEventFormHeader">Create Short Event</h2>
                             <button class="close-btn" onclick="closeForm('short-events')">
                                 <i class="fas fa-times"></i>
                             </button>
@@ -187,7 +187,7 @@
                             <div class="form-actions">
                                 <button type="button" class="btn-secondary"
                                     onclick="closeForm('short-events')">Cancel</button>
-                                <button type="submit" class="btn-primary">Create Event</button>
+                                <button id="shortEventFormSubmit" type="submit" class="btn-primary">Create Event</button>
                             </div>
                         </form>
                     </div>
@@ -218,7 +218,7 @@
                 <div id="camps-form-modal" class="form-modal">
                     <div class="form-container">
                         <div class="form-header">
-                            <h2>Create Camp</h2>
+                            <h2 id="campFormHeader">Create Camp</h2>
                             <button class="close-btn" onclick="closeForm('camps')">
                                 <i class="fas fa-times"></i>
                             </button>
@@ -298,7 +298,7 @@
     
                             <div class="form-actions">
                                 <button type="button" class="btn-secondary" onclick="closeForm('camps')">Cancel</button>
-                                <button type="submit" class="btn-primary">Create Camp</button>
+                                <button id="campsEventFormSubmit" type="submit" class="btn-primary">Create Camp</button>
                             </div>
                         </form>
                     </div>
@@ -366,6 +366,20 @@
             <button class="btn-secondary" onclick="closeUnsavedClientsModal()">Cancel</button>
             <button class="btn-danger" onclick="discardClientsChangesAndClose()">Discard</button>
             <button class="btn-primary" onclick="saveAndCloseClientsModal()">Save & Leave</button>
+        </div>
+    </div>
+</div>
+<div id="unsavedEventModal" class="delete-modal">
+    <div class="delete-modal-content">
+        <div class="delete-modal-header">
+            <i class="fas fa-floppy-disk"></i>
+            <h2>Unsaved Changes</h2>
+        </div>
+        <p>You have unsaved event changes. What would you like to do?</p>
+        <div class="delete-modal-actions">
+            <button class="btn-secondary" onclick="closeUnsavedEventModal()">Cancel</button>
+            <button class="btn-danger" onclick="discardEventChangesAndClose()">Discard</button>
+            <button class="btn-primary" onclick="saveAndCloseEventModal()">Save & Leave</button>
         </div>
     </div>
 </div>

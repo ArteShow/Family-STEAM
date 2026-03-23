@@ -248,3 +248,64 @@ func UpdateImageIDs(id string, imageIDs []string) error {
 
 	return err
 }
+func Update(
+    id string,
+    location string,
+    price int,
+    tag string,
+    imageIDs []string,
+    amount int,
+    titleEn string,
+    titleDe string,
+    titleRu string,
+    descriptionEn string,
+    descriptionDe string,
+    descriptionRu string,
+    responsibility *string,
+    startsAt *time.Time,
+    endsAt *time.Time,
+    duration *string,
+) error {
+    db, err := database.Connect()
+    if err != nil {
+        return err
+    }
+
+    _, err = db.Exec(`
+        UPDATE calendar
+        SET location = $1,
+            price = $2,
+            tag = $3,
+            image_ids = $4,
+            amount = $5,
+            title_en = $6,
+            title_de = $7,
+            title_ru = $8,
+            description_en = $9,
+            description_de = $10,
+            description_ru = $11,
+            responsibility = $12,
+            starts_at = $13,
+            ends_at = $14,
+            duration = $15
+        WHERE id = $16`,
+        location,
+        price,
+        tag,
+        pq.Array(imageIDs),
+        amount,
+        titleEn,
+        titleDe,
+        titleRu,
+        descriptionEn,
+        descriptionDe,
+        descriptionRu,
+        responsibility,
+        startsAt,
+        endsAt,
+        duration,
+        id,
+    )
+
+    return err
+}
