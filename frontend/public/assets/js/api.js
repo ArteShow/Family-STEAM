@@ -158,6 +158,20 @@ async function formatEventFromBackend(event) {
             ? `${durationHours}h`
             : `${Math.ceil(durationHours / 24)} days`;
 
+        // Fetch event links
+        let eventLinks = [];
+        try {
+            const linksResponse = await fetch('/api/v1/event-links/get', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ calender_entry_id: event.id })
+            });
+            const linksData = await linksResponse.json();
+            eventLinks = linksData?.links || [];
+        } catch (linkError) {
+            console.warn('Failed to fetch event links:', linkError);
+        }
+
         return {
             id: event.id,
             title,
@@ -176,6 +190,7 @@ async function formatEventFromBackend(event) {
                 ? description.substring(0, 150) + (description.length > 150 ? '...' : '')
                 : 'No description available',
             images: imageUrls,
+            links: eventLinks,
             registerUrl: isCamp
                 ? `/forms/camp_register.html?eventId=${event.id}`
                 : `/forms/event_register.html?eventId=${event.id}`,

@@ -54,7 +54,7 @@
 
 			const campImages = (camp.images && camp.images.length > 0)
 				? camp.images
-				: ['../images/slider1.webp'];
+				: [];
 
 			campImages.forEach(src => {
 				const slide = document.createElement('div');
@@ -63,10 +63,28 @@
 				img.className = 'carousel_image';
 				img.src = src;
 				img.alt = camp.title;
-				img.onerror = function() { this.src = '../images/slider1.webp'; };
+				img.onerror = function() { 
+					this.style.display = 'none';
+					const noImg = document.createElement('div');
+					noImg.className = 'carousel_no_image';
+					noImg.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#999;font-size:1rem;';
+					noImg.textContent = 'No image';
+					this.parentNode.replaceChild(noImg, this);
+				};
 				slide.appendChild(img);
 				track.appendChild(slide);
 			});
+
+			if (campImages.length === 0) {
+				const slide = document.createElement('div');
+				slide.className = 'carousel_slide';
+				const noImg = document.createElement('div');
+				noImg.className = 'carousel_no_image';
+				noImg.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#999;font-size:1rem;';
+				noImg.textContent = 'No image';
+				slide.appendChild(noImg);
+				track.appendChild(slide);
+			}
 
 			const leftBtn = document.createElement('button');
 			leftBtn.className = 'carousel_btn left';
@@ -85,10 +103,6 @@
 
 			const title = document.createElement('h4');
 			title.textContent = camp.title;
-
-			const shortDesc = document.createElement('p');
-			shortDesc.className = 'camp_short_desc';
-			shortDesc.textContent = camp.shortDesc || camp.description || t('dynamic.noDescription', 'No description available');
 
 			const icons = document.createElement('ul');
 			icons.className = 'camp_icons';
@@ -109,56 +123,114 @@
 			const actions = document.createElement('div');
 			actions.className = 'camp_actions';
 
-			const viewCalendarBtn = document.createElement('a');
-			viewCalendarBtn.className = 'view_calendar_btn';
-			viewCalendarBtn.href = `calender.html?date=${encodeURIComponent(camp.startDate)}`;
-			viewCalendarBtn.textContent = 'View on Calendar';
-
 			const registerBtn = document.createElement('a');
 			registerBtn.className = 'register_btn';
 			registerBtn.href = camp.registerUrl || '/forms/camp_register.html';
 			registerBtn.textContent = camp.registerLabel || t('dynamic.registerNow', 'Register Now');
 
-			const viewCalendarLabel = t('dynamic.viewOnCalendar', 'View on Calendar');
+			const seeDescription = document.createElement('a');
+			seeDescription.className = 'see_description_btn';
+			seeDescription.href = '#';
+			seeDescription.innerHTML = '<i class="fa-solid fa-arrow-down"></i> See description';
+			seeDescription.style.cssText = 'margin-left:auto;';
+			
+			const descModal = document.createElement('div');
+			descModal.className = 'description_modal';
+			descModal.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;';
+			
+			const modalContent = document.createElement('div');
+			modalContent.style.cssText = 'background:white;padding:2rem;border-radius:1rem;max-width:600px;max-height:80vh;overflow-y:auto;';
+			modalContent.innerHTML = `<h3>${camp.title}</h3><p>${camp.description}</p><button onclick="this.parentNode.parentNode.classList.remove('active')" style="margin-top:1rem;padding:0.5rem 1rem;background:rgb(41,128,225);color:white;border:none;border-radius:0.5rem;cursor:pointer;">Close</button>`;
+			descModal.appendChild(modalContent);
+			
+			seeDescription.addEventListener('click', (e) => {
+				e.preventDefault();
+				descModal.classList.add('active');
+			});
+			
+			const style = document.createElement('style');
+			style.textContent = `.description_modal.active { display: flex !important; }`;
+			if (!document.head.querySelector('style[data-modal-style]')) {
+				style.setAttribute('data-modal-style', 'true');
+				document.head.appendChild(style);
+			}
+			document.body.appendChild(descModal);
 
 			actions.appendChild(registerBtn);
-			actions.appendChild(viewCalendarBtn);
+			actions.appendChild(seeDescription);
 
 			info.appendChild(title);
-			info.appendChild(shortDesc);
 			info.appendChild(icons);
 			info.appendChild(actions);
 
-			const descContainer = document.createElement('div');
-			descContainer.className = 'camp_desc_container';
-
-			const expandBtn = document.createElement('button');
-			expandBtn.className = 'expand_btn';
-			expandBtn.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
-			expandBtn.setAttribute('aria-expanded', 'false');
-
-			const descContent = document.createElement('div');
-			descContent.className = 'camp_desc_content';
-			descContent.innerHTML = `<p>${camp.description || t('dynamic.noDescription', 'No description available')}</p>`;
-			viewCalendarBtn.textContent = viewCalendarLabel;
-
-			descContainer.appendChild(expandBtn);
-			descContainer.appendChild(descContent);
+			// Create links table
+			const linksContainer = document.createElement('div');
+			linksContainer.className = 'camp_links_container';
+			linksContainer.style.cssText = 'margin-top:1.5rem;';
+			
+			const linksTitle = document.createElement('h5');
+			linksTitle.textContent = t('dynamic.resources', 'Resources & Links');
+			linksTitle.style.cssText = 'margin-bottom:1rem;color:rgb(24,37,110);';
+			
+			const linksTable = document.createElement('table');
+			linksTable.style.cssText = 'width:100%;border-collapse:collapse;margin-bottom:1rem;';
+			
+			const thead = document.createElement('thead');
+			const headerRow = document.createElement('tr');
+			headerRow.style.cssText = 'background:#f5f5f5;';
+			['Title', 'URL'].forEach(header => {
+				const th = document.createElement('th');
+				th.textContent = header;
+				th.style.cssText = 'padding:0.75rem;border:1px solid #ddd;text-align:left;';
+				headerRow.appendChild(th);
+			});
+			thead.appendChild(headerRow);
+			linksTable.appendChild(thead);
+			
+			const tbody = document.createElement('tbody');
+			if (camp.links && camp.links.length > 0) {
+				camp.links.forEach(link => {
+					const row = document.createElement('tr');
+					row.style.cssText = 'border-bottom:1px solid #ddd;';
+					
+					const titleCell = document.createElement('td');
+					titleCell.textContent = link.title_en || link.title || 'Link';
+					titleCell.style.cssText = 'padding:0.75rem;border:1px solid #ddd;';
+					
+					const urlCell = document.createElement('td');
+					urlCell.style.cssText = 'padding:0.75rem;border:1px solid #ddd;';
+					const urlLink = document.createElement('a');
+					urlLink.href = link.url;
+					urlLink.target = '_blank';
+					urlLink.textContent = 'Open';
+					urlLink.style.cssText = 'color:rgb(41,128,225);text-decoration:none;font-weight:500;';
+					urlCell.appendChild(urlLink);
+					
+					row.appendChild(titleCell);
+					row.appendChild(urlCell);
+					tbody.appendChild(row);
+				});
+			} else {
+				const row = document.createElement('tr');
+				const cell = document.createElement('td');
+				cell.colSpan = 2;
+				cell.textContent = t('dynamic.noLinks', 'No links available');
+				cell.style.cssText = 'padding:1rem;text-align:center;color:#999;border:1px solid #ddd;';
+				row.appendChild(cell);
+				tbody.appendChild(row);
+			}
+			linksTable.appendChild(tbody);
+			
+			linksContainer.appendChild(linksTitle);
+			linksContainer.appendChild(linksTable);
 
 			card.appendChild(carousel);
 			card.appendChild(info);
-			card.appendChild(descContainer);
+			card.appendChild(linksContainer);
 			root.appendChild(card);
 
-			expandBtn.addEventListener('click', function() {
-				const isExpanded = expandBtn.getAttribute('aria-expanded') === 'true';
-				expandBtn.setAttribute('aria-expanded', !isExpanded);
-				descContent.classList.toggle('expanded');
-				expandBtn.classList.toggle('rotated');
-			});
-
 			let cur = 0;
-			const slidesCount = campImages.length;
+			const slidesCount = campImages.length > 0 ? campImages.length : 1;
 			const trackEl = track;
 
 			function updateTrack() {

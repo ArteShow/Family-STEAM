@@ -62,7 +62,7 @@
 
 			const eventImages = (ev.images && ev.images.length > 0)
 				? ev.images
-				: ['../images/slider1.webp'];
+				: [];
 
 			eventImages.forEach(src => {
 				const slide = document.createElement('div');
@@ -71,30 +71,46 @@
 				sImg.className = 'carousel_image';
 				sImg.src = src;
 				sImg.alt = ev.title;
-				sImg.onerror = function() { this.src = '../images/slider1.webp'; };
+				sImg.onerror = function() { 
+					this.style.display = 'none';
+					const noImg = document.createElement('div');
+					noImg.className = 'carousel_no_image';
+					noImg.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#999;font-size:1rem;';
+					noImg.textContent = 'No image';
+					this.parentNode.replaceChild(noImg, this);
+				};
 				slide.appendChild(sImg);
 				track.appendChild(slide);
 			});
 
-			const left = document.createElement('button');
-			left.className = 'carousel_btn left';
-			left.innerHTML = '&#10094;';
+			if (eventImages.length === 0) {
+				const slide = document.createElement('div');
+				slide.className = 'carousel_slide';
+				const noImg = document.createElement('div');
+				noImg.className = 'carousel_no_image';
+				noImg.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#999;font-size:1rem;';
+				noImg.textContent = 'No image';
+				slide.appendChild(noImg);
+				track.appendChild(slide);
+			}
 
-			const right = document.createElement('button');
-			right.className = 'carousel_btn right';
-			right.innerHTML = '&#10095;';
-
-			carousel.appendChild(left);
-			carousel.appendChild(track);
-			carousel.appendChild(right);
-
-			const info = document.createElement('div');
-			info.className = 'event_info';
+			const actions = document.createElement('div');
+			actions.className = 'event_actions';
 
 			const register = document.createElement('a');
 			register.className = 'register_btn';
 			register.href = ev.registerUrl || '/forms/event_register.html';
 			register.textContent = t('dynamic.register', 'Register');
+			
+			const seeDescription = document.createElement('a');
+			seeDescription.className = 'see_description_btn';
+			seeDescription.href = '#';
+			seeDescription.innerHTML = '<i class="fa-solid fa-arrow-down"></i> See description';
+			seeDescription.style.cssText = 'margin-left:auto;';
+			seeDescription.addEventListener('click', (e) => {
+				e.preventDefault();
+				descModal.classList.add('active');
+			});
 			
 			const title = document.createElement('h4');
 			title.textContent = ev.title + ' — ' + (new Date(ev.date)).toLocaleDateString();
@@ -112,51 +128,99 @@
 			resp.className = 'event_responsibility';
 			resp.innerHTML = `<strong>Tags:</strong> ${ev.tags.join(', ') || t('dynamic.allEvents', 'Event')}`;
 
-			const descContainer = document.createElement('div');
-			descContainer.className = 'event_desc_container';
-
-			const expandBtn = document.createElement('button');
-			expandBtn.className = 'expand_btn';
-			expandBtn.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
-			expandBtn.setAttribute('aria-expanded', 'false');
-
-			const descContent = document.createElement('div');
-			descContent.className = 'event_desc_content';
-			descContent.innerHTML = `<p>${ev.description || t('dynamic.noDescription', 'No description available')}</p>`;
-
-			descContainer.appendChild(expandBtn);
-			descContainer.appendChild(descContent);
-
-			const actions = document.createElement('div');
-			actions.className = 'event_actions';
-
-			const viewOnCalendar = document.createElement('a');
-			viewOnCalendar.className = 'see_more_btn';
-			viewOnCalendar.href = `calender.html?date=${encodeURIComponent(ev.date)}`;
-			viewOnCalendar.textContent = t('dynamic.viewOnCalendar', 'View on Calendar');
-
 			actions.appendChild(register);
-			actions.appendChild(viewOnCalendar);
+			actions.appendChild(seeDescription);
 
 			info.appendChild(title);
 			info.appendChild(icons);
 			info.appendChild(resp);
 			info.appendChild(actions);
 
+			// Create links table
+			const linksContainer = document.createElement('div');
+			linksContainer.className = 'event_links_container';
+			linksContainer.style.cssText = 'margin-top:1.5rem;';
+			
+			const linksTitle = document.createElement('h5');
+			linksTitle.textContent = t('dynamic.resources', 'Resources & Links');
+			linksTitle.style.cssText = 'margin-bottom:1rem;color:rgb(24,37,110);';
+			
+			const linksTable = document.createElement('table');
+			linksTable.style.cssText = 'width:100%;border-collapse:collapse;margin-bottom:1rem;';
+			
+			const thead = document.createElement('thead');
+			const headerRow = document.createElement('tr');
+			headerRow.style.cssText = 'background:#f5f5f5;';
+			['Title', 'URL'].forEach(header => {
+				const th = document.createElement('th');
+				th.textContent = header;
+				th.style.cssText = 'padding:0.75rem;border:1px solid #ddd;text-align:left;';
+				headerRow.appendChild(th);
+			});
+			thead.appendChild(headerRow);
+			linksTable.appendChild(thead);
+			
+			const tbody = document.createElement('tbody');
+			if (ev.links && ev.links.length > 0) {
+				ev.links.forEach(link => {
+					const row = document.createElement('tr');
+					row.style.cssText = 'border-bottom:1px solid #ddd;';
+					
+					const titleCell = document.createElement('td');
+					titleCell.textContent = link.title_en || link.title || 'Link';
+					titleCell.style.cssText = 'padding:0.75rem;border:1px solid #ddd;';
+					
+					const urlCell = document.createElement('td');
+					urlCell.style.cssText = 'padding:0.75rem;border:1px solid #ddd;';
+					const urlLink = document.createElement('a');
+					urlLink.href = link.url;
+					urlLink.target = '_blank';
+					urlLink.textContent = 'Open';
+					urlLink.style.cssText = 'color:rgb(41,128,225);text-decoration:none;font-weight:500;';
+					urlCell.appendChild(urlLink);
+					
+					row.appendChild(titleCell);
+					row.appendChild(urlCell);
+					tbody.appendChild(row);
+				});
+			} else {
+				const row = document.createElement('tr');
+				const cell = document.createElement('td');
+				cell.colSpan = 2;
+				cell.textContent = t('dynamic.noLinks', 'No links available');
+				cell.style.cssText = 'padding:1rem;text-align:center;color:#999;border:1px solid #ddd;';
+				row.appendChild(cell);
+				tbody.appendChild(row);
+			}
+			linksTable.appendChild(tbody);
+			
+			linksContainer.appendChild(linksTitle);
+			linksContainer.appendChild(linksTable);
+
 			row.appendChild(carousel);
 			row.appendChild(info);
-			row.appendChild(descContainer);
+			row.appendChild(linksContainer);
+			
+			const descModal = document.createElement('div');
+			descModal.className = 'description_modal';
+			descModal.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;';
+			descModal.classList.add('active-display-none');
+			
+			const modalContent = document.createElement('div');
+			modalContent.style.cssText = 'background:white;padding:2rem;border-radius:1rem;max-width:600px;max-height:80vh;overflow-y:auto;';
+			modalContent.innerHTML = `<h3>${ev.title}</h3><p>${ev.description}</p><button onclick="this.parentNode.parentNode.classList.remove('active')" style="margin-top:1rem;padding:0.5rem 1rem;background:rgb(41,128,225);color:white;border:none;border-radius:0.5rem;cursor:pointer;">Close</button>`;
+			descModal.appendChild(modalContent);
+			document.body.appendChild(descModal);
+			
+			// Modified EventListener to toggle the modal
+			const style = document.createElement('style');
+			style.textContent = `.description_modal.active { display: flex !important; }`;
+			document.head.appendChild(style);
+			
 			root.appendChild(row);
 
-			expandBtn.addEventListener('click', function() {
-				const isExpanded = expandBtn.getAttribute('aria-expanded') === 'true';
-				expandBtn.setAttribute('aria-expanded', !isExpanded);
-				descContent.classList.toggle('expanded');
-				expandBtn.classList.toggle('rotated');
-			});
-
 			let cur = 0;
-			const slidesCount = eventImages.length;
+			const slidesCount = eventImages.length > 0 ? eventImages.length : 1;
 			const trackEl = track;
 			trackEl.style.transition = 'transform 420ms cubic-bezier(.22,.9,.3,1)';
 

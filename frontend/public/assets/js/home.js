@@ -66,9 +66,10 @@ async function generateIncomingEvents() {
                 ? event.images[0]
                 : 'assets/images/slider1.webp';
             
-            // Map frontend event type to detail page format
-            const detailEventType = event.type === 'camp' ? 'camps' : 'short-events';
-            const detailUrl = `dashboard/html/event-detail.html?type=${detailEventType}&id=${event.id}`;
+            // Map frontend event type to public announcement page
+            const annoucementPageUrl = event.type === 'camp' 
+                ? `assets/html/camps.html?eventId=${event.id}`
+                : `assets/html/short_events.html?eventId=${event.id}`;
 
             return `
                 <div class="incoming_event" style="animation-delay: ${index * 0.1}s;">
@@ -79,7 +80,7 @@ async function generateIncomingEvents() {
                         <h5>${event.title}</h5>
                         <p class="event_description">${event.shortDesc}</p>
                         <div class="event_footer single">
-                            <a href="${detailUrl}" class="see_details_btn">${t('dynamic.seeMoreDetails', 'See More Details')}</a>
+                            <a href="${annoucementPageUrl}" class="see_details_btn">${t('dynamic.seeMoreDetails', 'See More Details')}</a>
                         </div>
                     </div>
                 </div>
