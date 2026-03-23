@@ -29,13 +29,26 @@ async function apiRequest(url, options = {}) {
     const mergedOptions = { ...defaultOptions, ...options };
 
     try {
-        const response = await fetch(url, mergedOptions);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        const response = await fetch(url, {
+            ...mergedOptions,
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
         if (!response.ok) {
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
         }
         return await response.json();
     } catch (error) {
-        console.error('API request failed:', error);
+        if (error.name === 'AbortError') {
+            console.error('API request timeout:', url);
+        } else {
+            console.error('API request failed:', url, error.message);
+        }
         throw error;
     }
 }
