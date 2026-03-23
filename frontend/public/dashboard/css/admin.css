@@ -1118,6 +1118,36 @@ body {
             z-index: 20;
         }
     
+/* Delete Button Styling (Small) - for links table */
+.btn-sm-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1.5px solid #ff6b6b;
+    border-radius: 0.6rem;
+    background: white;
+    color: #d94a4a;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.15);
+}
+
+.btn-sm-delete:hover {
+    background: #ff6b6b;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(255, 107, 107, 0.3);
+    border-color: #ff5252;
+}
+
+.btn-sm-delete:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.15);
+}
         .admin-nav.active {
             display: flex;
         }

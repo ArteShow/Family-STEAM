@@ -28,6 +28,13 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
 const CALENDER_API_URL = `${API_BASE_URL}/calender`;
 const FILE_API_URL = `${API_BASE_URL}/file`;
 const CLIENT_API_URL = `${API_BASE_URL}/client`;
+const EVENT_LINKS_API_URL = `${API_BASE_URL}/event-links`;
+
+let eventLinksContext = {
+    eventId: null,
+    links: [],
+    newLinkCount: 0
+};
 
 function getAuthToken() {
     return localStorage.getItem('authToken') || '';
@@ -474,6 +481,11 @@ function populateEventForm(type, eventData) {
         document.getElementById('campDescriptionDe').value = eventData.description_de || '';
         document.getElementById('campDescriptionRu').value = eventData.description_ru || '';
     }
+
+    // Load event links if editing
+    if (eventData.id) {
+        loadEventLinks(eventData.id, type);
+    }
 }
 
 function isFormEventType(type) {
@@ -664,6 +676,9 @@ async function handleShortEventSubmit(event) {
                 });
             }
 
+            // Save event links
+            await saveEventLinks();
+
             closeForm('short-events', true);
             await reloadDashboardData();
             showDashboardMessage('Short event updated successfully', 'success');
@@ -697,6 +712,10 @@ async function handleShortEventSubmit(event) {
                 })
             });
         }
+
+        // Save event links
+        eventLinksContext.eventId = calenderEntryID;
+        await saveEventLinks();
 
         closeForm('short-events', true);
         await reloadDashboardData();
@@ -756,6 +775,9 @@ async function handleCampsEventSubmit(event) {
                 });
             }
 
+            // Save event links
+            await saveEventLinks();
+
             closeForm('camps', true);
             await reloadDashboardData();
             showDashboardMessage('Camp updated successfully', 'success');
@@ -789,6 +811,10 @@ async function handleCampsEventSubmit(event) {
                 })
             });
         }
+
+        // Save event links
+        eventLinksContext.eventId = calenderEntryID;
+        await saveEventLinks();
 
         closeForm('camps', true);
         await reloadDashboardData();
@@ -836,7 +862,6 @@ function renderShortEvents() {
                     <i class="fas fa-tag"></i>
                     ${event.tag}
                 </div>
-                <p class="event-description">${event.description}</p>
                 <div class="event-actions">
                     <button class="edit-btn" onclick="editEvent('short-events', '${event.id}')">
                         <i class="fas fa-edit"></i> Edit
@@ -887,7 +912,6 @@ function renderCampsEvents() {
                     <i class="fas fa-tag"></i>
                     ${event.tag}
                 </div>
-                <p class="event-description">${event.description}</p>
                 <div class="event-actions">
                     <button class="edit-btn" onclick="editEvent('camps', '${event.id}')">
                         <i class="fas fa-edit"></i> Edit
@@ -1226,6 +1250,113 @@ function editEvent(type, id) {
         return;
     }
     openEventForm(type, eventData);
+}
+
+function openEventDetailPage(type, id) {
+    window.location.href = `event-detail.html?type=${type}&id=${id}`;
+}
+
+async function loadEventLinks(eventId, formType = 'short-events') {
+    try {
+        const response = await apiRequest(`${EVENT_LINKS_API_URL}/get`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ calender_entry_id: eventId })
+        });
+
+        const data = await response.json();
+        eventLinksContext.eventId = eventId;
+        eventLinksContext.links = data?.links || [];
+        eventLinksContext.newLinkCount = 0;
+
+        displayEventLinksInForm(formType);
+    } catch (error) {
+        showDashboardMessage('Failed to load event links');
+    }
+}
+
+function displayEventLinksInForm(formType = 'short-events') {
+    const tableId = formType === 'camps' ? 'campLinksTableBody' : 'eventLinksTableBody';
+    const container = document.getElementById(tableId);
+    if (!container) return;
+
+    container.innerHTML = eventLinksContext.links.map((link, index) => `
+        <tr data-link-id="${link.id}">
+            <td><input type="text" placeholder="Title (EN)" value="${link.title_en}" class="link-title-en"></td>
+            <td><input type="text" placeholder="Title (DE)" value="${link.title_de}" class="link-title-de"></td>
+            <td><input type="text" placeholder="Title (RU)" value="${link.title_ru}" class="link-title-ru"></td>
+            <td><input type="url" placeholder="https://..." value="${link.url}" class="link-url"></td>
+            <td><button type="button" class="btn-sm-delete" onclick="removeEventLinkRow(${index}, '${formType}')">
+                <i class="fas fa-trash"></i>
+            </button></td>
+        </tr>
+    `).join('');
+}
+
+function addEventLinkRow(formType = 'short-events') {
+    eventLinksContext.links.push({
+        id: 'new-' + (++eventLinksContext.newLinkCount),
+        title_en: '',
+        title_de: '',
+        title_ru: '',
+        url: ''
+    });
+    displayEventLinksInForm(formType);
+}
+
+function removeEventLinkRow(index, formType = 'short-events') {
+    eventLinksContext.links.splice(index, 1);
+    displayEventLinksInForm(formType);
+}
+
+async function saveEventLinks() {
+    if (!eventLinksContext.eventId) return;
+
+    try {
+        for (const link of eventLinksContext.links) {
+            const titleEn = document.querySelector(`[data-link-id="${link.id}"] .link-title-en`)?.value || '';
+            const titleDe = document.querySelector(`[data-link-id="${link.id}"] .link-title-de`)?.value || '';
+            const titleRu = document.querySelector(`[data-link-id="${link.id}"] .link-title-ru`)?.value || '';
+            const url = document.querySelector(`[data-link-id="${link.id}"] .link-url`)?.value || '';
+
+            if (!titleEn || !url) continue;
+
+            if (link.id.startsWith('new-')) {
+                await apiRequest(`${EVENT_LINKS_API_URL}/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        link: {
+                            calender_entry_id: eventLinksContext.eventId,
+                            title_en: titleEn,
+                            title_de: titleDe,
+                            title_ru: titleRu,
+                            url: url,
+                            link_order: eventLinksContext.links.indexOf(link)
+                        }
+                    })
+                });
+            } else {
+                await apiRequest(`${EVENT_LINKS_API_URL}/update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        link: {
+                            id: link.id,
+                            title_en: titleEn,
+                            title_de: titleDe,
+                            title_ru: titleRu,
+                            url: url,
+                            link_order: eventLinksContext.links.indexOf(link)
+                        }
+                    })
+                });
+            }
+        }
+        showDashboardMessage('Event links saved successfully', 'success');
+    } catch (error) {
+        showDashboardMessage('Failed to save event links');
+    }
 }
 
 function closeClientsDetails(force = false) {

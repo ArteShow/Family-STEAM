@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family STEAM | Event Details</title>
+    <link rel="stylesheet" href="../../assets/css/footer.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="icon" href="../../assets/images/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .event-detail-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .event-detail-header {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .event-detail-images {
+            flex: 1;
+            min-width: 300px;
+        }
+        .event-detail-info {
+            flex: 1;
+        }
+        .event-detail-info h1 {
+            margin: 0 0 1rem 0;
+            color: rgb(24, 37, 110);
+        }
+        .event-detail-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .event-detail-description {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .event-detail-description h2 {
+            color: rgb(24, 37, 110);
+            margin-top: 0;
+        }
+        .event-links-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .event-links-section h2 {
+            color: rgb(24, 37, 110);
+            margin-top: 0;
+        }
+        .event-links-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .event-links-table th,
+        .event-links-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .event-links-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+        .event-links-table a {
+            color: rgb(41, 128, 225);
+            text-decoration: none;
+        }
+        .event-links-table a:hover {
+            text-decoration: underline;
+        }
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgb(41, 128, 225);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            margin-bottom: 2rem;
+        }
+        .back-button:hover {
+            background: rgb(30, 100, 180);
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-container">
+            <img src="../../assets/images/logo_png.png" alt="logo" class="admin-logo">
+            <a href="main.html" class="nav-link logout">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <div class="event-detail-container">
+        <a href="main.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <div class="event-detail-header">
+            <div class="event-detail-images">
+                <div id="eventImageSlider" style="width: 100%; border-radius: 0.5rem; overflow: hidden;">
+                    <!-- Images will be loaded here -->
+                </div>
+            </div>
+            <div class="event-detail-info">
+                <h1 id="eventTitle">Event Title</h1>
+                <div class="event-detail-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span id="eventDate">Date</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="eventLocation">Location</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-euro-sign"></i>
+                        <span id="eventPrice">Price</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-users"></i>
+                        <span id="eventCapacity">Capacity</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <span id="eventTag">Tag</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="event-detail-description">
+            <h2>Description</h2>
+            <p id="eventDescription">Description will be loaded here...</p>
+        </div>
+
+        <div id="linksSection" class="event-links-section" style="display: none;">
+            <h2>Resources & Links</h2>
+            <table class="event-links-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody id="eventLinksTable">
+                    <!-- Links will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer_content">
+            <div class="footer_section">
+                <h4 data-i18n="footer.about.title">About Us</h4>
+                <p data-i18n="footer.about.text">Family STEAM is dedicated to providing innovative, engaging, and educational programs for families of all ages.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../assets/js/i18n.js?v=1"></script>
+    <script src="../js/event-detail.js?v=1"></script>
+</body>
+</html>

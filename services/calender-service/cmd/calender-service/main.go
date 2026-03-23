@@ -43,6 +43,10 @@ func main() {
 	mux.HandleFunc("/calender-service/get", handlers.GetCalenderEntryByIDHandler)
 	mux.HandleFunc("/calender-service/update", handlers.UpdateCalenderEntryHandler)
 	mux.HandleFunc("/calender-service/update-images", handlers.UpdateCalenderEntryImagesHandler)
+	mux.HandleFunc("/calender-service/event-links/create", handlers.CreateEventLinkHandler)
+	mux.HandleFunc("/calender-service/event-links/get", handlers.GetEventLinksHandler)
+	mux.HandleFunc("/calender-service/event-links/update", handlers.UpdateEventLinkHandler)
+	mux.HandleFunc("/calender-service/event-links/delete", handlers.DeleteEventLinkHandler)
 
 	srv := &http.Server{
 		Addr:         cfg.Port,

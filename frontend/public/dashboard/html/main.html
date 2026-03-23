@@ -183,7 +183,26 @@
                                     <div id="imagePreviewContainer" class="preview-container"></div>
                                 </div>
                             </div>
-    
+
+                            <div class="form-group">
+                                <label>Resources & Links</label>
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+                                    <thead>
+                                        <tr style="background: #f5f5f5;">
+                                            <th style="padding: 0.5rem; border: 1px solid #ddd; text-align: left;">Title (EN)</th>
+                                            <th style="padding: 0.5rem; border: 1px solid #ddd; text-align: left;">Title (DE)</th>
+                                            <th style="padding: 0.5rem; border: 1px solid #ddd; text-align: left;">Title (RU)</th>
+                                            <th style="padding: 0.5rem; border: 1px solid #ddd; text-align: left;">URL</th>
+                                            <th style="padding: 0.5rem; border: 1px solid #ddd; width: 50px;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="eventLinksTableBody" style="border: 1px solid #ddd;"></tbody>
+                                </table>
+                                <button type="button" class="btn-secondary" onclick="addEventLinkRow()" style="margin-bottom: 1rem;">
+                                    <i class="fas fa-plus"></i> Add Link
+                                </button>
+                            </div>
+
                             <div class="form-actions">
                                 <button type="button" class="btn-secondary"
                                     onclick="closeForm('short-events')">Cancel</button>
@@ -295,6 +314,24 @@
                                     <div id="campImagePreviewContainer" class="preview-container"></div>
                                 </div>
                             </div>
+<div class="form-group">
+    <label>Resources & Links</label>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+        <thead>
+            <tr style="background: #f5f5f5;">
+                <th style="padding: 0.5rem; border: 1px solid #ddd; text-align: left;">Title (EN)</th>
+                <th style="padding: 0.5rem; border: 1px solid #ddd; text-align: left;">Title (DE)</th>
+                <th style="padding: 0.5rem; border: 1px solid #ddd; text-align: left;">Title (RU)</th>
+                <th style="padding: 0.5rem; border: 1px solid #ddd; text-align: left;">URL</th>
+                <th style="padding: 0.5rem; border: 1px solid #ddd; width: 50px;">Action</th>
+            </tr>
+        </thead>
+        <tbody id="campLinksTableBody" style="border: 1px solid #ddd;"></tbody>
+    </table>
+    <button type="button" class="btn-secondary" onclick="addEventLinkRow('camps')" style="margin-bottom: 1rem;">
+        <i class="fas fa-plus"></i> Add Link
+    </button>
+</div>
     
                             <div class="form-actions">
                                 <button type="button" class="btn-secondary" onclick="closeForm('camps')">Cancel</button>
