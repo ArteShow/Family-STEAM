@@ -58,21 +58,41 @@ main h3 {
 .event_carousel{
     position: relative;
     grid-column: 1;
-        grid-row: 1;
+    grid-row: 1;
         min-height: 300px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display: flex;
+        align-items: center;
+        justify-content: center;
     overflow: hidden;
+    border-radius: 8px;
 }
-.carousel_track{display:flex;width:100%;height:100%;will-change:transform}
-.carousel_slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center}
-.carousel_image{width:100%;height:100%;object-fit:cover;border-radius:8px}
-.carousel_btn{
+.carousel_track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+    transition: transform 420ms cubic-bezier(.22, .9, .3, 1);
+}
+
+.carousel_slide {
+    flex: 0 0 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel_image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.carousel_btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0,0,0,0.45);
+    background: rgba(0, 0, 0, 0.45);
     color: #fff;
     border: none;
     padding: 0.6rem 0.9rem;
@@ -81,11 +101,32 @@ main h3 {
     font-size: 1.35rem;
     opacity: 0.9;
     transition: background 180ms ease, transform 120ms ease, opacity 180ms ease;
+    z-index: 10;
 }
-.carousel_btn.left{left:12px}
-.carousel_btn.right{right:12px}
 
-.carousel_btn:hover{background: rgba(0,0,0,0.65); transform: scale(1.04)}
+.carousel_btn.left {
+    left: 12px;
+}
+
+.carousel_btn.right {
+    right: 12px;
+}
+
+.carousel_btn:hover {
+    background: rgba(0, 0, 0, 0.65);
+    transform: translateY(-50%) scale(1.04);
+}
+
+.carousel_no_image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    color: #999;
+    font-size: 1rem;
+}
 
 .event_info{
     grid-column: 2;
@@ -144,7 +185,10 @@ main h3 {
     display: flex;
     flex-wrap: wrap;
     gap: 0.8rem;
-    margin-top: 1.2rem;
+    margin-top: auto;
+        padding-top: 0.6rem;
+        align-items: center;
+        justify-content: flex-start;
 }
 
 .see_more_btn {
@@ -270,7 +314,7 @@ main h3 {
     font-size: 0.85rem;
 }
 
-/* Event Links Container */
+/* Event Links Container - Inline Links Format */
 .event_links_container {
     margin-top: 1.5rem;
 }
@@ -281,46 +325,35 @@ main h3 {
     font-size: 1.1rem;
 }
 
-.event_links_container table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-    background: white;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.event_links_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.event_links_container thead {
-    background: #f5f5f5;
-}
-
-.event_links_container th {
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    text-align: left;
-    color: rgb(24, 37, 110);
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-
-.event_links_container td {
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    font-size: 0.9rem;
-    color: #555;
-}
-
-.event_links_container td a {
+.event_link_item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     color: rgb(41, 128, 225);
     text-decoration: none;
     font-weight: 500;
+    font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        background: rgba(41, 128, 225, 0.08);
     transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
-.event_links_container td a:hover {
+.event_link_item:hover {
+    background: rgba(41, 128, 225, 0.15);
     color: rgb(30, 100, 180);
-    text-decoration: underline;
+    gap: 0.75rem;
+    }
+    
+    .event_link_item i {
+        font-size: 0.8rem;
 }
 
 /* Description Modal */

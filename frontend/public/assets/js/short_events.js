@@ -94,6 +94,37 @@
 				track.appendChild(slide);
 			}
 
+			const leftBtn = document.createElement('button');
+			leftBtn.className = 'carousel_btn left';
+			leftBtn.innerHTML = '&#10094;';
+
+			const rightBtn = document.createElement('button');
+			rightBtn.className = 'carousel_btn right';
+			rightBtn.innerHTML = '&#10095;';
+
+			carousel.appendChild(leftBtn);
+			carousel.appendChild(track);
+			carousel.appendChild(rightBtn);
+
+			const info = document.createElement('div');
+			info.className = 'event_info';
+
+			const title = document.createElement('h4');
+			title.textContent = ev.title + ' — ' + (new Date(ev.date)).toLocaleDateString();
+
+			const icons = document.createElement('ul');
+			icons.className = 'event_icons';
+			icons.innerHTML = `
+				<li><i class="fa-solid fa-location-dot"></i> <span>${ev.place}</span></li>
+				<li><span style="color: #ff6b6b; font-weight: 600;">€ ${ev.price}</span></li>
+				<li><i class="fa-regular fa-clock"></i> <span>${ev.duration}</span></li>
+				<li><i class="fa-solid fa-users"></i> <span>${ev.persons}</span></li>
+			`;
+
+			const resp = document.createElement('p');
+			resp.className = 'event_responsibility';
+			resp.innerHTML = `<strong>Tags:</strong> ${ev.tags.join(', ') || t('dynamic.allEvents', 'Event')}`;
+
 			const actions = document.createElement('div');
 			actions.className = 'event_actions';
 
@@ -106,28 +137,29 @@
 			seeDescription.className = 'see_description_btn';
 			seeDescription.href = '#';
 			seeDescription.innerHTML = '<i class="fa-solid fa-arrow-down"></i> See description';
-			seeDescription.style.cssText = 'margin-left:auto;';
+			
+			const descModal = document.createElement('div');
+			descModal.className = 'description_modal';
+			descModal.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;';
+			
+			const modalContent = document.createElement('div');
+			modalContent.style.cssText = 'background:white;padding:2rem;border-radius:1rem;max-width:600px;max-height:80vh;overflow-y:auto;';
+			modalContent.innerHTML = `<h3>${ev.title}</h3><p>${ev.description}</p><button onclick="this.parentNode.parentNode.classList.remove('active')" style="margin-top:1rem;padding:0.5rem 1rem;background:rgb(41,128,225);color:white;border:none;border-radius:0.5rem;cursor:pointer;">Close</button>`;
+			descModal.appendChild(modalContent);
+			document.body.appendChild(descModal);
+			
 			seeDescription.addEventListener('click', (e) => {
 				e.preventDefault();
 				descModal.classList.add('active');
 			});
 			
-			const title = document.createElement('h4');
-			title.textContent = ev.title + ' — ' + (new Date(ev.date)).toLocaleDateString();
-
-			const icons = document.createElement('ul');
-			icons.className = 'event_icons';
-			icons.innerHTML = `
-				<li><i class="fa-solid fa-location-dot"></i> <span>${ev.place}</span></li>
-				<li><i class="fa-solid fa-euro-sign"></i> <span>${ev.price}</span></li>
-				<li><i class="fa-regular fa-clock"></i> <span>${ev.duration}</span></li>
-				<li><i class="fa-solid fa-users"></i> <span>${ev.persons}</span></li>
-			`;
-
-			const resp = document.createElement('p');
-			resp.className = 'event_responsibility';
-			resp.innerHTML = `<strong>Tags:</strong> ${ev.tags.join(', ') || t('dynamic.allEvents', 'Event')}`;
-
+			const style = document.createElement('style');
+			style.textContent = `.description_modal.active { display: flex !important; }`;
+			if (!document.head.querySelector('style[data-modal-style-short]')) {
+				style.setAttribute('data-modal-style-short', 'true');
+				document.head.appendChild(style);
+			}
+			
 			actions.appendChild(register);
 			actions.appendChild(seeDescription);
 
@@ -136,93 +168,41 @@
 			info.appendChild(resp);
 			info.appendChild(actions);
 
-			// Create links table
+			// Create links container (formatted as inline links, not table)
 			const linksContainer = document.createElement('div');
 			linksContainer.className = 'event_links_container';
 			linksContainer.style.cssText = 'margin-top:1.5rem;';
 			
-			const linksTitle = document.createElement('h5');
-			linksTitle.textContent = t('dynamic.resources', 'Resources & Links');
-			linksTitle.style.cssText = 'margin-bottom:1rem;color:rgb(24,37,110);';
-			
-			const linksTable = document.createElement('table');
-			linksTable.style.cssText = 'width:100%;border-collapse:collapse;margin-bottom:1rem;';
-			
-			const thead = document.createElement('thead');
-			const headerRow = document.createElement('tr');
-			headerRow.style.cssText = 'background:#f5f5f5;';
-			['Title', 'URL'].forEach(header => {
-				const th = document.createElement('th');
-				th.textContent = header;
-				th.style.cssText = 'padding:0.75rem;border:1px solid #ddd;text-align:left;';
-				headerRow.appendChild(th);
-			});
-			thead.appendChild(headerRow);
-			linksTable.appendChild(thead);
-			
-			const tbody = document.createElement('tbody');
 			if (ev.links && ev.links.length > 0) {
+				const linksTitle = document.createElement('h5');
+				linksTitle.textContent = t('dynamic.resources', 'Resources & Links');
+				linksTitle.style.cssText = 'margin-bottom:1rem;color:rgb(24,37,110);';
+				linksContainer.appendChild(linksTitle);
+				
+				const linksList = document.createElement('div');
+				linksList.className = 'event_links_list';
+				linksList.style.cssText = 'display:flex;flex-wrap:wrap;gap:1rem;';
+				
 				ev.links.forEach(link => {
-					const row = document.createElement('tr');
-					row.style.cssText = 'border-bottom:1px solid #ddd;';
-					
-					const titleCell = document.createElement('td');
-					titleCell.textContent = link.title_en || link.title || 'Link';
-					titleCell.style.cssText = 'padding:0.75rem;border:1px solid #ddd;';
-					
-					const urlCell = document.createElement('td');
-					urlCell.style.cssText = 'padding:0.75rem;border:1px solid #ddd;';
-					const urlLink = document.createElement('a');
-					urlLink.href = link.url;
-					urlLink.target = '_blank';
-					urlLink.textContent = 'Open';
-					urlLink.style.cssText = 'color:rgb(41,128,225);text-decoration:none;font-weight:500;';
-					urlCell.appendChild(urlLink);
-					
-					row.appendChild(titleCell);
-					row.appendChild(urlCell);
-					tbody.appendChild(row);
+					const linkItem = document.createElement('a');
+					linkItem.href = link.url;
+					linkItem.target = '_blank';
+					linkItem.className = 'event_link_item';
+					linkItem.innerHTML = `<i class="fa-solid fa-external-link-alt"></i> ${link.title_en || link.title || 'Link'}`;
+					linksList.appendChild(linkItem);
 				});
-			} else {
-				const row = document.createElement('tr');
-				const cell = document.createElement('td');
-				cell.colSpan = 2;
-				cell.textContent = t('dynamic.noLinks', 'No links available');
-				cell.style.cssText = 'padding:1rem;text-align:center;color:#999;border:1px solid #ddd;';
-				row.appendChild(cell);
-				tbody.appendChild(row);
+				
+				linksContainer.appendChild(linksList);
 			}
-			linksTable.appendChild(tbody);
-			
-			linksContainer.appendChild(linksTitle);
-			linksContainer.appendChild(linksTable);
 
 			row.appendChild(carousel);
 			row.appendChild(info);
 			row.appendChild(linksContainer);
-			
-			const descModal = document.createElement('div');
-			descModal.className = 'description_modal';
-			descModal.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;';
-			descModal.classList.add('active-display-none');
-			
-			const modalContent = document.createElement('div');
-			modalContent.style.cssText = 'background:white;padding:2rem;border-radius:1rem;max-width:600px;max-height:80vh;overflow-y:auto;';
-			modalContent.innerHTML = `<h3>${ev.title}</h3><p>${ev.description}</p><button onclick="this.parentNode.parentNode.classList.remove('active')" style="margin-top:1rem;padding:0.5rem 1rem;background:rgb(41,128,225);color:white;border:none;border-radius:0.5rem;cursor:pointer;">Close</button>`;
-			descModal.appendChild(modalContent);
-			document.body.appendChild(descModal);
-			
-			// Modified EventListener to toggle the modal
-			const style = document.createElement('style');
-			style.textContent = `.description_modal.active { display: flex !important; }`;
-			document.head.appendChild(style);
-			
 			root.appendChild(row);
 
 			let cur = 0;
 			const slidesCount = eventImages.length > 0 ? eventImages.length : 1;
 			const trackEl = track;
-			trackEl.style.transition = 'transform 420ms cubic-bezier(.22,.9,.3,1)';
 
 			function updateTrack(){
 				trackEl.style.transform = `translateX(-${cur * 100}%)`;
@@ -233,8 +213,8 @@
 				updateTrack();
 			}
 
-			left.addEventListener('click', ()=> show(cur - 1));
-			right.addEventListener('click', ()=> show(cur + 1));
+			leftBtn.addEventListener('click', ()=> show(cur - 1));
+			rightBtn.addEventListener('click', ()=> show(cur + 1));
 
 			let startX = 0, deltaX = 0, isDragging = false;
 			carousel.addEventListener('touchstart', (e) => {

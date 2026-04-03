@@ -115,7 +115,7 @@
 
 			icons.innerHTML = `
 				<li><i class="fa-solid fa-location-dot"></i> <span>${camp.place}</span></li>
-				<li><i class="fa-solid fa-euro-sign"></i> <span>${camp.price}</span></li>
+				<li><span style="color: #ff6b6b; font-weight: 600;">€ ${camp.price}</span></li>
 				<li><i class="fa-regular fa-calendar"></i> <span>${dayCount} ${t('dynamic.days', 'days')}</span></li>
 				<li><i class="fa-solid fa-users"></i> <span>${camp.persons}</span></li>
 			`;
@@ -128,11 +128,15 @@
 			registerBtn.href = camp.registerUrl || '/forms/camp_register.html';
 			registerBtn.textContent = camp.registerLabel || t('dynamic.registerNow', 'Register Now');
 
+			const viewCalendarBtn = document.createElement('a');
+			viewCalendarBtn.className = 'view_calendar_btn';
+			viewCalendarBtn.href = 'calender.html';
+			viewCalendarBtn.innerHTML = '<i class="fa-regular fa-calendar"></i> View on Calendar';
+
 			const seeDescription = document.createElement('a');
 			seeDescription.className = 'see_description_btn';
 			seeDescription.href = '#';
 			seeDescription.innerHTML = '<i class="fa-solid fa-arrow-down"></i> See description';
-			seeDescription.style.cssText = 'margin-left:auto;';
 			
 			const descModal = document.createElement('div');
 			descModal.className = 'description_modal';
@@ -157,72 +161,39 @@
 			document.body.appendChild(descModal);
 
 			actions.appendChild(registerBtn);
+			actions.appendChild(viewCalendarBtn);
 			actions.appendChild(seeDescription);
 
 			info.appendChild(title);
 			info.appendChild(icons);
 			info.appendChild(actions);
 
-			// Create links table
+			// Create links container (formatted as inline links, not table)
 			const linksContainer = document.createElement('div');
 			linksContainer.className = 'camp_links_container';
 			linksContainer.style.cssText = 'margin-top:1.5rem;';
 			
-			const linksTitle = document.createElement('h5');
-			linksTitle.textContent = t('dynamic.resources', 'Resources & Links');
-			linksTitle.style.cssText = 'margin-bottom:1rem;color:rgb(24,37,110);';
-			
-			const linksTable = document.createElement('table');
-			linksTable.style.cssText = 'width:100%;border-collapse:collapse;margin-bottom:1rem;';
-			
-			const thead = document.createElement('thead');
-			const headerRow = document.createElement('tr');
-			headerRow.style.cssText = 'background:#f5f5f5;';
-			['Title', 'URL'].forEach(header => {
-				const th = document.createElement('th');
-				th.textContent = header;
-				th.style.cssText = 'padding:0.75rem;border:1px solid #ddd;text-align:left;';
-				headerRow.appendChild(th);
-			});
-			thead.appendChild(headerRow);
-			linksTable.appendChild(thead);
-			
-			const tbody = document.createElement('tbody');
 			if (camp.links && camp.links.length > 0) {
+				const linksTitle = document.createElement('h5');
+				linksTitle.textContent = t('dynamic.resources', 'Resources & Links');
+				linksTitle.style.cssText = 'margin-bottom:1rem;color:rgb(24,37,110);';
+				linksContainer.appendChild(linksTitle);
+				
+				const linksList = document.createElement('div');
+				linksList.className = 'camp_links_list';
+				linksList.style.cssText = 'display:flex;flex-wrap:wrap;gap:1rem;';
+				
 				camp.links.forEach(link => {
-					const row = document.createElement('tr');
-					row.style.cssText = 'border-bottom:1px solid #ddd;';
-					
-					const titleCell = document.createElement('td');
-					titleCell.textContent = link.title_en || link.title || 'Link';
-					titleCell.style.cssText = 'padding:0.75rem;border:1px solid #ddd;';
-					
-					const urlCell = document.createElement('td');
-					urlCell.style.cssText = 'padding:0.75rem;border:1px solid #ddd;';
-					const urlLink = document.createElement('a');
-					urlLink.href = link.url;
-					urlLink.target = '_blank';
-					urlLink.textContent = 'Open';
-					urlLink.style.cssText = 'color:rgb(41,128,225);text-decoration:none;font-weight:500;';
-					urlCell.appendChild(urlLink);
-					
-					row.appendChild(titleCell);
-					row.appendChild(urlCell);
-					tbody.appendChild(row);
+					const linkItem = document.createElement('a');
+					linkItem.href = link.url;
+					linkItem.target = '_blank';
+					linkItem.className = 'camp_link_item';
+					linkItem.innerHTML = `<i class="fa-solid fa-external-link-alt"></i> ${link.title_en || link.title || 'Link'}`;
+					linksList.appendChild(linkItem);
 				});
-			} else {
-				const row = document.createElement('tr');
-				const cell = document.createElement('td');
-				cell.colSpan = 2;
-				cell.textContent = t('dynamic.noLinks', 'No links available');
-				cell.style.cssText = 'padding:1rem;text-align:center;color:#999;border:1px solid #ddd;';
-				row.appendChild(cell);
-				tbody.appendChild(row);
+				
+				linksContainer.appendChild(linksList);
 			}
-			linksTable.appendChild(tbody);
-			
-			linksContainer.appendChild(linksTitle);
-			linksContainer.appendChild(linksTable);
 
 			card.appendChild(carousel);
 			card.appendChild(info);
