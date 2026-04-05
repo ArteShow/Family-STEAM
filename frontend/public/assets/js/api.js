@@ -122,6 +122,22 @@ async function getEventImageUrls(imageIds = []) {
     }
 }
 
+// Get the preferred display language from localStorage (en / de / ru)
+function getPreferredLanguage() {
+    const lang = localStorage.getItem('preferredLanguage') || 'en';
+    return ['en', 'de', 'ru'].includes(lang) ? lang : 'en';
+}
+
+// Pick the localized field with fallback chain: preferred → en → legacy single field
+function localizedField(event, fieldBase, fallback) {
+    const lang = getPreferredLanguage();
+    return event[`${fieldBase}_${lang}`]
+        || event[`${fieldBase}_en`]
+        || event[fieldBase]
+        || fallback
+        || '';
+}
+
 // Format event data from backend to frontend structure
 async function formatEventFromBackend(event) {
     try {
@@ -141,9 +157,12 @@ async function formatEventFromBackend(event) {
             ? `${durationHours}h`
             : `${Math.ceil(durationHours / 24)} days`;
 
+        const title = localizedField(event, 'title', 'Untitled');
+        const description = localizedField(event, 'description', 'No description available');
+
         return {
             id: event.id,
-            title: event.title,
+            title,
             date: startDate,
             startDate,
             endDate,
@@ -154,10 +173,10 @@ async function formatEventFromBackend(event) {
             capacity: event.amount || 'All ages',
             tag: tag || 'Event',
             tags,
-            description: event.description || 'No description available',
-            shortDesc: event.description
-                ? event.description.substring(0, 150) + (event.description.length > 150 ? '...' : '')
-                : 'No description available',
+            description,
+            shortDesc: description.length > 150
+                ? description.substring(0, 150) + '...'
+                : description,
             images: imageUrls,
             registerUrl: isCamp
                 ? `/forms/camp_register.html?eventId=${event.id}`

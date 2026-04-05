@@ -9,6 +9,8 @@ import (
 
 type Ticket struct {
 	ID            string     `json:"id"`
+	UserID        string     `json:"user_id"`
+	Username      string     `json:"username"`
 	Name          string     `json:"name"`
 	Email         string     `json:"email"`
 	Subject       string     `json:"subject"`
@@ -19,7 +21,7 @@ type Ticket struct {
 	UpdatedAt     time.Time  `json:"updated_at"`
 }
 
-func Create(name, email, subject, message string) (string, error) {
+func Create(userID, username, name, email, subject, message string) (string, error) {
 	id := uuid.NewString()
 
 	db, err := database.Connect()
@@ -29,9 +31,9 @@ func Create(name, email, subject, message string) (string, error) {
 	defer db.Close()
 
 	_, err = db.Exec(`
-		INSERT INTO tickets (id, name, email, subject, message, status)
-		VALUES ($1, $2, $3, $4, $5, 'open')
-	`, id, name, email, subject, message)
+		INSERT INTO tickets (id, user_id, username, name, email, subject, message, status)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, 'open')
+	`, id, userID, username, name, email, subject, message)
 	return id, err
 }
 
@@ -43,7 +45,7 @@ func GetAll() ([]Ticket, error) {
 	defer db.Close()
 
 	rows, err := db.Query(`
-		SELECT id, name, email, subject, message, status, admin_response, created_at, updated_at
+		SELECT id, user_id, username, name, email, subject, message, status, admin_response, created_at, updated_at
 		FROM tickets
 		ORDER BY created_at DESC
 	`)
@@ -55,7 +57,44 @@ func GetAll() ([]Ticket, error) {
 	tickets := []Ticket{}
 	for rows.Next() {
 		var t Ticket
-		if err = rows.Scan(&t.ID, &t.Name, &t.Email, &t.Subject, &t.Message, &t.Status, &t.AdminResponse, &t.CreatedAt, &t.UpdatedAt); err != nil {
+		if err = rows.Scan(&t.ID, &t.UserID, &t.Username, &t.Name, &t.Email, &t.Subject, &t.Message, &t.Status, &t.AdminResponse, &t.CreatedAt, &t.UpdatedAt); err != nil {
+			return nil, err
+		}
+		tickets = append(tickets, t)
+	}
+	return tickets, rows.Err()
+}
+
+// GetByUserID returns up to the last 5 tickets for a user, or tickets
+// created within the last month — whichever gives more tickets up to 5.
+func GetByUserID(userID string) ([]Ticket, error) {
+	db, err := database.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query(`
+		SELECT id, user_id, username, name, email, subject, message, status, admin_response, created_at, updated_at
+		FROM tickets
+		WHERE user_id = $1
+		  AND (created_at >= now() - INTERVAL '1 month'
+		       OR id IN (
+		           SELECT id FROM tickets WHERE user_id = $1
+		           ORDER BY created_at DESC LIMIT 5
+		       ))
+		ORDER BY created_at DESC
+		LIMIT 5
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	tickets := []Ticket{}
+	for rows.Next() {
+		var t Ticket
+		if err = rows.Scan(&t.ID, &t.UserID, &t.Username, &t.Name, &t.Email, &t.Subject, &t.Message, &t.Status, &t.AdminResponse, &t.CreatedAt, &t.UpdatedAt); err != nil {
 			return nil, err
 		}
 		tickets = append(tickets, t)
@@ -71,7 +110,7 @@ func GetByEmail(email string) ([]Ticket, error) {
 	defer db.Close()
 
 	rows, err := db.Query(`
-		SELECT id, name, email, subject, message, status, admin_response, created_at, updated_at
+		SELECT id, user_id, username, name, email, subject, message, status, admin_response, created_at, updated_at
 		FROM tickets
 		WHERE email = $1
 		ORDER BY created_at DESC
@@ -84,7 +123,7 @@ func GetByEmail(email string) ([]Ticket, error) {
 	tickets := []Ticket{}
 	for rows.Next() {
 		var t Ticket
-		if err = rows.Scan(&t.ID, &t.Name, &t.Email, &t.Subject, &t.Message, &t.Status, &t.AdminResponse, &t.CreatedAt, &t.UpdatedAt); err != nil {
+		if err = rows.Scan(&t.ID, &t.UserID, &t.Username, &t.Name, &t.Email, &t.Subject, &t.Message, &t.Status, &t.AdminResponse, &t.CreatedAt, &t.UpdatedAt); err != nil {
 			return nil, err
 		}
 		tickets = append(tickets, t)
@@ -127,4 +166,17 @@ func Delete(id string) error {
 
 	_, err = db.Exec(`DELETE FROM tickets WHERE id = $1`, id)
 	return err
+}
+
+// GetTicketOwner returns the user_id that owns the ticket (for authorization checks).
+func GetTicketOwner(id string) (string, error) {
+	db, err := database.Connect()
+	if err != nil {
+		return "", err
+	}
+	defer db.Close()
+
+	var userID string
+	err = db.QueryRow(`SELECT user_id FROM tickets WHERE id = $1`, id).Scan(&userID)
+	return userID, err
 }

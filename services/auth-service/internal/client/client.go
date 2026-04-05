@@ -59,6 +59,6 @@ func (u *UserClient) CheckUserId(req *pb.CheckUserIdRequest) (*pb.CheckUserIdRes
 	if err != nil {
 		return &pb.CheckUserIdResponse{}, err
 	}
-	
+
 	return res, nil
 }

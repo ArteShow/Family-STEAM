@@ -9,6 +9,15 @@ import (
 )
 
 func CreateTicketHandler(w http.ResponseWriter, r *http.Request) {
+	// User identity is injected by the API gateway's UserAuth middleware
+	userID := r.Header.Get("X-User-ID")
+	username := r.Header.Get("X-Username")
+
+	if userID == "" {
+		http.Error(w, "unauthorized: missing user identity", http.StatusUnauthorized)
+		return
+	}
+
 	var req CreateTicketRequest
 
 	body, err := io.ReadAll(r.Body)
@@ -23,12 +32,18 @@ func CreateTicketHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Name == "" || req.Email == "" || req.Subject == "" || req.Message == "" {
-		http.Error(w, "name, email, subject and message are required", http.StatusBadRequest)
+	if req.Subject == "" || req.Message == "" {
+		http.Error(w, "subject and message are required", http.StatusBadRequest)
 		return
 	}
 
-	id, err := repository.Create(req.Name, req.Email, req.Subject, req.Message)
+	// Use username as display name; email is optional contact info
+	name := username
+	if name == "" {
+		name = userID
+	}
+
+	id, err := repository.Create(userID, username, name, req.Email, req.Subject, req.Message)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

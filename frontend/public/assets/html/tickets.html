@@ -45,28 +45,8 @@
         <!-- Create Ticket section -->
         <div id="section_create" class="tab_section active">
             <div class="tickets_container">
-                <div class="form_container">
-                    <h4>Submit a Support Ticket</h4>
-                    <p class="form_subtitle">Tell us how we can help. We'll get back to you as soon as possible.</p>
-
-                    <form class="ticket_form" id="ticketForm">
-                        <div class="form_group">
-                            <input type="text" id="ticketName" placeholder="Your Name" required>
-                        </div>
-                        <div class="form_group">
-                            <input type="email" id="ticketEmail" placeholder="Your Email" required>
-                        </div>
-                        <div class="form_group">
-                            <input type="text" id="ticketSubject" placeholder="Subject" required>
-                        </div>
-                        <div class="form_group">
-                            <textarea id="ticketMessage" placeholder="Describe your issue…" rows="6" required></textarea>
-                        </div>
-                        <div id="createMsg" class="form_message" style="display:none;"></div>
-                        <button type="submit" class="submit_btn">
-                            <i class="fas fa-paper-plane"></i> Submit Ticket
-                        </button>
-                    </form>
+                <div class="form_container" id="createFormWrap">
+                    <!-- Content injected by tickets.js based on auth state -->
                 </div>
             </div>
         </div>
@@ -74,19 +54,9 @@
         <!-- My Tickets section -->
         <div id="section_my" class="tab_section">
             <div class="tickets_container">
-                <div class="form_container">
-                    <h4>View My Tickets</h4>
-                    <p class="form_subtitle">Enter your email address to see all tickets you have submitted.</p>
-
-                    <div class="lookup_row">
-                        <input type="email" id="lookupEmail" placeholder="Your Email" required>
-                        <button class="submit_btn lookup_btn" onclick="loadMyTickets()">
-                            <i class="fas fa-search"></i> Search
-                        </button>
-                    </div>
-                    <div id="lookupMsg" class="form_message" style="display:none;"></div>
+                <div class="form_container" id="myTicketsHeader">
+                    <!-- Injected by tickets.js -->
                 </div>
-
                 <div id="myTicketsList" class="tickets_list" style="display:none;"></div>
             </div>
         </div>
@@ -134,11 +104,11 @@
             <div id="contact_info">
                 <div class="contact_item" id="phone_number">
                     <i class="fa-solid fa-phone"></i>
-                    <p>+123456789</p>
+                    <p>+43 6604893883</p>
                 </div>
                 <div class="contact_item" id="email">
                     <i class="fa-solid fa-envelope"></i>
-                    <p>lorem@mail.eu</p>
+                    <p>familysteamcamp@gmail.com</p>
                 </div>
             </div>
             <div id="social_medias">
@@ -160,6 +130,7 @@
     </footer>
 
     <script src="../js/nav.js"></script>
+    <script src="../js/whatsapp.js"></script>
     <script src="../js/tickets.js"></script>
 </body>
 </html>

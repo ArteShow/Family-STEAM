@@ -48,7 +48,8 @@ async function populateCampOptions() {
 
             const option = document.createElement('option');
             option.value = String(camp.id);
-            option.textContent = `${camp.title}${formattedDate}`;
+            const campTitle = camp.title_en || camp.title || 'Camp';
+            option.textContent = `${campTitle}${formattedDate}`;
             if (selectedEventId && String(camp.id) === String(selectedEventId)) {
                 option.selected = true;
             }

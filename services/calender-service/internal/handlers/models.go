@@ -22,7 +22,7 @@ type GetCalenderEntryByIDRequest struct {
 	CalenderEntryID string `json:"calender_entry_id"`
 }
 
-type GetCalenderEntryByIDResponse struct{
+type GetCalenderEntryByIDResponse struct {
 	CalenderEntry repository.Calendar `json:"calender_entry"`
 }
 

@@ -15,7 +15,7 @@ func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	} 
+	}
 	defer r.Body.Close()
 
 	if err = json.Unmarshal(body, &req); err != nil {

@@ -40,7 +40,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := jwt.GenerateToken(GrpcRes.GetId(), time.Hour*24)
+	token, err := jwt.GenerateToken(GrpcRes.GetId(), req.Username, time.Hour*24)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

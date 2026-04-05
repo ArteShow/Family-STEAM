@@ -95,8 +95,14 @@ async function mapCalendarEntryToDashboardEvent(entry) {
 
     const base = {
         id: entry.id,
-        title: entry.title,
-        description: entry.description,
+        title: entry.title_en || entry.title || '',
+        description: entry.description_en || entry.description || '',
+        title_en: entry.title_en || '',
+        title_de: entry.title_de || '',
+        title_ru: entry.title_ru || '',
+        description_en: entry.description_en || '',
+        description_de: entry.description_de || '',
+        description_ru: entry.description_ru || '',
         place: entry.location,
         price: entry.price,
         tag: entry.tag,
@@ -475,8 +481,12 @@ async function handleShortEventSubmit(event) {
                     tag: formData.get('tag'),
                     image_ids: [],
                     amount: parseNumberFromText(formData.get('persons'), 0),
-                    title: formData.get('title'),
-                    description: formData.get('description'),
+                    title_en: formData.get('title_en'),
+                    title_de: formData.get('title_de') || '',
+                    title_ru: formData.get('title_ru') || '',
+                    description_en: formData.get('description_en'),
+                    description_de: formData.get('description_de') || '',
+                    description_ru: formData.get('description_ru') || '',
                     responsibility: formData.get('responsibility'),
                     starts_at: parseDateToISO(formData.get('date')),
                     ends_at: null,
@@ -533,8 +543,12 @@ async function handleCampsEventSubmit(event) {
                     tag: formData.get('tag'),
                     image_ids: [],
                     amount: parseNumberFromText(formData.get('capacity'), 0),
-                    title: formData.get('title'),
-                    description: formData.get('description'),
+                    title_en: formData.get('title_en'),
+                    title_de: formData.get('title_de') || '',
+                    title_ru: formData.get('title_ru') || '',
+                    description_en: formData.get('description_en'),
+                    description_de: formData.get('description_de') || '',
+                    description_ru: formData.get('description_ru') || '',
                     responsibility: null,
                     starts_at: parseDateToISO(formData.get('startDate')),
                     ends_at: parseDateToISO(formData.get('endDate')),
@@ -1223,9 +1237,9 @@ function renderAdminTickets() {
                     </span>
                 </div>
                 <div class="ticket-admin-meta">
-                    <i class="fas fa-user"></i> ${escapeHtml(ticket.name)}
+                    <i class="fas fa-user"></i> ${escapeHtml(ticket.username || ticket.name)}
                     &nbsp;·&nbsp;
-                    <i class="fas fa-envelope"></i> ${escapeHtml(ticket.email)}
+                    <i class="fas fa-envelope"></i> ${escapeHtml(ticket.email || '—')}
                     &nbsp;·&nbsp;
                     <i class="fas fa-calendar"></i> ${date}
                 </div>

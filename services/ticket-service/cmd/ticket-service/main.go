@@ -40,6 +40,7 @@ func main() {
 	mux.HandleFunc("/ticket-service/create", handlers.CreateTicketHandler)
 	mux.HandleFunc("/ticket-service/getAll", handlers.GetAllTicketsHandler)
 	mux.HandleFunc("/ticket-service/getByEmail", handlers.GetByEmailHandler)
+	mux.HandleFunc("/ticket-service/getByUser", handlers.GetByUserHandler)
 	mux.HandleFunc("/ticket-service/respond", handlers.RespondHandler)
 	mux.HandleFunc("/ticket-service/close", handlers.CloseTicketHandler)
 	mux.HandleFunc("/ticket-service/delete", handlers.DeleteTicketHandler)

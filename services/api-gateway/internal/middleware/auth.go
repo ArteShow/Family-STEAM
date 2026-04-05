@@ -68,3 +68,43 @@ func AdminOnly(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+// UserAuth validates the JWT token and injects X-User-ID and X-Username headers.
+// It does NOT verify against the user-service, so it's lighter-weight than AdminOnly.
+func UserAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			http.Error(w, "Missing token", http.StatusUnauthorized)
+			return
+		}
+
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return jwtSecret, nil
+		})
+
+		if err != nil || !token.Valid {
+			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			return
+		}
+
+		claims := token.Claims.(jwt.MapClaims)
+
+		userID, _ := claims["user_id"].(string)
+		username, _ := claims["username"].(string)
+
+		if userID == "" {
+			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
+			return
+		}
+
+		// Clone request and inject user identity headers for downstream services
+		newReq := r.Clone(r.Context())
+		newReq.Header.Set("X-User-ID", userID)
+		newReq.Header.Set("X-Username", username)
+
+		next.ServeHTTP(w, newReq)
+	})
+}

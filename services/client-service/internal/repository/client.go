@@ -94,13 +94,13 @@ func UpdateClient(value, column, id string) error {
 
 	allowedColumns := map[string]struct{}{
 		"calendar_id": {},
-		"first_name": {},
-		"last_name":  {},
-		"email":      {},
-		"phone":      {},
-		"paid":       {},
-		"birthday":   {},
-		"age":        {},
+		"first_name":  {},
+		"last_name":   {},
+		"email":       {},
+		"phone":       {},
+		"paid":        {},
+		"birthday":    {},
+		"age":         {},
 	}
 
 	normalizedColumn := strings.ToLower(strings.TrimSpace(column))

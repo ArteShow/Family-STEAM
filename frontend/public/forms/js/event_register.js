@@ -52,7 +52,8 @@ async function populateEventOptions() {
 
             const option = document.createElement('option');
             option.value = String(eventItem.id);
-            option.textContent = `${eventItem.title}${formattedDate}`;
+            const eventTitle = eventItem.title_en || eventItem.title || 'Event';
+            option.textContent = `${eventTitle}${formattedDate}`;
             if (selectedEventId && String(eventItem.id) === String(selectedEventId)) {
                 option.selected = true;
             }

@@ -37,7 +37,7 @@ func main() {
 			return
 		}
 	})
-	
+
 	mux.HandleFunc("/file-service/upload", handlers.UploadHandler)
 	mux.HandleFunc("/file-service/download", handlers.DownloadHandler)
 	mux.HandleFunc("/file-service/delete", handlers.DeleteFileHandler)

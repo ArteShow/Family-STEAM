@@ -9,6 +9,12 @@ import (
 )
 
 func CloseTicketHandler(w http.ResponseWriter, r *http.Request) {
+	userID := r.Header.Get("X-User-ID")
+	if userID == "" {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	var req CloseTicketRequest
 
 	body, err := io.ReadAll(r.Body)
@@ -25,6 +31,17 @@ func CloseTicketHandler(w http.ResponseWriter, r *http.Request) {
 
 	if req.TicketID == "" {
 		http.Error(w, "ticket_id is required", http.StatusBadRequest)
+		return
+	}
+
+	// Verify the ticket belongs to the requesting user
+	owner, err := repository.GetTicketOwner(req.TicketID)
+	if err != nil {
+		http.Error(w, "ticket not found", http.StatusNotFound)
+		return
+	}
+	if owner != userID {
+		http.Error(w, "forbidden", http.StatusForbidden)
 		return
 	}
 

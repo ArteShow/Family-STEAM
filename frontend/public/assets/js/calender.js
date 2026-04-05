@@ -199,13 +199,18 @@ function showEvents(day, month, year) {
                 ? `./camps.html?eventId=${encodeURIComponent(event.id)}#camp-${encodeURIComponent(event.id)}`
                 : `./short_events.html?eventId=${encodeURIComponent(event.id)}#event-${encodeURIComponent(event.id)}`
             
+            const _calLang = localStorage.getItem('preferredLanguage') || 'en';
+            const _calTitle = (['en','de','ru'].includes(_calLang) ? event[`title_${_calLang}`] : null) || event.title_en || event.title || '';
+            const _calDesc  = (['en','de','ru'].includes(_calLang) ? event[`description_${_calLang}`] : null) || event.description_en || event.description || 'No description';
+            const _calDescShort = _calDesc.length > 250 ? _calDesc.substring(0, 250) + '...' : _calDesc;
+
             eventItem.innerHTML = `
                 <div class="event-card-content">
                     <div class="event-header">
-                        <h3>${event.title}</h3>
+                        <h3>${_calTitle}</h3>
                         <span class="event-tag">${tag}</span>
                     </div>
-                    <p class="event-description">${event.description ? event.description.substring(0, 250) + (event.description.length > 250 ? '...' : '') : 'No description'}</p>
+                    <p class="event-description">${_calDescShort}</p>
                 </div>
                 <button class="see_more_btn" onclick="window.location.href='${detailsLink}'">See Details</button>
             `

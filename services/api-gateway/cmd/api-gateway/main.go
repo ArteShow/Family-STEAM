@@ -33,6 +33,7 @@ func main() {
 	authRegisterProxy := proxy.NewProxy("http://auth-service:8001", "/auth-service/register")
 	authLoginProxy := proxy.NewProxy("http://auth-service:8001", "/auth-service/login")
 	authVerifyProxy := proxy.NewProxy("http://auth-service:8001", "/auth-service/verify")
+	authUserRegisterProxy := proxy.NewProxy("http://auth-service:8001", "/auth-service/user-register")
 
 	fileUploadProxy := proxy.NewProxy("http://file-service:8003", "/file-service/upload")
 	fileDownloadProxy := proxy.NewProxy("http://file-service:8003", "/file-service/download")
@@ -53,6 +54,7 @@ func main() {
 	ticketCreateProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/create")
 	ticketGetAllProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/getAll")
 	ticketGetByEmailProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/getByEmail")
+	ticketGetByUserProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/getByUser")
 	ticketRespondProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/respond")
 	ticketCloseProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/close")
 	ticketDeleteProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/delete")
@@ -73,6 +75,7 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/auth/register", middleware.LoggingMiddleware(authRegisterProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/auth/login", middleware.LoggingMiddleware(authLoginProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/auth/verify", middleware.LoggingMiddleware(authVerifyProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/auth/user-register", middleware.LoggingMiddleware(authUserRegisterProxy))
 
 	handler.Handle("/api/"+cfg.APIVersion+"/file/download", middleware.LoggingMiddleware(fileDownloadProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/file/upload", middleware.LoggingMiddleware(middleware.AdminOnly(fileUploadProxy)))
@@ -90,9 +93,10 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/get", middleware.LoggingMiddleware(calenderGetProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/getAll", middleware.LoggingMiddleware(calenderGetAllProxy))
 
-	handler.Handle("/api/"+cfg.APIVersion+"/ticket/create", middleware.LoggingMiddleware(ticketCreateProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/ticket/getByEmail", middleware.LoggingMiddleware(ticketGetByEmailProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/ticket/close", middleware.LoggingMiddleware(ticketCloseProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/ticket/create", middleware.LoggingMiddleware(middleware.UserAuth(ticketCreateProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/ticket/getByEmail", middleware.LoggingMiddleware(middleware.AdminOnly(ticketGetByEmailProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/ticket/getByUser", middleware.LoggingMiddleware(middleware.UserAuth(ticketGetByUserProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/ticket/close", middleware.LoggingMiddleware(middleware.UserAuth(ticketCloseProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/ticket/getAll", middleware.LoggingMiddleware(middleware.AdminOnly(ticketGetAllProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/ticket/respond", middleware.LoggingMiddleware(middleware.AdminOnly(ticketRespondProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/ticket/delete", middleware.LoggingMiddleware(middleware.AdminOnly(ticketDeleteProxy)))

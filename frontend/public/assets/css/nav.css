@@ -241,3 +241,23 @@ nav a:hover::after {
     }
 }
 
+/* User account nav link */
+nav a.nav-user-link {
+    background: rgba(255, 239, 170, 0.18);
+    border: 1.5px solid rgba(255, 239, 170, 0.55);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+nav a.nav-user-link:hover {
+    background: rgba(255, 239, 170, 0.32);
+}
+
+nav a.nav-user-link::after {
+    display: none;
+}

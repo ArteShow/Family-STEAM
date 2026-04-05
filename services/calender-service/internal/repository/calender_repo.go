@@ -15,8 +15,12 @@ type Calendar struct {
 	Tag            string     `json:"tag"`
 	ImageIDs       []string   `json:"image_ids"`
 	Amount         int        `json:"amount"`
-	Title          string     `json:"title"`
-	Description    string     `json:"description"`
+	TitleEn        string     `json:"title_en"`
+	TitleDe        string     `json:"title_de"`
+	TitleRu        string     `json:"title_ru"`
+	DescriptionEn  string     `json:"description_en"`
+	DescriptionDe  string     `json:"description_de"`
+	DescriptionRu  string     `json:"description_ru"`
 	Responsibility *string    `json:"responsibility"`
 	StartsAt       *time.Time `json:"starts_at"`
 	EndsAt         *time.Time `json:"ends_at"`
@@ -30,8 +34,12 @@ func Create(
 	tag string,
 	imageIDs []string,
 	amount int,
-	title string,
-	description string,
+	titleEn string,
+	titleDe string,
+	titleRu string,
+	descriptionEn string,
+	descriptionDe string,
+	descriptionRu string,
 	responsibility *string,
 	startsAt *time.Time,
 	endsAt *time.Time,
@@ -53,14 +61,18 @@ func Create(
 			tag,
 			image_ids,
 			amount,
-			title,
-			description,
+			title_en,
+			title_de,
+			title_ru,
+			description_en,
+			description_de,
+			description_ru,
 			responsibility,
 			starts_at,
 			ends_at,
 			duration
 		)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
 	`,
 		id,
 		location,
@@ -68,8 +80,12 @@ func Create(
 		tag,
 		pq.Array(imageIDs),
 		amount,
-		title,
-		description,
+		titleEn,
+		titleDe,
+		titleRu,
+		descriptionEn,
+		descriptionDe,
+		descriptionRu,
 		responsibility,
 		startsAt,
 		endsAt,
@@ -107,8 +123,12 @@ func GetByID(id string) (*Calendar, error) {
 			tag,
 			image_ids,
 			amount,
-			title,
-			description,
+			title_en,
+			title_de,
+			title_ru,
+			description_en,
+			description_de,
+			description_ru,
 			responsibility,
 			starts_at,
 			ends_at,
@@ -127,8 +147,12 @@ func GetByID(id string) (*Calendar, error) {
 		&c.Tag,
 		pq.Array(&c.ImageIDs),
 		&c.Amount,
-		&c.Title,
-		&c.Description,
+		&c.TitleEn,
+		&c.TitleDe,
+		&c.TitleRu,
+		&c.DescriptionEn,
+		&c.DescriptionDe,
+		&c.DescriptionRu,
 		&c.Responsibility,
 		&c.StartsAt,
 		&c.EndsAt,
@@ -157,8 +181,12 @@ func GetAll() ([]Calendar, error) {
 			tag,
 			image_ids,
 			amount,
-			title,
-			description,
+			title_en,
+			title_de,
+			title_ru,
+			description_en,
+			description_de,
+			description_ru,
 			responsibility,
 			starts_at,
 			ends_at,
@@ -184,8 +212,12 @@ func GetAll() ([]Calendar, error) {
 			&c.Tag,
 			pq.Array(&c.ImageIDs),
 			&c.Amount,
-			&c.Title,
-			&c.Description,
+			&c.TitleEn,
+			&c.TitleDe,
+			&c.TitleRu,
+			&c.DescriptionEn,
+			&c.DescriptionDe,
+			&c.DescriptionRu,
 			&c.Responsibility,
 			&c.StartsAt,
 			&c.EndsAt,

@@ -32,8 +32,12 @@ func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 	GrpcRes, err := userClient.CheckUserId(&proto.CheckUserIdRequest{
 		Id: req.Id,
 	})
-	if err != nil || !GrpcRes.Success{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if !GrpcRes.Success {
+		http.Error(w, "user not found", http.StatusUnauthorized)
 		return
 	}
 

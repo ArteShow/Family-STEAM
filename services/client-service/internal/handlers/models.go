@@ -23,8 +23,8 @@ type GetClientResponse struct {
 }
 
 type UpdateClientRequest struct {
-	Value string `json:"value"`
-	Column string `json:"column"`
+	Value    string `json:"value"`
+	Column   string `json:"column"`
 	ClientID string `json:"client_id"`
 }
 

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family STEAM | Settings</title>
+    <link rel="stylesheet" href="../assets/css/nav.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
+    <link rel="stylesheet" href="css/settings.css">
+    <link rel="icon" href="../assets/images/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <img src="../assets/images/logo_png.png" alt="logo">
+        <button class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav id="navMenu">
+            <a href="../index.html">Home</a>
+            <a href="../assets/html/about_us.html">About Us</a>
+            <a href="../assets/html/calender.html">Calender</a>
+            <a href="../assets/html/short_events.html">Short events</a>
+            <a href="../assets/html/camps.html">Camps</a>
+            <a href="../assets/html/tickets.html">Support Tickets</a>
+        </nav>
+    </header>
+
+    <main class="settings-page">
+        <div class="settings-header">
+            <h2><i class="fas fa-cog"></i> Account Settings</h2>
+            <p>Manage your profile and preferences</p>
+        </div>
+
+        <div class="settings-body">
+
+            <!-- Profile Section -->
+            <div class="settings-card">
+                <div class="settings-card-title">
+                    <i class="fas fa-user-circle"></i> Profile
+                </div>
+
+                <div class="profile-section">
+                    <div class="avatar-wrapper">
+                        <img id="avatarPreview" src="" alt="Profile picture" class="avatar-img">
+                        <label for="avatarInput" class="avatar-edit-btn" title="Change photo">
+                            <i class="fas fa-camera"></i>
+                        </label>
+                        <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-username" id="profileUsername">—</div>
+                        <div class="profile-sub">Registered user</div>
+                        <button class="btn-outline-danger" onclick="handleLogout()">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Language Section -->
+            <div class="settings-card">
+                <div class="settings-card-title">
+                    <i class="fas fa-globe"></i> Language
+                </div>
+                <p class="settings-desc">Choose the language for the website interface.</p>
+                <div class="lang-options">
+                    <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">
+                        <span class="lang-flag">🇬🇧</span> English
+                    </button>
+                    <button class="lang-btn" data-lang="de" onclick="setLanguage('de')">
+                        <span class="lang-flag">🇦🇹</span> Deutsch
+                    </button>
+                    <button class="lang-btn" data-lang="ru" onclick="setLanguage('ru')">
+                        <span class="lang-flag">🇷🇺</span> Русский
+                    </button>
+                </div>
+            </div>
+
+            <!-- WhatsApp Toggle Section -->
+            <div class="settings-card">
+                <div class="settings-card-title">
+                    <i class="fab fa-whatsapp"></i> WhatsApp Support Button
+                </div>
+                <p class="settings-desc">Show or hide the floating WhatsApp support button across the site.</p>
+                <div class="toggle-row">
+                    <span id="waToggleLabel">Enabled</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="waToggle" onchange="handleWaToggle(this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="settingsMsg" class="settings-msg" style="display:none;"></div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer_content">
+            <div class="footer_section">
+                <h4>About Us</h4>
+                <p>Family STEAM is dedicated to providing innovative, engaging, and educational programs for families of all ages.</p>
+            </div>
+            <div class="footer_section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../assets/html/calender.html">Events Calendar</a></li>
+                    <li><a href="../assets/html/camps.html">Camps</a></li>
+                    <li><a href="../assets/html/tickets.html">Support Tickets</a></li>
+                </ul>
+            </div>
+            <div class="footer_section">
+                <h4>Programs</h4>
+                <ul>
+                    <li><a href="#science">Science Programs</a></li>
+                    <li><a href="#technology">Tech Labs</a></li>
+                    <li><a href="#arts">Art Workshops</a></li>
+                    <li><a href="#math">Math Camp</a></li>
+                </ul>
+            </div>
+            <div class="footer_section">
+                <h4>Newsletter</h4>
+                <p>Subscribe to get updates about our latest programs and events.</p>
+                <form class="newsletter_form">
+                    <input type="email" placeholder="Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div id="contact">
+            <div id="contact_info">
+                <div class="contact_item" id="phone_number">
+                    <i class="fa-solid fa-phone"></i>
+                    <p>+43 6604893883</p>
+                </div>
+                <div class="contact_item" id="email">
+                    <i class="fa-solid fa-envelope"></i>
+                    <p>familysteamcamp@gmail.com</p>
+                </div>
+            </div>
+            <div id="social_medias">
+                <div class="social_item" id="facebook">
+                    <a href="https://facebook.com"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+                <div class="social_item" id="instagram">
+                    <a href="https://instagram.com"><i class="fa-brands fa-square-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="legal">
+            <p>© 2026 Family STEAM | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script src="../assets/js/nav.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="../assets/js/whatsapp.js"></script>
+</body>
+</html>

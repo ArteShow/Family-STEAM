@@ -3,10 +3,9 @@ package handlers
 import "github.com/ArteShow/Family-STEAM/services/ticket-service/internal/repository"
 
 type CreateTicketRequest struct {
-	Name    string `json:"name"`
-	Email   string `json:"email"`
 	Subject string `json:"subject"`
 	Message string `json:"message"`
+	Email   string `json:"email"`
 }
 
 type CreateTicketResponse struct {
@@ -22,6 +21,10 @@ type GetByEmailRequest struct {
 }
 
 type GetByEmailResponse struct {
+	Tickets []repository.Ticket `json:"tickets"`
+}
+
+type GetByUserResponse struct {
 	Tickets []repository.Ticket `json:"tickets"`
 }
 

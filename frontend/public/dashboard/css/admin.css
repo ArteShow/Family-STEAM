@@ -1391,3 +1391,49 @@ body {
     gap: 0.6rem;
     flex-wrap: wrap;
 }
+/* ─── Multilingual input groups ─────────────────────────────────────────── */
+.lang-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.lang-input-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+}
+
+.lang-badge {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-top: 8px;
+}
+
+.lang-badge.en {
+    background: rgba(41, 128, 225, 0.15);
+    color: rgb(41, 128, 225);
+}
+
+.lang-badge.de {
+    background: rgba(220, 80, 60, 0.12);
+    color: rgb(200, 60, 40);
+}
+
+.lang-badge.ru {
+    background: rgba(80, 180, 80, 0.14);
+    color: rgb(40, 140, 40);
+}
+
+.lang-input-row input,
+.lang-input-row textarea {
+    flex: 1;
+}

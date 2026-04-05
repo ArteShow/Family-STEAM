@@ -17,7 +17,7 @@ import (
 const (
 	readTimeout  = 10 * time.Second
 	writeTimeout = 10 * time.Second
-	idleTimeou  = 60 * time.Second
+	idleTimeou   = 60 * time.Second
 )
 
 func main() {
@@ -25,20 +25,21 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	if cfg.Port != "" && cfg.Port[0] != ':' {
-    	cfg.Port = ":" + cfg.Port
+		cfg.Port = ":" + cfg.Port
 	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/auth-service/health", func(w http.ResponseWriter, _ *http.Request) {
 		_, err = w.Write([]byte("ok"))
-		if err != nil{
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	})
 	mux.Handle("/auth-service/register", middleware.JWTKeyMiddleware(http.HandlerFunc(handlers.RegisterHandler)))
+	mux.HandleFunc("/auth-service/user-register", handlers.RegisterHandler)
 	mux.HandleFunc("/auth-service/login", handlers.LoginHandler)
 	mux.HandleFunc("/auth-service/verify", handlers.VerifyHandler)
 

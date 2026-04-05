@@ -109,8 +109,21 @@
                         </div>
                         <form id="shortEventForm" onsubmit="handleShortEventSubmit(event)">
                             <div class="form-group">
-                                <label for="eventTitle">Event Title</label>
-                                <input type="text" id="eventTitle" name="title" placeholder="Enter event title" required>
+                                <label>Event Title</label>
+                                <div class="lang-input-group">
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge en">EN</span>
+                                        <input type="text" id="eventTitleEn" name="title_en" placeholder="Event title in English" required>
+                                    </div>
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge de">DE</span>
+                                        <input type="text" id="eventTitleDe" name="title_de" placeholder="Veranstaltungstitel auf Deutsch" required>
+                                    </div>
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge ru">RU</span>
+                                        <input type="text" id="eventTitleRu" name="title_ru" placeholder="Название мероприятия на русском" required>
+                                    </div>
+                                </div>
                             </div>
     
                             <div class="form-row">
@@ -156,9 +169,24 @@
                             </div>
     
                             <div class="form-group">
-                                <label for="eventDescription">Description</label>
-                                <textarea id="eventDescription" name="description" placeholder="Enter event description"
-                                    rows="4" required></textarea>
+                                <label>Description</label>
+                                <div class="lang-input-group">
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge en">EN</span>
+                                        <textarea id="eventDescriptionEn" name="description_en" placeholder="Event description in English" rows="3"
+                                            required></textarea>
+                                    </div>
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge de">DE</span>
+                                        <textarea id="eventDescriptionDe" name="description_de" placeholder="Veranstaltungsbeschreibung auf Deutsch"
+                                            rows="3" required></textarea>
+                                    </div>
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge ru">RU</span>
+                                        <textarea id="eventDescriptionRu" name="description_ru" placeholder="Описание мероприятия на русском" rows="3"
+                                            required></textarea>
+                                    </div>
+                                </div>
                             </div>
     
                             <div class="form-group">
@@ -213,14 +241,42 @@
                         </div>
                         <form id="campsEventForm" onsubmit="handleCampsEventSubmit(event)">
                             <div class="form-group">
-                                <label for="campTitle">Camp Title</label>
-                                <input type="text" id="campTitle" name="title" placeholder="Enter camp title" required>
+                                <label>Camp Title</label>
+                                <div class="lang-input-group">
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge en">EN</span>
+                                        <input type="text" id="campTitleEn" name="title_en" placeholder="Camp title in English" required>
+                                    </div>
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge de">DE</span>
+                                        <input type="text" id="campTitleDe" name="title_de" placeholder="Camp-Titel auf Deutsch" required>
+                                    </div>
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge ru">RU</span>
+                                        <input type="text" id="campTitleRu" name="title_ru" placeholder="Название лагеря на русском" required>
+                                    </div>
+                                </div>
                             </div>
     
                             <div class="form-group">
-                                <label for="campDescription">Description</label>
-                                <textarea id="campDescription" name="description" placeholder="Enter camp description"
-                                    rows="4" required></textarea>
+                                <label>Description</label>
+                                <div class="lang-input-group">
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge en">EN</span>
+                                        <textarea id="campDescriptionEn" name="description_en" placeholder="Camp description in English" rows="3"
+                                            required></textarea>
+                                    </div>
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge de">DE</span>
+                                        <textarea id="campDescriptionDe" name="description_de" placeholder="Camp-Beschreibung auf Deutsch" rows="3"
+                                            required></textarea>
+                                    </div>
+                                    <div class="lang-input-row">
+                                        <span class="lang-badge ru">RU</span>
+                                        <textarea id="campDescriptionRu" name="description_ru" placeholder="Описание лагеря на русском" rows="3"
+                                            required></textarea>
+                                    </div>
+                                </div>
                             </div>
     
                             <div class="form-row">
@@ -423,11 +479,11 @@
             <div id="contact_info">
                 <div class="contact_item" id="phone_number">
                     <i class="fa-solid fa-phone"></i>
-                    <p>+123456789</p>
+                    <p>+43 6604893883</p>
                 </div>
                 <div class="contact_item" id="email">
                     <i class="fa-solid fa-envelope"></i>
-                    <p>lorem@mail.eu</p>
+                    <p>familysteamcamp@gmail.com</p>
                 </div>
             </div>
             <div id="social_medias">
