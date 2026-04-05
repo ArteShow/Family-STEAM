@@ -265,15 +265,6 @@ async function loadEvents() {
     try {
         allEvents = await window.apiUtils.fetchAllEvents()
         
-        // Filter out past events
-        const now = new Date()
-        now.setHours(0, 0, 0, 0)
-        allEvents = allEvents.filter(event => {
-            const eventDate = new Date(event.starts_at || event.start_date)
-            eventDate.setHours(0, 0, 0, 0)
-            return eventDate >= now
-        })
-        
         filteredEvents = [...allEvents]
         
         await initializeTags()
