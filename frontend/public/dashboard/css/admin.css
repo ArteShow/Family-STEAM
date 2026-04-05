@@ -1290,3 +1290,104 @@ body {
         align-self: flex-end;
     }
 }
+
+/* ─── Tickets admin list ─────────────────────────────────────────────────── */
+
+.tickets-admin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.ticket-admin-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(20, 20, 60, 0.07);
+    border-left: 4px solid rgb(41, 128, 225);
+    animation: fadeIn 0.3s ease;
+}
+
+.ticket-admin-card.closed {
+    border-left-color: #bbb;
+    opacity: 0.85;
+}
+
+.ticket-admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+}
+
+.ticket-admin-subject {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: rgb(24, 37, 110);
+}
+
+.ticket-admin-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ticket-admin-status.open {
+    background: rgba(41, 128, 225, 0.12);
+    color: rgb(24, 37, 110);
+}
+
+.ticket-admin-status.closed {
+    background: rgba(150, 150, 150, 0.15);
+    color: #777;
+}
+
+.ticket-admin-meta {
+    font-size: 0.83rem;
+    color: #667;
+    margin-bottom: 0.75rem;
+}
+
+.ticket-admin-message {
+    color: #40507a;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 0.9rem;
+}
+
+.ticket-admin-response {
+    background: rgba(41, 128, 225, 0.07);
+    border-left: 3px solid rgb(41, 128, 225);
+    border-radius: 0 8px 8px 0;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.9rem;
+}
+
+.ticket-admin-response-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgb(24, 37, 110);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.3rem;
+}
+
+.ticket-admin-response-text {
+    color: #40507a;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.ticket-admin-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}

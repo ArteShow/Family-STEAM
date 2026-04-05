@@ -29,6 +29,9 @@
                 <a href="#" class="nav-link" data-page="camps">
                     <i class="fas fa-calendar-alt"></i> Camps
                 </a>
+                <a href="#" class="nav-link" data-page="tickets">
+                    <i class="fas fa-ticket-alt"></i> Tickets
+                </a>
             </nav>
             <a href="#" class="nav-link logout" onclick="handleLogout(event)">
                 <i class="fas fa-sign-out-alt"></i> Logout
@@ -71,6 +74,14 @@
                         <a href="#" class="card-link" onclick="navigateTo('camps')">Manage <i
                                 class="fas fa-arrow-right"></i></a>
                     </div>
+<div class="card">
+    <div class="card-icon">
+        <i class="fas fa-ticket-alt"></i>
+    </div>
+    <h3>Support Tickets</h3>
+    <p id="tickets-count" class="card-count">0</p>
+    <a href="#" class="card-link" onclick="navigateTo('tickets')">Manage <i class="fas fa-arrow-right"></i></a>
+</div>
                 </div>
             </div>
     
@@ -272,9 +283,49 @@
                     </div>
                 </div>
             </div>
+<!-- Tickets Management Page -->
+<div id="tickets-page" class="page">
+    <div class="page-header">
+        <h1>Support Tickets</h1>
+        <p>View, respond to, and manage user support tickets</p>
+        <div class="action-buttons" style="margin-top: 1rem;">
+            <button class="btn-secondary" onclick="reloadTickets()">
+                <i class="fas fa-rotate-right"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    <div id="ticketsList" class="tickets-admin-list">
+        <p class="empty-state">No tickets yet.</p>
+    </div>
+</div>
         </main>
     </div>
-    
+
+    <!-- Ticket Respond Modal -->
+    <div id="ticketRespondModal" class="form-modal">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Respond to Ticket</h2>
+                <button class="close-btn" onclick="closeTicketRespondModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="ticketRespondInfo" style="margin-bottom:1rem;"></div>
+            <form id="ticketRespondForm" onsubmit="submitTicketResponse(event)">
+                <div class="form-group">
+                    <label for="ticketResponseText">Your Response</label>
+                    <textarea id="ticketResponseText" name="response" rows="5" placeholder="Type your response…"
+                        required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeTicketRespondModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Send Response</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="delete-modal">
         <div class="delete-modal-content">

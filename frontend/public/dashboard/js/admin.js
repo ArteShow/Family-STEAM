@@ -1,6 +1,7 @@
 // Data storage
 let shortEvents = [];
 let campsEvents = [];
+let adminTickets = [];
 
 // Delete confirmation state
 let pendingDelete = {
@@ -20,6 +21,7 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
 const CALENDER_API_URL = `${API_BASE_URL}/calender`;
 const FILE_API_URL = `${API_BASE_URL}/file`;
 const CLIENT_API_URL = `${API_BASE_URL}/client`;
+const TICKET_API_URL = `${API_BASE_URL}/ticket`;
 
 function getAuthToken() {
     return localStorage.getItem('authToken') || '';
@@ -175,6 +177,15 @@ async function reloadDashboardData() {
     const mapped = await Promise.all(entries.map(mapCalendarEntryToDashboardEvent));
     shortEvents = mapped.filter(event => !event.endDate);
     campsEvents = mapped.filter(event => event.endDate);
+
+    // Also refresh ticket count for the dashboard card
+    try {
+        const ticketRes = await apiRequest(`${TICKET_API_URL}/getAll`, { method: 'GET' });
+        const ticketData = await ticketRes.json();
+        adminTickets = ticketData.tickets || [];
+    } catch (_) {
+        // tickets count stays as-is
+    }
 
     renderContent();
 }
@@ -384,6 +395,8 @@ function navigateTo(page) {
         renderShortEvents();
     } else if (page === 'camps') {
         renderCampsEvents();
+    } else if (page === 'tickets') {
+        reloadTickets();
     }
 }
 
@@ -689,18 +702,23 @@ async function confirmDelete() {
     if (!pendingDelete.type || !pendingDelete.id) return;
 
     try {
-        await apiRequest(`${CALENDER_API_URL}/delete`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                calender_entry_id: pendingDelete.id
-            })
-        });
-
-        cancelDelete();
-        await reloadDashboardData();
+        if (pendingDelete.type === 'ticket') {
+            await apiRequest(`${TICKET_API_URL}/delete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticket_id: pendingDelete.id })
+            });
+            cancelDelete();
+            await reloadTickets();
+        } else {
+            await apiRequest(`${CALENDER_API_URL}/delete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ calender_entry_id: pendingDelete.id })
+            });
+            cancelDelete();
+            await reloadDashboardData();
+        }
         showDashboardMessage('Deleted successfully', 'success');
     } catch (error) {
         showDashboardMessage(error.message || 'Failed to delete entry');
@@ -711,6 +729,7 @@ async function confirmDelete() {
 function updateCounts() {
     document.getElementById('short-events-count').textContent = shortEvents.length;
     document.getElementById('camps-count').textContent = campsEvents.length;
+    updateTicketsCount();
 }
 
 // Image Upload Handler
@@ -812,12 +831,26 @@ function initializeFormInteractions() {
             }
         });
     }
+
+    const ticketModal = document.getElementById('ticketRespondModal');
+    if (ticketModal) {
+        ticketModal.addEventListener('click', (e) => {
+            if (e.target === ticketModal) {
+                closeTicketRespondModal();
+            }
+        });
+    }
 }
 
 function renderContent() {
     updateCounts();
     renderShortEvents();
     renderCampsEvents();
+}
+
+function updateTicketsCount() {
+    const el = document.getElementById('tickets-count');
+    if (el) el.textContent = adminTickets.length;
 }
 
 function toInputDateString(dateValue) {
@@ -1141,5 +1174,119 @@ function escapeHtml(value) {
 
 function addClientFromModal() {
     addClientRowToModal();
+}
+
+// ─── Ticket management ────────────────────────────────────────────────────────
+
+let respondingTicketId = null;
+
+async function reloadTickets() {
+    try {
+        const response = await apiRequest(`${TICKET_API_URL}/getAll`, { method: 'GET' });
+        const data = await response.json();
+        adminTickets = data.tickets || [];
+        renderAdminTickets();
+        updateTicketsCount();
+    } catch (error) {
+        showDashboardMessage(error.message || 'Failed to load tickets');
+    }
+}
+
+function renderAdminTickets() {
+    const container = document.getElementById('ticketsList');
+    if (!container) return;
+
+    if (adminTickets.length === 0) {
+        container.innerHTML = '<p class="empty-state">No support tickets yet.</p>';
+        return;
+    }
+
+    container.innerHTML = adminTickets.map(ticket => {
+        const isClosed = ticket.status === 'closed';
+        const date = new Date(ticket.created_at).toLocaleDateString('en-GB', {
+            day: '2-digit', month: 'short', year: 'numeric'
+        });
+
+        const responseHtml = ticket.admin_response
+            ? `<div class="ticket-admin-response">
+                   <div class="ticket-admin-response-label"><i class="fas fa-headset"></i> Admin Response</div>
+                   <div class="ticket-admin-response-text">${escapeHtml(ticket.admin_response)}</div>
+               </div>`
+            : '';
+
+        return `
+            <div class="ticket-admin-card ${isClosed ? 'closed' : ''}" id="admin-ticket-${ticket.id}">
+                <div class="ticket-admin-header">
+                    <span class="ticket-admin-subject">${escapeHtml(ticket.subject)}</span>
+                    <span class="ticket-admin-status ${ticket.status}">
+                        <i class="fas fa-circle" style="font-size:0.5rem;"></i> ${ticket.status}
+                    </span>
+                </div>
+                <div class="ticket-admin-meta">
+                    <i class="fas fa-user"></i> ${escapeHtml(ticket.name)}
+                    &nbsp;·&nbsp;
+                    <i class="fas fa-envelope"></i> ${escapeHtml(ticket.email)}
+                    &nbsp;·&nbsp;
+                    <i class="fas fa-calendar"></i> ${date}
+                </div>
+                <div class="ticket-admin-message">${escapeHtml(ticket.message)}</div>
+                ${responseHtml}
+                <div class="ticket-admin-actions">
+                    <button class="btn-primary" onclick="openTicketRespondModal('${ticket.id}', \`${escapeHtml(ticket.subject)}\`)">
+                        <i class="fas fa-reply"></i> Respond
+                    </button>
+                    <button class="delete-btn" onclick="deleteAdminTicket('${ticket.id}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openTicketRespondModal(ticketId, subject) {
+    respondingTicketId = ticketId;
+    const infoEl = document.getElementById('ticketRespondInfo');
+    if (infoEl) {
+        infoEl.innerHTML = `<strong>Ticket:</strong> ${escapeHtml(subject)}`;
+    }
+    const modal = document.getElementById('ticketRespondModal');
+    const form = document.getElementById('ticketRespondForm');
+    if (form) form.reset();
+    if (modal) modal.classList.add('active');
+}
+
+function closeTicketRespondModal() {
+    respondingTicketId = null;
+    const modal = document.getElementById('ticketRespondModal');
+    if (modal) modal.classList.remove('active');
+}
+
+async function submitTicketResponse(event) {
+    event.preventDefault();
+    if (!respondingTicketId) return;
+
+    const responseText = document.getElementById('ticketResponseText').value.trim();
+    if (!responseText) return;
+
+    try {
+        await apiRequest(`${TICKET_API_URL}/respond`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ticket_id: respondingTicketId, response: responseText })
+        });
+
+        closeTicketRespondModal();
+        await reloadTickets();
+        showDashboardMessage('Response sent successfully', 'success');
+    } catch (error) {
+        showDashboardMessage(error.message || 'Failed to send response');
+    }
+}
+
+function deleteAdminTicket(id) {
+    pendingDelete.type = 'ticket';
+    pendingDelete.id = id;
+    showDeleteModal('support ticket');
 }
 

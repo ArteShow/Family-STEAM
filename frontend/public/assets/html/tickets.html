@@ -6,9 +6,10 @@
     <link rel="icon" href="../images/favicon.png" type="image/png">
     <link rel="stylesheet" href="../css/nav.css">
     <link rel="stylesheet" href="../css/footer.css">
-    <link rel="stylesheet" href="../css/camps.css">
+    <link rel="stylesheet" href="../css/tickets.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <title>Family STEAM | Camps</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Family STEAM | Support Tickets</title>
 </head>
 <body>
     <header>
@@ -27,15 +28,70 @@
             <a href="tickets.html">Support Tickets</a>
         </nav>
     </header>
+
     <main>
-        <h3>Summer & Winter Camps</h3>
-        <section id="campsRoot" class="camps_root">
-        </section>
-    
-        <noscript>
-            <p style="text-align:center;padding:2rem;color:#333">Enable JavaScript to view camps.</p>
-        </noscript>
+        <h3>Support Tickets</h3>
+
+        <!-- Tab switcher -->
+        <div class="tabs_container">
+            <button class="tab_btn active" id="tab_create" onclick="switchTab('create')">
+                <i class="fas fa-plus-circle"></i> Create Ticket
+            </button>
+            <button class="tab_btn" id="tab_my" onclick="switchTab('my')">
+                <i class="fas fa-list"></i> My Tickets
+            </button>
+        </div>
+
+        <!-- Create Ticket section -->
+        <div id="section_create" class="tab_section active">
+            <div class="tickets_container">
+                <div class="form_container">
+                    <h4>Submit a Support Ticket</h4>
+                    <p class="form_subtitle">Tell us how we can help. We'll get back to you as soon as possible.</p>
+
+                    <form class="ticket_form" id="ticketForm">
+                        <div class="form_group">
+                            <input type="text" id="ticketName" placeholder="Your Name" required>
+                        </div>
+                        <div class="form_group">
+                            <input type="email" id="ticketEmail" placeholder="Your Email" required>
+                        </div>
+                        <div class="form_group">
+                            <input type="text" id="ticketSubject" placeholder="Subject" required>
+                        </div>
+                        <div class="form_group">
+                            <textarea id="ticketMessage" placeholder="Describe your issue…" rows="6" required></textarea>
+                        </div>
+                        <div id="createMsg" class="form_message" style="display:none;"></div>
+                        <button type="submit" class="submit_btn">
+                            <i class="fas fa-paper-plane"></i> Submit Ticket
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Tickets section -->
+        <div id="section_my" class="tab_section">
+            <div class="tickets_container">
+                <div class="form_container">
+                    <h4>View My Tickets</h4>
+                    <p class="form_subtitle">Enter your email address to see all tickets you have submitted.</p>
+
+                    <div class="lookup_row">
+                        <input type="email" id="lookupEmail" placeholder="Your Email" required>
+                        <button class="submit_btn lookup_btn" onclick="loadMyTickets()">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                    <div id="lookupMsg" class="form_message" style="display:none;"></div>
+                </div>
+
+                <div id="myTicketsList" class="tickets_list" style="display:none;"></div>
+            </div>
+        </div>
     </main>
+
     <footer>
         <div class="footer_content">
             <div class="footer_section">
@@ -43,17 +99,17 @@
                 <p>Family STEAM is dedicated to providing innovative, engaging, and educational programs for families of all
                     ages. We believe in hands-on learning and creativity.</p>
             </div>
-    
+
             <div class="footer_section">
                 <h4>Quick Links</h4>
                 <ul>
                     <li><a href="../../index.html">Home</a></li>
                     <li><a href="calender.html">Events Calendar</a></li>
                     <li><a href="camps.html">Camps</a></li>
-                    <li><a href="#contact">Contact Us</a></li>
+                    <li><a href="tickets.html">Support Tickets</a></li>
                 </ul>
             </div>
-    
+
             <div class="footer_section">
                 <h4>Programs</h4>
                 <ul>
@@ -63,7 +119,7 @@
                     <li><a href="#math">Math Camp</a></li>
                 </ul>
             </div>
-    
+
             <div class="footer_section">
                 <h4>Newsletter</h4>
                 <p>Subscribe to get updates about our latest programs and events.</p>
@@ -73,7 +129,7 @@
                 </form>
             </div>
         </div>
-    
+
         <div id="contact">
             <div id="contact_info">
                 <div class="contact_item" id="phone_number">
@@ -102,11 +158,8 @@
             <p>© 2026 Family STEAM | All Rights Reserved</p>
         </div>
     </footer>
-    
-    <script src="https://kit.fontawesome.com/d9e39d51d2.js" crossorigin="anonymous"></script>
-    <script src="../js/api.js?v=4"></script>
-    <script src="../js/data.js"></script>
-    <script src="../js/camps.js?v=2"></script>
+
     <script src="../js/nav.js"></script>
+    <script src="../js/tickets.js"></script>
 </body>
 </html>

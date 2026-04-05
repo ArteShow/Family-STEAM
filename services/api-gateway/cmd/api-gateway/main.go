@@ -50,6 +50,13 @@ func main() {
 	calenderGetAllProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/getAll")
 	calenderUpdateImagesProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/update-images")
 
+	ticketCreateProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/create")
+	ticketGetAllProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/getAll")
+	ticketGetByEmailProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/getByEmail")
+	ticketRespondProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/respond")
+	ticketCloseProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/close")
+	ticketDeleteProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/delete")
+
 	handler := http.NewServeMux()
 	handler.Handle(
 		"/api/"+cfg.APIVersion+"/api-gateway/health",
@@ -82,6 +89,13 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/update-images", middleware.LoggingMiddleware(middleware.AdminOnly(calenderUpdateImagesProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/get", middleware.LoggingMiddleware(calenderGetProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/calender/getAll", middleware.LoggingMiddleware(calenderGetAllProxy))
+
+	handler.Handle("/api/"+cfg.APIVersion+"/ticket/create", middleware.LoggingMiddleware(ticketCreateProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/ticket/getByEmail", middleware.LoggingMiddleware(ticketGetByEmailProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/ticket/close", middleware.LoggingMiddleware(ticketCloseProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/ticket/getAll", middleware.LoggingMiddleware(middleware.AdminOnly(ticketGetAllProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/ticket/respond", middleware.LoggingMiddleware(middleware.AdminOnly(ticketRespondProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/ticket/delete", middleware.LoggingMiddleware(middleware.AdminOnly(ticketDeleteProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,
