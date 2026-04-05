@@ -275,3 +275,18 @@ main.settings-page {
     color: #c0392b;
     border: 1px solid rgba(220, 60, 60, 0.2);
 }
+
+/* Description text below card headings */
+.settings-desc {
+    color: #40507a;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.55;
+}
+
+/* Sub-label in profile card (e.g. "Registered user") */
+.profile-sub {
+    color: #40507a;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+}

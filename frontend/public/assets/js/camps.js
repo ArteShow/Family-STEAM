@@ -8,6 +8,8 @@
 	function isCampEvent(event) {
 		const tag = (event.tag || '').toLowerCase();
 		if (tag.includes('camp')) return true;
+		// Admin-created camps always have ends_at set
+		if (event.ends_at) return true;
 
 		const start = new Date(event.starts_at || event.start_date);
 		const end = new Date(event.ends_at || event.end_date);

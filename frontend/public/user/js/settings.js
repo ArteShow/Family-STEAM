@@ -53,6 +53,11 @@ function applyTranslations(lang) {
 }
 
 // --- Avatar ---
+function getAvatarKey() {
+    const user = localStorage.getItem('currentUser') || 'guest';
+    return 'userAvatarDataURL_' + user;
+}
+
 function handleAvatarUpload(event) {
     const file = event.target.files && event.target.files[0];
     if (!file) return;
@@ -68,7 +73,7 @@ function handleAvatarUpload(event) {
     const reader = new FileReader();
     reader.onload = function (e) {
         const dataUrl = e.target.result;
-        localStorage.setItem('userAvatarDataURL', dataUrl);
+        localStorage.setItem(getAvatarKey(), dataUrl);
         const preview = document.getElementById('avatarPreview');
         if (preview) preview.src = dataUrl;
         showMsg('Profile picture updated.', 'success');
@@ -101,7 +106,6 @@ function handleWaToggle(checked) {
 function handleLogout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('userAvatarDataURL');
     window.location.replace('/index.html');
 }
 
@@ -125,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (usernameEl) usernameEl.textContent = username;
 
     // Set avatar
-    const avatarData = localStorage.getItem('userAvatarDataURL');
+    const avatarData = localStorage.getItem(getAvatarKey());
     const avatarPreview = document.getElementById('avatarPreview');
     if (avatarPreview && avatarData) avatarPreview.src = avatarData;
 

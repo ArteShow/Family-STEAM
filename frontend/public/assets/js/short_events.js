@@ -8,6 +8,8 @@
 	function isCampEvent(event) {
 		const tag = (event.tag || '').toLowerCase();
 		if (tag.includes('camp')) return true;
+		// Admin-created camps always have ends_at set
+		if (event.ends_at) return true;
 
 		const start = new Date(event.starts_at || event.start_date);
 		const end = new Date(event.ends_at || event.end_date);
@@ -22,12 +24,11 @@
 		
 		const now = new Date();
 		now.setHours(0, 0, 0, 0);
-		const thirtyDaysLater = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 		
 		const upcoming = allEvents.filter(event => {
 			const eventDate = new Date(event.starts_at || event.start_date);
 			eventDate.setHours(0, 0, 0, 0);
-			return eventDate >= now && eventDate <= thirtyDaysLater && !isCampEvent(event);
+			return eventDate >= now && !isCampEvent(event);
 		});
 
 		if (eventIdFromUrl) {
@@ -38,7 +39,7 @@
 		}
 
 		if(upcoming.length === 0){
-			root.innerHTML = '<p style="text-align:center;padding:2rem;color:#333">No short events in the next 30 days.</p>';
+			root.innerHTML = '<p style="text-align:center;padding:2rem;color:#333">No short events available at the moment.</p>';
 			return;
 		}
 
