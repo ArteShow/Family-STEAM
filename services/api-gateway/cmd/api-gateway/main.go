@@ -60,6 +60,23 @@ func main() {
 	ticketCloseProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/close")
 	ticketDeleteProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/delete")
 
+	// message-service proxies (port 8007)
+	msgAdminSendProxy := proxy.NewProxy("http://message-service:8007", "/message-service/adminSend")
+	msgAdminInboxProxy := proxy.NewProxy("http://message-service:8007", "/message-service/adminInbox")
+	msgAdminThreadProxy := proxy.NewProxy("http://message-service:8007", "/message-service/adminThread")
+	msgAdminDeleteProxy := proxy.NewProxy("http://message-service:8007", "/message-service/adminDelete")
+	msgUserReplyProxy := proxy.NewProxy("http://message-service:8007", "/message-service/userReply")
+	msgUserInboxProxy := proxy.NewProxy("http://message-service:8007", "/message-service/userInbox")
+	msgUserThreadProxy := proxy.NewProxy("http://message-service:8007", "/message-service/userThread")
+	msgMarkReadProxy := proxy.NewProxy("http://message-service:8007", "/message-service/markRead")
+
+	// newsletter-service proxies (port 8008)
+	nlSubscribeProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/subscribe")
+	nlUnsubscribeProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/unsubscribe")
+	nlSubscribersProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/subscribers")
+	nlSendProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/send")
+	nlCampaignsProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/campaigns")
+
 	handler := http.NewServeMux()
 	handler.Handle(
 		"/api/"+cfg.APIVersion+"/api-gateway/health",
@@ -102,6 +119,23 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/ticket/getAll", middleware.LoggingMiddleware(middleware.AdminOnly(ticketGetAllProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/ticket/respond", middleware.LoggingMiddleware(middleware.AdminOnly(ticketRespondProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/ticket/delete", middleware.LoggingMiddleware(middleware.AdminOnly(ticketDeleteProxy)))
+
+	// message-service routes
+	handler.Handle("/api/"+cfg.APIVersion+"/message/adminSend", middleware.LoggingMiddleware(middleware.AdminOnly(msgAdminSendProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/message/adminInbox", middleware.LoggingMiddleware(middleware.AdminOnly(msgAdminInboxProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/message/adminThread", middleware.LoggingMiddleware(middleware.AdminOnly(msgAdminThreadProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/message/adminDelete", middleware.LoggingMiddleware(middleware.AdminOnly(msgAdminDeleteProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/message/userReply", middleware.LoggingMiddleware(middleware.UserAuth(msgUserReplyProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/message/userInbox", middleware.LoggingMiddleware(middleware.UserAuth(msgUserInboxProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/message/userThread", middleware.LoggingMiddleware(middleware.UserAuth(msgUserThreadProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/message/markRead", middleware.LoggingMiddleware(middleware.UserAuth(msgMarkReadProxy)))
+
+	// newsletter-service routes
+	handler.Handle("/api/"+cfg.APIVersion+"/newsletter/subscribe", middleware.LoggingMiddleware(nlSubscribeProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/newsletter/unsubscribe", middleware.LoggingMiddleware(nlUnsubscribeProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/newsletter/subscribers", middleware.LoggingMiddleware(middleware.AdminOnly(nlSubscribersProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/newsletter/send", middleware.LoggingMiddleware(middleware.AdminOnly(nlSendProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/newsletter/campaigns", middleware.LoggingMiddleware(middleware.AdminOnly(nlCampaignsProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,

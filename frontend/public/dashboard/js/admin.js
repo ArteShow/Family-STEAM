@@ -27,14 +27,28 @@ const CALENDER_API_URL = `${API_BASE_URL}/calender`;
 const FILE_API_URL = `${API_BASE_URL}/file`;
 const CLIENT_API_URL = `${API_BASE_URL}/client`;
 const TICKET_API_URL = `${API_BASE_URL}/ticket`;
+const MESSAGE_API_URL = `${API_BASE_URL}/message`;
+const NEWSLETTER_API_URL = `${API_BASE_URL}/newsletter`;
 
 function getAuthToken() {
     return localStorage.getItem('authToken') || '';
 }
 
 function showDashboardMessage(message, type = 'error') {
-    const prefix = type === 'success' ? '✅' : '⚠️';
-    console.log(`${prefix} ${message}`);
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.style.animation = 'toastOut 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
 }
 
 async function apiRequest(url, options = {}) {
@@ -197,6 +211,22 @@ async function reloadDashboardData() {
     } catch (_) {
         // tickets count stays as-is
     }
+
+    // Inbox count
+    try {
+        const inboxRes = await apiRequest(`${MESSAGE_API_URL}/adminInbox`, { method: 'GET' });
+        const inboxData = await inboxRes.json();
+        const inboxCountEl = document.getElementById('inbox-count');
+        if (inboxCountEl) inboxCountEl.textContent = (inboxData.threads || []).length;
+    } catch (_) { /* ignore */ }
+
+    // Newsletter subscriber count
+    try {
+        const subRes = await apiRequest(`${NEWSLETTER_API_URL}/subscribers`, { method: 'GET' });
+        const subData = await subRes.json();
+        const newsletterCountEl = document.getElementById('newsletter-count');
+        if (newsletterCountEl) newsletterCountEl.textContent = (subData.subscribers || []).length + ' subscribers';
+    } catch (_) { /* ignore */ }
 
     renderContent();
 }
@@ -416,6 +446,10 @@ function navigateTo(page) {
         renderCampsEvents();
     } else if (page === 'tickets') {
         reloadTickets();
+    } else if (page === 'inbox') {
+        loadAdminInbox();
+    } else if (page === 'newsletter') {
+        loadNewsletterData();
     }
 }
 

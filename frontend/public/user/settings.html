@@ -96,6 +96,34 @@
                 </div>
             </div>
 
+            <!-- Inbox Section -->
+            <div class="settings-card" id="inboxSettingsCard">
+                <div class="settings-card-title">
+                    <i class="fas fa-inbox"></i> Messages
+                </div>
+                <p class="settings-desc">Messages from the Family STEAM team.</p>
+            
+                <div class="user-inbox-layout">
+                    <!-- Thread list -->
+                    <div id="userInboxThreadsList" class="user-inbox-threads">
+                        <p class="settings-desc">Loading…</p>
+                    </div>
+                    <!-- Thread view -->
+                    <div id="userInboxThreadView" class="user-inbox-view" style="display:none;">
+                        <button class="btn-secondary btn-sm" onclick="closeUserThread()" style="margin-bottom:0.75rem;">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <div id="userThreadMessages" class="thread-messages"></div>
+                        <div class="thread-reply-box" style="margin-top:0.75rem;">
+                            <textarea id="userReplyContent" placeholder="Reply…" rows="3"></textarea>
+                            <button class="btn-primary btn-sm" id="userReplyBtn" onclick="sendUserReply()">
+                                <i class="fas fa-reply"></i> Reply
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="settingsMsg" class="settings-msg" style="display:none;"></div>
         </div>
     </main>
@@ -162,6 +190,7 @@
     <script src="../assets/js/i18n.js"></script>
     <script src="../assets/js/nav.js"></script>
     <script src="js/settings.js"></script>
+    <script src="../assets/js/newsletter.js"></script>
     <script src="../assets/js/whatsapp.js"></script>
 </body>
 </html>

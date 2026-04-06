@@ -158,4 +158,152 @@ document.addEventListener('DOMContentLoaded', () => {
     // Wire logout
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+
+    // Load user inbox if logged in
+    const token = localStorage.getItem('authToken');
+    if (token) loadUserInbox();
 });
+
+/* ─── User Inbox ─────────────────────────────────────────────────────────── */
+
+const _MSG_API = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/message`;
+let _userThreads = [];
+let _activeUserThreadId = null;
+
+function _inboxRequest(url, options = {}) {
+    const token = localStorage.getItem('authToken');
+    const headers = { ...(options.headers || {}) };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    return fetch(url, { ...options, headers });
+}
+
+async function loadUserInbox() {
+    try {
+        const res  = await _inboxRequest(`${_MSG_API}/userInbox`, { method: 'GET' });
+        const data = await res.json();
+        _userThreads = data.threads || [];
+        renderUserThreadsList();
+    } catch (err) {
+        console.error('Failed to load inbox:', err);
+    }
+}
+
+function renderUserThreadsList() {
+    const container = document.getElementById('userInboxThreadsList');
+    if (!container) return;
+
+    if (_userThreads.length === 0) {
+        container.innerHTML = '<p class="settings-desc">No messages yet.</p>';
+        return;
+    }
+
+    container.innerHTML = _userThreads.map(t => `
+        <div class="user-thread-item" onclick="openUserThread('${_esc(t.thread_id)}')">
+            <div class="user-thread-header">
+                <strong>${_esc(t.subject)}</strong>
+                <span>${_relTime(t.last_at)}</span>
+            </div>
+            <p class="user-thread-preview">${_esc((t.last_message || '').slice(0, 70))}${(t.last_message || '').length > 70 ? '…' : ''}</p>
+        </div>
+    `).join('');
+}
+
+async function openUserThread(threadId) {
+    _activeUserThreadId = threadId;
+
+    try {
+        const res  = await _inboxRequest(`${_MSG_API}/userThread`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ thread_id: threadId })
+        });
+        const data = await res.json();
+        renderUserThreadView(data.messages || []);
+
+        // Mark as read
+        await _inboxRequest(`${_MSG_API}/markRead`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ thread_id: threadId })
+        });
+    } catch (err) {
+        console.error('Failed to open thread:', err);
+    }
+}
+
+function renderUserThreadView(messages) {
+    const listEl = document.getElementById('userInboxThreadsList');
+    const viewEl = document.getElementById('userInboxThreadView');
+    if (listEl) listEl.style.display = 'none';
+    if (viewEl) viewEl.style.display = 'block';
+
+    const msgsEl = document.getElementById('userThreadMessages');
+    if (!msgsEl) return;
+
+    const username = localStorage.getItem('currentUser') || '';
+    msgsEl.innerHTML = messages.map(msg => `
+        <div class="message-bubble ${msg.sender_id === username ? 'outgoing' : 'incoming'}">
+            <div class="bubble-meta">
+                <strong>${_esc(msg.sender_name)}</strong>
+                <span>${_relTime(msg.created_at)}</span>
+            </div>
+            <div class="bubble-content">${_esc(msg.content)}</div>
+        </div>
+    `).join('');
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+function closeUserThread() {
+    _activeUserThreadId = null;
+    const listEl = document.getElementById('userInboxThreadsList');
+    const viewEl = document.getElementById('userInboxThreadView');
+    if (listEl) listEl.style.display = 'block';
+    if (viewEl) viewEl.style.display = 'none';
+    const replyEl = document.getElementById('userReplyContent');
+    if (replyEl) replyEl.value = '';
+}
+
+async function sendUserReply() {
+    const content = document.getElementById('userReplyContent')?.value.trim();
+    if (!content || !_activeUserThreadId) return;
+
+    const btn = document.getElementById('userReplyBtn');
+    if (btn) btn.disabled = true;
+
+    try {
+        await _inboxRequest(`${_MSG_API}/userReply`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ thread_id: _activeUserThreadId, content })
+        });
+        const replyEl = document.getElementById('userReplyContent');
+        if (replyEl) replyEl.value = '';
+        await openUserThread(_activeUserThreadId);
+    } catch (err) {
+        console.error('Failed to send reply:', err);
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+/* Helpers */
+function _esc(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+function _relTime(dateStr) {
+    if (!dateStr) return '';
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const m = Math.floor(diff / 60000);
+    if (m < 1)  return 'Just now';
+    if (m < 60) return `${m}m ago`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h}h ago`;
+    return `${Math.floor(h / 24)}d ago`;
+}
+

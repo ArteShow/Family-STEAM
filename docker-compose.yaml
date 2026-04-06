@@ -113,6 +113,36 @@ services:
       start_period: 10s
     networks:
       - disknet
+  message-service:
+    build: ./services/message-service
+    container_name: message-service
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${MESSAGE_SERVICE_PORT}:${MESSAGE_SERVICE_PORT}"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${MESSAGE_SERVICE_PORT}/message-service/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - disknet
+  newsletter-service:
+    build: ./services/newsletter-service
+    container_name: newsletter-service
+    env_file:
+      - ./config/docker.env
+    ports:
+      - "${NEWSLETTER_SERVICE_PORT}:${NEWSLETTER_SERVICE_PORT}"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${NEWSLETTER_SERVICE_PORT}/newsletter-service/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - disknet
   postgres:
     image: postgres:16
     container_name: postgres

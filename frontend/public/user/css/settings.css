@@ -290,3 +290,114 @@ main.settings-page {
     font-size: 0.85rem;
     margin-bottom: 0.75rem;
 }
+/* ─── User Inbox ─────────────────────────────────────────────────────────── */
+
+.user-inbox-layout {
+    width: 100%;
+}
+
+.user-inbox-threads {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.user-thread-item {
+    background: #f8faff;
+    border: 1px solid #e8eaf6;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.user-thread-item:hover {
+    background: rgba(41, 128, 225, 0.08);
+}
+
+.user-thread-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.2rem;
+}
+
+.user-thread-header strong {
+    font-size: 0.9rem;
+    color: #1a2549;
+}
+
+.user-thread-header span {
+    font-size: 0.72rem;
+    color: #888;
+}
+
+.user-thread-preview {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-inbox-view .thread-messages {
+    max-height: 320px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.5rem 0;
+}
+
+.user-inbox-view .message-bubble {
+    max-width: 80%;
+    padding: 0.6rem 0.85rem;
+    border-radius: 10px;
+    font-size: 0.87rem;
+    line-height: 1.5;
+}
+
+.user-inbox-view .message-bubble.outgoing {
+    align-self: flex-end;
+    background: #2980e1;
+    color: #fff;
+    border-bottom-right-radius: 3px;
+}
+
+.user-inbox-view .message-bubble.incoming {
+    align-self: flex-start;
+    background: #eef1ff;
+    color: #1a2549;
+    border-bottom-left-radius: 3px;
+}
+
+.user-inbox-view .bubble-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    opacity: 0.75;
+    margin-bottom: 0.25rem;
+}
+
+.user-inbox-view .thread-reply-box {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-end;
+}
+
+.user-inbox-view .thread-reply-box textarea {
+    flex: 1;
+    border: 1.5px solid #d0d4e8;
+    border-radius: 8px;
+    padding: 0.55rem 0.8rem;
+    font-family: inherit;
+    font-size: 0.87rem;
+    resize: vertical;
+    outline: none;
+}
+
+.user-inbox-view .thread-reply-box textarea:focus {
+    border-color: #2980e1;
+}
