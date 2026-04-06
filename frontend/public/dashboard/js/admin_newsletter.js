@@ -19,7 +19,7 @@ async function loadNewsletterData() {
         if (countEl) countEl.textContent = count;
 
         const dashCountEl = document.getElementById('newsletter-count');
-        if (dashCountEl) dashCountEl.textContent = count + ' subscribers';
+        if (dashCountEl) dashCountEl.textContent = count;
 
         renderCampaignHistory(campData.campaigns || []);
     } catch (err) {
