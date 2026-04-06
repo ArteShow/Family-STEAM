@@ -9,6 +9,11 @@ let pendingDelete = {
     id: null
 };
 
+// Edit state
+let editingId = null;
+let editingType = null; // 'short-events' | 'camps'
+let editFormDirty = false;
+
 let detailsContext = {
     type: null,
     id: null,
@@ -303,6 +308,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // Warn before leaving if an edit form is open and dirty
+    window.addEventListener('beforeunload', (e) => {
+        if (editingId && editFormDirty) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
     initializeNavigation();
     initializeImageUploads();
     initializeFormInteractions();
@@ -407,21 +420,83 @@ function navigateTo(page) {
 }
 
 // Form Management
-function showForm(type) {
+function showForm(type, prefill) {
     let modalId;
     if (type === 'short-events') {
         modalId = 'short-events-form-modal';
     } else if (type === 'camps') {
         modalId = 'camps-form-modal';
     }
-    
+
     const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.add('active');
+    if (!modal) return;
+
+    if (prefill) {
+        // Edit mode: fill form fields with existing data
+        if (type === 'short-events') {
+            document.getElementById('eventTitleEn').value   = prefill.title_en || '';
+            document.getElementById('eventTitleDe').value   = prefill.title_de || '';
+            document.getElementById('eventTitleRu').value   = prefill.title_ru || '';
+            document.getElementById('eventDate').value       = prefill.date || '';
+            document.getElementById('eventPlace').value      = prefill.place || '';
+            document.getElementById('eventPrice').value      = prefill.price !== undefined ? String(prefill.price) : '';
+            document.getElementById('eventDuration').value   = prefill.duration || '';
+            document.getElementById('eventPersons').value    = prefill.persons !== undefined ? String(prefill.persons) : '';
+            document.getElementById('eventTag').value        = prefill.tag || '';
+            document.getElementById('eventResponsibility').value = prefill.responsibility || '';
+            document.getElementById('eventDescriptionEn').value  = prefill.description_en || '';
+            document.getElementById('eventDescriptionDe').value  = prefill.description_de || '';
+            document.getElementById('eventDescriptionRu').value  = prefill.description_ru || '';
+            modal.querySelector('.form-header h2').textContent = 'Edit Short Event';
+            modal.querySelector('.btn-primary[type="submit"]').textContent = 'Save Changes';
+        } else if (type === 'camps') {
+            document.getElementById('campTitleEn').value      = prefill.title_en || '';
+            document.getElementById('campTitleDe').value      = prefill.title_de || '';
+            document.getElementById('campTitleRu').value      = prefill.title_ru || '';
+            document.getElementById('campStartDate').value    = prefill.startDate || '';
+            document.getElementById('campEndDate').value      = prefill.endDate || '';
+            document.getElementById('campLocation').value     = prefill.place || '';
+            document.getElementById('campPrice').value        = prefill.price !== undefined ? String(prefill.price) : '';
+            document.getElementById('campCapacity').value     = prefill.capacity !== undefined ? String(prefill.capacity) : '';
+            document.getElementById('campTag').value          = prefill.tag || '';
+            document.getElementById('campDescriptionEn').value = prefill.description_en || '';
+            document.getElementById('campDescriptionDe').value = prefill.description_de || '';
+            document.getElementById('campDescriptionRu').value = prefill.description_ru || '';
+            modal.querySelector('.form-header h2').textContent = 'Edit Camp';
+            modal.querySelector('.btn-primary[type="submit"]').textContent = 'Save Changes';
+        }
+        editFormDirty = false;
+        modal.addEventListener('input', markEditDirty, { once: false });
+        modal.addEventListener('change', markEditDirty, { once: false });
+    } else {
+        // Create mode: reset
+        if (type === 'short-events') {
+            modal.querySelector('.form-header h2').textContent = 'Create Short Event';
+            modal.querySelector('.btn-primary[type="submit"]').textContent = 'Create Event';
+        } else if (type === 'camps') {
+            modal.querySelector('.form-header h2').textContent = 'Create Camp';
+            modal.querySelector('.btn-primary[type="submit"]').textContent = 'Create Camp';
+        }
+        editFormDirty = false;
     }
+
+    modal.classList.add('active');
+}
+
+function markEditDirty() {
+    editFormDirty = true;
 }
 
 function closeForm(type) {
+    // If editing and form is dirty, ask for confirmation
+    if (editingId && editingType === type && editFormDirty) {
+        showDiscardEditModal(type);
+        return;
+    }
+    _doCloseForm(type);
+}
+
+function _doCloseForm(type) {
     let modalId, formId, previewContainerId, previewTextId, fileInputId;
     
     if (type === 'short-events') {
@@ -443,6 +518,8 @@ function closeForm(type) {
     
     if (modal) {
         modal.classList.remove('active');
+        modal.removeEventListener('input', markEditDirty);
+        modal.removeEventListener('change', markEditDirty);
     }
     
     if (form) {
@@ -459,6 +536,30 @@ function closeForm(type) {
         const fileInput = document.getElementById(fileInputId);
         if (fileInput) fileInput.value = '';
     }
+
+    editingId = null;
+    editingType = null;
+    editFormDirty = false;
+}
+
+function showDiscardEditModal(type) {
+    const modal = document.getElementById('discardEditModal');
+    if (modal) {
+        modal._pendingType = type;
+        modal.classList.add('active');
+    }
+}
+
+function closeDiscardEditModal() {
+    const modal = document.getElementById('discardEditModal');
+    if (modal) modal.classList.remove('active');
+}
+
+function confirmDiscardEdit() {
+    const modal = document.getElementById('discardEditModal');
+    const type = modal ? modal._pendingType : null;
+    closeDiscardEditModal();
+    if (type) _doCloseForm(type);
 }
 
 // Handle Short Event Form Submission
@@ -469,6 +570,47 @@ async function handleShortEventSubmit(event) {
     const imageFiles = Array.from(document.getElementById('eventImage').files || []);
 
     try {
+        if (editingId && editingType === 'short-events') {
+            // Update existing event
+            await apiRequest(`${CALENDER_API_URL}/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    calender_entry_id: editingId,
+                    calender_entry: {
+                        location:       formData.get('place'),
+                        price:          parseNumberFromText(formData.get('price'), 0),
+                        tag:            formData.get('tag'),
+                        amount:         parseNumberFromText(formData.get('persons'), 0),
+                        title_en:       formData.get('title_en'),
+                        title_de:       formData.get('title_de') || '',
+                        title_ru:       formData.get('title_ru') || '',
+                        description_en: formData.get('description_en'),
+                        description_de: formData.get('description_de') || '',
+                        description_ru: formData.get('description_ru') || '',
+                        responsibility: formData.get('responsibility'),
+                        starts_at:      parseDateToISO(formData.get('date')),
+                        ends_at:        null,
+                        duration:       formData.get('duration')
+                    }
+                })
+            });
+
+            if (imageFiles.length > 0) {
+                const imageIDs = await uploadImagesForEntry(editingId, imageFiles);
+                await apiRequest(`${CALENDER_API_URL}/update-images`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ calender_entry_id: editingId, image_ids: imageIDs })
+                });
+            }
+
+            _doCloseForm('short-events');
+            await reloadDashboardData();
+            showDashboardMessage('Short event updated successfully', 'success');
+            return;
+        }
+
         const createResponse = await apiRequest(`${CALENDER_API_URL}/create`, {
             method: 'POST',
             headers: {
@@ -531,6 +673,47 @@ async function handleCampsEventSubmit(event) {
     const imageFiles = Array.from(document.getElementById('campImage').files || []);
 
     try {
+        if (editingId && editingType === 'camps') {
+            // Update existing camp
+            await apiRequest(`${CALENDER_API_URL}/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    calender_entry_id: editingId,
+                    calender_entry: {
+                        location:       formData.get('place'),
+                        price:          parseNumberFromText(formData.get('price'), 0),
+                        tag:            formData.get('tag'),
+                        amount:         parseNumberFromText(formData.get('capacity'), 0),
+                        title_en:       formData.get('title_en'),
+                        title_de:       formData.get('title_de') || '',
+                        title_ru:       formData.get('title_ru') || '',
+                        description_en: formData.get('description_en'),
+                        description_de: formData.get('description_de') || '',
+                        description_ru: formData.get('description_ru') || '',
+                        responsibility: null,
+                        starts_at:      parseDateToISO(formData.get('startDate')),
+                        ends_at:        parseDateToISO(formData.get('endDate')),
+                        duration:       null
+                    }
+                })
+            });
+
+            if (imageFiles.length > 0) {
+                const imageIDs = await uploadImagesForEntry(editingId, imageFiles);
+                await apiRequest(`${CALENDER_API_URL}/update-images`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ calender_entry_id: editingId, image_ids: imageIDs })
+                });
+            }
+
+            _doCloseForm('camps');
+            await reloadDashboardData();
+            showDashboardMessage('Camp updated successfully', 'success');
+            return;
+        }
+
         const createResponse = await apiRequest(`${CALENDER_API_URL}/create`, {
             method: 'POST',
             headers: {
@@ -625,6 +808,9 @@ function renderShortEvents() {
                 </div>
                 <p class="event-description">${event.description}</p>
                 <div class="event-actions">
+                    <button class="edit-btn" onclick="editShortEvent('${event.id}')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
                     <button class="details-btn" onclick="openClientsDetails('short-events', '${event.id}')">
                         <i class="fas fa-users"></i> See details
                     </button>
@@ -673,6 +859,9 @@ function renderCampsEvents() {
                 </div>
                 <p class="event-description">${event.description}</p>
                 <div class="event-actions">
+                    <button class="edit-btn" onclick="editCampsEvent('${event.id}')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
                     <button class="details-btn" onclick="openClientsDetails('camps', '${event.id}')">
                         <i class="fas fa-users"></i> See details
                     </button>
@@ -686,6 +875,22 @@ function renderCampsEvents() {
 }
 
 // Delete Functions with Modal Confirmation
+function editShortEvent(id) {
+    const ev = shortEvents.find(e => e.id === id);
+    if (!ev) return;
+    editingId = id;
+    editingType = 'short-events';
+    showForm('short-events', ev);
+}
+
+function editCampsEvent(id) {
+    const ev = campsEvents.find(e => e.id === id);
+    if (!ev) return;
+    editingId = id;
+    editingType = 'camps';
+    showForm('camps', ev);
+}
+
 function deleteShortEvent(id) {
     pendingDelete.type = 'short-events';
     pendingDelete.id = id;
@@ -846,6 +1051,13 @@ function initializeFormInteractions() {
         });
     }
 
+    const discardModal = document.getElementById('discardEditModal');
+    if (discardModal) {
+        discardModal.addEventListener('click', (e) => {
+            if (e.target === discardModal) closeDiscardEditModal();
+        });
+    }
+
     const ticketModal = document.getElementById('ticketRespondModal');
     if (ticketModal) {
         ticketModal.addEventListener('click', (e) => {
@@ -888,7 +1100,10 @@ function mapApiClientToModalClient(apiClient) {
         email: apiClient.email || '',
         age: apiClient.age ?? '',
         birthday: toInputDateString(apiClient.birthday),
-        paid: Boolean(apiClient.paid)
+        paid: Boolean(apiClient.paid),
+        username: apiClient.username || '',
+        avatar: apiClient.avatar || '',
+        paymentMethod: apiClient.payment_method || 'cash'
     };
 }
 
@@ -1153,18 +1368,40 @@ async function saveClientsDetails(closeAfterSave = true) {
 
 function getDetailsSchema(type) {
     return [
-        { key: 'firstName', label: 'First Name', inputType: 'text' },
-        { key: 'lastName', label: 'Last Name', inputType: 'text' },
-        { key: 'birthday', label: 'Date of Birth', inputType: 'date' },
-        { key: 'phone', label: 'Phone', inputType: 'text' },
-        { key: 'email', label: 'Email', inputType: 'email' },
-        { key: 'age', label: 'Age', inputType: 'number' },
-        { key: 'paid', label: 'Paid', inputType: 'checkbox' }
+        { key: 'avatar',        label: 'Photo',          inputType: 'avatar' },
+        { key: 'username',      label: 'Username',       inputType: 'readonly' },
+        { key: 'paymentMethod', label: 'Payment',        inputType: 'payment-badge' },
+        { key: 'firstName',     label: 'First Name',     inputType: 'text' },
+        { key: 'lastName',      label: 'Last Name',      inputType: 'text' },
+        { key: 'birthday',      label: 'Date of Birth',  inputType: 'date' },
+        { key: 'phone',         label: 'Phone',          inputType: 'text' },
+        { key: 'email',         label: 'Email',          inputType: 'email' },
+        { key: 'age',           label: 'Age',            inputType: 'number' },
+        { key: 'paid',          label: 'Paid',           inputType: 'checkbox' }
     ];
 }
 
 function renderClientCell(field, client, index) {
     const value = client[field.key] ?? '';
+
+    if (field.inputType === 'avatar') {
+        const src = escapeHtml(String(value));
+        const alt = escapeHtml(client.username || '');
+        if (src) {
+            return `<td data-col="${field.key}"><img src="${src}" alt="${alt}" class="client-avatar-preview" onerror="this.style.display='none'"></td>`;
+        }
+        return `<td data-col="${field.key}"><span class="client-avatar-placeholder"><i class="fas fa-user"></i></span></td>`;
+    }
+
+    if (field.inputType === 'readonly') {
+        return `<td data-col="${field.key}"><span class="readonly-cell">${escapeHtml(String(value)) || '—'}</span></td>`;
+    }
+
+    if (field.inputType === 'payment-badge') {
+        const isCard = value === 'card';
+        const label = isCard ? '✅ Card (Paid)' : '⏳ Cash (On arrival)';
+        return `<td data-col="${field.key}"><span class="payment-badge ${escapeHtml(String(value))}">${label}</span></td>`;
+    }
 
     if (field.inputType === 'checkbox') {
         return `<td data-col="${field.key}"><input type="checkbox" ${value ? 'checked' : ''} data-field="${field.key}" data-row="${index}"></td>`;

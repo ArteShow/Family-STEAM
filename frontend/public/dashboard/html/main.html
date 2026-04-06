@@ -358,6 +358,21 @@
         </main>
     </div>
 
+    <!-- Discard Edit Modal -->
+    <div id="discardEditModal" class="delete-modal">
+        <div class="delete-modal-content">
+            <div class="delete-modal-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h2>Discard Changes?</h2>
+            </div>
+            <p>You have unsaved changes. Are you sure you want to discard them?</p>
+            <div class="delete-modal-actions">
+                <button class="btn-secondary" onclick="closeDiscardEditModal()">Keep Editing</button>
+                <button class="btn-danger" onclick="confirmDiscardEdit()">Discard</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Ticket Respond Modal -->
     <div id="ticketRespondModal" class="form-modal">
         <div class="form-container">

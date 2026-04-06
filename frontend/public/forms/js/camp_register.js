@@ -2,6 +2,45 @@ const campSelect = document.getElementById("campSelect");
 const campForm = document.getElementById("campRegisterForm");
 const CLIENT_CREATE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/client/create`;
 
+// ── Auth helpers ──────────────────────────────────────────────────────────────
+function getAuthInfo() {
+    const token = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('currentUser');
+    if (!token || !userId) return null;
+    return { token, userId };
+}
+
+function initAuthState() {
+    const auth = getAuthInfo();
+    const loginRequired = document.getElementById('loginRequired');
+    const form = document.getElementById('campRegisterForm');
+    const accountBanner = document.getElementById('accountBanner');
+    const bannerUsername = document.getElementById('bannerUsername');
+    const bannerAvatar = document.getElementById('bannerAvatar');
+
+    if (!auth) {
+        if (loginRequired) loginRequired.style.display = 'block';
+        if (form) form.style.display = 'none';
+        return;
+    }
+
+    if (accountBanner) accountBanner.style.display = 'flex';
+    if (bannerUsername) bannerUsername.textContent = auth.userId;
+    const avatarUrl = localStorage.getItem('userAvatarDataURL_' + auth.userId);
+    if (bannerAvatar && avatarUrl) {
+        bannerAvatar.src = avatarUrl;
+        bannerAvatar.style.display = 'block';
+    } else if (bannerAvatar) {
+        bannerAvatar.style.display = 'none';
+    }
+
+    // Pre-fill email if stored
+    const emailInput = document.getElementById('email');
+    const savedEmail = localStorage.getItem('userEmail_' + auth.userId);
+    if (emailInput && savedEmail) emailInput.value = savedEmail;
+}
+
+// ── Camp filter ───────────────────────────────────────────────────────────────
 function isCampEvent(event) {
     const tag = (event.tag || '').toLowerCase();
     if (tag.includes('camp')) return true;
@@ -14,6 +53,7 @@ function isCampEvent(event) {
     return durationDays >= 2;
 }
 
+// ── Populate camp dropdown ────────────────────────────────────────────────────
 async function populateCampOptions() {
     if (!campSelect) return;
 
@@ -66,10 +106,18 @@ async function populateCampOptions() {
 }
 
 populateCampOptions();
+initAuthState();
 
+// ── Form submit ───────────────────────────────────────────────────────────────
 if (campForm) {
-    campForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
+    campForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const auth = getAuthInfo();
+        if (!auth) {
+            alert('Please sign in to register.');
+            return;
+        }
 
         const selectedCampId = campSelect?.value;
         if (!selectedCampId) {
@@ -78,29 +126,40 @@ if (campForm) {
         }
 
         const firstName = document.getElementById('firstName')?.value?.trim() || '';
-        const lastName = document.getElementById('lastName')?.value?.trim() || '';
-        const email = document.getElementById('email')?.value?.trim() || '';
-        const phone = document.getElementById('phone')?.value?.trim() || '';
-        const dob = document.getElementById('dob')?.value || '';
+        const lastName  = document.getElementById('lastName')?.value?.trim()  || '';
+        const email     = document.getElementById('email')?.value?.trim()     || '';
+        const phone     = document.getElementById('phone')?.value?.trim()     || '';
+        const dob       = document.getElementById('dob')?.value               || '';
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'cash';
+        const avatar    = localStorage.getItem('userAvatarDataURL_' + auth.userId) || '';
 
+        const clientPayload = {
+            calendar_id:    selectedCampId,
+            first_name:     firstName,
+            last_name:      lastName,
+            email,
+            phone,
+            paid:           false,
+            birthday:       dob ? `${dob}T00:00:00Z` : null,
+            age:            null,
+            user_id:        auth.userId,
+            username:       auth.userId,
+            avatar,
+            payment_method: paymentMethod
+        };
+
+        if (paymentMethod === 'card') {
+            sessionStorage.setItem('pendingRegistration', JSON.stringify({ type: 'camp', client: clientPayload }));
+            window.location.href = 'payment.html';
+            return;
+        }
+
+        // Cash: submit directly
         try {
             const response = await fetch(CLIENT_CREATE_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    client: {
-                        calendar_id: selectedCampId,
-                        first_name: firstName,
-                        last_name: lastName,
-                        email,
-                        phone,
-                        paid: false,
-                        birthday: dob ? `${dob}T00:00:00Z` : null,
-                        age: null
-                    }
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ client: clientPayload })
             });
 
             if (!response.ok) {
@@ -108,8 +167,8 @@ if (campForm) {
                 throw new Error(errorText || `Request failed with status ${response.status}`);
             }
 
-            alert('Registration submitted successfully.');
-            window.location.href = "../index.html";
+            alert('Registration submitted successfully!');
+            window.location.href = '../index.html';
         } catch (error) {
             alert(error.message || 'Failed to submit registration. Please try again.');
         }

@@ -32,6 +32,10 @@ func CreateClientHandler(w http.ResponseWriter, r *http.Request) {
 		req.Client.Paid,
 		req.Client.Birthday,
 		req.Client.Age,
+		req.Client.UserID,
+		req.Client.Username,
+		req.Client.Avatar,
+		req.Client.PaymentMethod,
 	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -7,6 +7,45 @@ function getQueryParam(param) {
     return params.get(param);
 }
 
+// ── Auth helpers ──────────────────────────────────────────────────────────────
+function getAuthInfo() {
+    const token = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('currentUser');
+    if (!token || !userId) return null;
+    return { token, userId };
+}
+
+function initAuthState() {
+    const auth = getAuthInfo();
+    const loginRequired = document.getElementById('loginRequired');
+    const form = document.getElementById('eventRegisterForm');
+    const accountBanner = document.getElementById('accountBanner');
+    const bannerUsername = document.getElementById('bannerUsername');
+    const bannerAvatar = document.getElementById('bannerAvatar');
+
+    if (!auth) {
+        if (loginRequired) loginRequired.style.display = 'block';
+        if (form) form.style.display = 'none';
+        return;
+    }
+
+    if (accountBanner) accountBanner.style.display = 'flex';
+    if (bannerUsername) bannerUsername.textContent = auth.userId;
+    const avatarUrl = localStorage.getItem('userAvatarDataURL_' + auth.userId);
+    if (bannerAvatar && avatarUrl) {
+        bannerAvatar.src = avatarUrl;
+        bannerAvatar.style.display = 'block';
+    } else if (bannerAvatar) {
+        bannerAvatar.style.display = 'none';
+    }
+
+    // Pre-fill email if stored
+    const emailInput = document.getElementById('email');
+    const savedEmail = localStorage.getItem('userEmail_' + auth.userId);
+    if (emailInput && savedEmail) emailInput.value = savedEmail;
+}
+
+// ── Event filter ──────────────────────────────────────────────────────────────
 function isCampEvent(event) {
     const tag = (event.tag || '').toLowerCase();
     if (tag.includes('camp')) return true;
@@ -19,6 +58,7 @@ function isCampEvent(event) {
     return durationDays >= 2;
 }
 
+// ── Populate event dropdown ───────────────────────────────────────────────────
 async function populateEventOptions() {
     if (!eventSelect || !window.apiUtils) return;
 
@@ -70,10 +110,18 @@ async function populateEventOptions() {
 }
 
 populateEventOptions();
+initAuthState();
 
+// ── Form submit ───────────────────────────────────────────────────────────────
 if (eventForm) {
-    eventForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
+    eventForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const auth = getAuthInfo();
+        if (!auth) {
+            alert('Please sign in to register.');
+            return;
+        }
 
         const eventId = eventSelect?.value || getQueryParam('eventId');
         if (!eventId) {
@@ -82,30 +130,41 @@ if (eventForm) {
         }
 
         const firstName = document.getElementById('firstName')?.value?.trim() || '';
-        const lastName = document.getElementById('lastName')?.value?.trim() || '';
-        const email = document.getElementById('email')?.value?.trim() || '';
-        const phone = document.getElementById('phone')?.value?.trim() || '';
-        const ageValue = document.getElementById('age')?.value;
+        const lastName  = document.getElementById('lastName')?.value?.trim()  || '';
+        const email     = document.getElementById('email')?.value?.trim()     || '';
+        const phone     = document.getElementById('phone')?.value?.trim()     || '';
+        const ageValue  = document.getElementById('age')?.value;
         const parsedAge = ageValue ? Number(ageValue) : null;
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'cash';
+        const avatar    = localStorage.getItem('userAvatarDataURL_' + auth.userId) || '';
 
+        const clientPayload = {
+            calendar_id:    eventId,
+            first_name:     firstName,
+            last_name:      lastName,
+            email,
+            phone,
+            paid:           false,
+            birthday:       null,
+            age:            Number.isFinite(parsedAge) ? parsedAge : null,
+            user_id:        auth.userId,
+            username:       auth.userId,
+            avatar,
+            payment_method: paymentMethod
+        };
+
+        if (paymentMethod === 'card') {
+            sessionStorage.setItem('pendingRegistration', JSON.stringify({ type: 'event', client: clientPayload }));
+            window.location.href = 'payment.html';
+            return;
+        }
+
+        // Cash: submit directly
         try {
             const response = await fetch(CLIENT_CREATE_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    client: {
-                        calendar_id: eventId,
-                        first_name: firstName,
-                        last_name: lastName,
-                        email,
-                        phone,
-                        paid: false,
-                        birthday: null,
-                        age: Number.isFinite(parsedAge) ? parsedAge : null
-                    }
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ client: clientPayload })
             });
 
             if (!response.ok) {
@@ -113,7 +172,7 @@ if (eventForm) {
                 throw new Error(errorText || `Request failed with status ${response.status}`);
             }
 
-            alert('Registration submitted successfully.');
+            alert('Registration submitted successfully!');
             window.location.href = '../index.html';
         } catch (error) {
             alert(error.message || 'Failed to submit registration. Please try again.');

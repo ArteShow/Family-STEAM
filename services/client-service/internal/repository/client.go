@@ -10,30 +10,37 @@ import (
 )
 
 type Client struct {
-	ID         string     `json:"client_id"`
-	CalendarID string     `json:"calendar_id"`
-	FirstName  string     `json:"first_name"`
-	LastName   string     `json:"last_name"`
-	Email      string     `json:"email"`
-	Phone      string     `json:"phone"`
-	Paid       bool       `json:"paid"`
-	Birthday   *time.Time `json:"birthday"`
-	Age        *int       `json:"age"`
-	CreatedAt  time.Time  `json:"created_at"`
+	ID            string     `json:"client_id"`
+	CalendarID    string     `json:"calendar_id"`
+	FirstName     string     `json:"first_name"`
+	LastName      string     `json:"last_name"`
+	Email         string     `json:"email"`
+	Phone         string     `json:"phone"`
+	Paid          bool       `json:"paid"`
+	Birthday      *time.Time `json:"birthday"`
+	Age           *int       `json:"age"`
+	UserID        string     `json:"user_id"`
+	Username      string     `json:"username"`
+	Avatar        string     `json:"avatar"`
+	PaymentMethod string     `json:"payment_method"`
+	CreatedAt     time.Time  `json:"created_at"`
 }
 
-func Create(calendarID, firstName, lastName, email, phone string, paid bool, birthday *time.Time, age *int) (string, error) {
+func Create(calendarID, firstName, lastName, email, phone string, paid bool, birthday *time.Time, age *int, userID, username, avatar, paymentMethod string) (string, error) {
 	db, err := database.Connect()
 	if err != nil {
 		return "", err
 	}
 
 	id := uuid.NewString()
+	if paymentMethod == "" {
+		paymentMethod = "cash"
+	}
 
 	_, err = db.Exec(
-		`INSERT INTO clients (id, calendar_id, first_name, last_name, email, phone, paid, birthday, age) 
-		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-		id, calendarID, firstName, lastName, email, phone, paid, birthday, age,
+		`INSERT INTO clients (id, calendar_id, first_name, last_name, email, phone, paid, birthday, age, user_id, username, avatar, payment_method)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+		id, calendarID, firstName, lastName, email, phone, paid, birthday, age, userID, username, avatar, paymentMethod,
 	)
 
 	return id, err
@@ -60,7 +67,7 @@ func GetByID(id string) (*Client, error) {
 	}
 
 	row := db.QueryRow(
-		`SELECT id, calendar_id, first_name, last_name, email, phone, paid, birthday, age, created_at
+		`SELECT id, calendar_id, first_name, last_name, email, phone, paid, birthday, age, user_id, username, avatar, payment_method, created_at
 		 FROM clients WHERE id = $1`,
 		id,
 	)
@@ -76,6 +83,10 @@ func GetByID(id string) (*Client, error) {
 		&client.Paid,
 		&client.Birthday,
 		&client.Age,
+		&client.UserID,
+		&client.Username,
+		&client.Avatar,
+		&client.PaymentMethod,
 		&client.CreatedAt,
 	)
 
@@ -93,14 +104,18 @@ func UpdateClient(value, column, id string) error {
 	}
 
 	allowedColumns := map[string]struct{}{
-		"calendar_id": {},
-		"first_name":  {},
-		"last_name":   {},
-		"email":       {},
-		"phone":       {},
-		"paid":        {},
-		"birthday":    {},
-		"age":         {},
+		"calendar_id":    {},
+		"first_name":     {},
+		"last_name":      {},
+		"email":          {},
+		"phone":          {},
+		"paid":           {},
+		"birthday":       {},
+		"age":            {},
+		"user_id":        {},
+		"username":       {},
+		"avatar":         {},
+		"payment_method": {},
 	}
 
 	normalizedColumn := strings.ToLower(strings.TrimSpace(column))
@@ -133,7 +148,7 @@ func GetByCalendarID(calendarID string) ([]Client, error) {
 	}
 
 	rows, err := db.Query(
-		`SELECT id, calendar_id, first_name, last_name, email, phone, paid, birthday, age, created_at
+		`SELECT id, calendar_id, first_name, last_name, email, phone, paid, birthday, age, user_id, username, avatar, payment_method, created_at
 		 FROM clients WHERE calendar_id = $1 ORDER BY created_at DESC`,
 		calendarID,
 	)
@@ -155,6 +170,10 @@ func GetByCalendarID(calendarID string) ([]Client, error) {
 			&client.Paid,
 			&client.Birthday,
 			&client.Age,
+			&client.UserID,
+			&client.Username,
+			&client.Avatar,
+			&client.PaymentMethod,
 			&client.CreatedAt,
 		)
 		if err != nil {

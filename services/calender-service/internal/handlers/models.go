@@ -30,3 +30,8 @@ type UpdateCalenderEntryImagesRequest struct {
 	CalenderEntryID string   `json:"calender_entry_id"`
 	ImageIDs        []string `json:"image_ids"`
 }
+
+type UpdateCalenderEntryRequest struct {
+	CalenderEntryID string              `json:"calender_entry_id"`
+	CalenderEntry   repository.Calendar `json:"calender_entry"`
+}

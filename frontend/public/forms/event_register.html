@@ -38,7 +38,27 @@
         </section>
 
         <section class="form-card">
+            <!-- Login required notice (shown when not logged in) -->
+            <div id="loginRequired" style="display:none; text-align:center; padding:2rem;">
+                <i class="fas fa-lock" style="font-size:2.5rem;color:rgb(41,128,225);margin-bottom:1rem;"></i>
+                <h3 data-i18n="reg_login_required">Sign in to register</h3>
+                <p data-i18n="reg_login_sub" style="margin:.75rem 0 1.5rem;">You need an account to register for an event.</p>
+                <a href="../user/auth.html" class="submit-btn"
+                    style="display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;padding:.75rem 2rem;background:rgb(41,128,225);color:#fff;border-radius:.75rem;font-weight:600;">
+                    <i class="fas fa-sign-in-alt"></i> <span data-i18n="nav_signin">Sign In</span>
+                </a>
+            </div>
+
             <form id="eventRegisterForm" class="camp-form">
+                <!-- Account banner -->
+                <div id="accountBanner" class="account-banner" style="display:none;">
+                    <img id="bannerAvatar" src="" alt="" class="banner-avatar">
+                    <div class="banner-info">
+                        <span data-i18n="reg_registering_as">Registering as</span>
+                        <strong id="bannerUsername"></strong>
+                    </div>
+                </div>
+
                 <div class="form-grid">
                     <div class="field">
                         <label for="eventSelect" data-i18n="event_reg_select_label">Select Event</label>
@@ -72,6 +92,29 @@
                     <div class="field">
                         <label for="age" data-i18n="event_reg_age">Age</label>
                         <input type="number" id="age" name="age" min="1" max="120" placeholder="Age" required>
+                    </div>
+                </div>
+
+                <!-- Payment method selection -->
+                <div class="payment-section">
+                    <h4 data-i18n="reg_payment_title">Payment Method</h4>
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="cash" checked>
+                            <span class="payment-card">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span data-i18n="reg_pay_cash">Cash</span>
+                                <small data-i18n="reg_pay_cash_sub">Pay on arrival</small>
+                            </span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="card">
+                            <span class="payment-card">
+                                <i class="fas fa-credit-card"></i>
+                                <span data-i18n="reg_pay_card">Card</span>
+                                <small data-i18n="reg_pay_card_sub">Pay now online</small>
+                            </span>
+                        </label>
                     </div>
                 </div>
 

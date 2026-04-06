@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family STEAM | Camp Registration</title>
+    <title>Family STEAM | Secure Payment</title>
     <link rel="stylesheet" href="../assets/css/nav.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="css/camp_register.css">
+    <link rel="stylesheet" href="css/payment.css">
     <link rel="icon" href="../assets/images/favicon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -32,98 +33,104 @@
     <main class="form-page">
         <section class="form-hero">
             <div class="form-hero-text">
-                <h1 data-i18n="camp_reg_title">Camp Registration</h1>
-                <p data-i18n="camp_reg_sub">Choose your camp and share the participant details. We will follow up with a confirmation
-                    email.</p>
+                <h1 data-i18n="pay_title">Secure Payment</h1>
+                <p data-i18n="pay_sub">Complete your registration by entering your card details below.</p>
             </div>
         </section>
 
-        <section class="form-card">
-            <!-- Login required notice (shown when not logged in) -->
-            <div id="loginRequired" style="display:none; text-align:center; padding:2rem;">
-                <i class="fas fa-lock" style="font-size:2.5rem;color:rgb(41,128,225);margin-bottom:1rem;"></i>
-                <h3 data-i18n="reg_login_required">Sign in to register</h3>
-                <p data-i18n="reg_login_sub" style="margin:.75rem 0 1.5rem;">You need an account to register for a camp.</p>
-                <a href="../user/auth.html" class="submit-btn"
-                    style="display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;padding:.75rem 2rem;background:rgb(41,128,225);color:#fff;border-radius:.75rem;font-weight:600;">
-                    <i class="fas fa-sign-in-alt"></i> <span data-i18n="nav_signin">Sign In</span>
-                </a>
+        <!-- No pending registration -->
+        <section id="noPendingSection" class="form-card" style="display:none; text-align:center; padding:3rem 2rem;">
+            <i class="fas fa-exclamation-circle" style="font-size:3rem; color:#e74c3c; margin-bottom:1rem;"></i>
+            <h3 data-i18n="pay_no_pending">No pending registration found.</h3>
+            <p data-i18n="pay_no_pending_sub" style="margin:.75rem 0 1.5rem;">Please go back and fill in the registration form first.</p>
+            <a href="../assets/html/camps.html" class="submit-btn" style="display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;padding:.75rem 2rem;background:rgb(41,128,225);color:#fff;border-radius:.75rem;font-weight:600;">
+                <i class="fas fa-arrow-left"></i> <span data-i18n="pay_back_camps">Back to Camps</span>
+            </a>
+        </section>
+
+        <!-- Payment form -->
+        <section id="paymentSection" class="form-card" style="display:none;">
+
+            <!-- Order summary -->
+            <div class="order-summary">
+                <h3 data-i18n="pay_order_summary">Order Summary</h3>
+                <div class="order-row">
+                    <span data-i18n="pay_type">Type</span>
+                    <strong id="summaryType">—</strong>
+                </div>
+                <div class="order-row">
+                    <span data-i18n="pay_registrant">Registrant</span>
+                    <strong id="summaryName">—</strong>
+                </div>
+                <div class="order-row">
+                    <span data-i18n="pay_email">Email</span>
+                    <strong id="summaryEmail">—</strong>
+                </div>
+                <div class="order-row order-total">
+                    <span data-i18n="pay_total">Total</span>
+                    <strong id="summaryPrice">€ —</strong>
+                </div>
             </div>
 
-            <form id="campRegisterForm" class="camp-form">
-                <!-- Account banner -->
-                <div id="accountBanner" class="account-banner" style="display:none;">
-                    <img id="bannerAvatar" src="" alt="" class="banner-avatar">
-                    <div class="banner-info">
-                        <span data-i18n="reg_registering_as">Registering as</span>
-                        <strong id="bannerUsername"></strong>
-                    </div>
-                </div>
+            <!-- Mock card form -->
+            <form id="paymentForm" class="camp-form" autocomplete="off">
+                <h3 data-i18n="pay_card_details" style="margin-bottom:1.25rem;">Card Details</h3>
 
                 <div class="form-grid">
-                    <div class="field">
-                        <label for="campSelect" data-i18n="camp_reg_select_label">Select Camp</label>
-                        <select id="campSelect" name="camp" required>
-                            <option value="" disabled selected data-i18n="camp_reg_select_ph">Select a camp</option>
-                        </select>
+                    <div class="field full-width">
+                        <label for="cardNumber" data-i18n="pay_card_number">Card Number</label>
+                        <div class="card-input-wrap">
+                            <input type="text" id="cardNumber" maxlength="19" placeholder="0000 0000 0000 0000"
+                                data-i18n-placeholder="pay_card_number_ph" required autocomplete="off" inputmode="numeric">
+                            <i class="fas fa-credit-card card-icon"></i>
+                        </div>
                     </div>
 
                     <div class="field">
-                        <label for="firstName" data-i18n="camp_reg_firstname">First Name</label>
-                        <input type="text" id="firstName" name="firstName" placeholder="First name"
-                            data-i18n-placeholder="camp_reg_firstname_ph" required>
+                        <label for="cardExpiry" data-i18n="pay_card_expiry">Expiry Date</label>
+                        <input type="text" id="cardExpiry" maxlength="5" placeholder="MM/YY"
+                            data-i18n-placeholder="pay_card_expiry_ph" required autocomplete="off">
                     </div>
 
                     <div class="field">
-                        <label for="lastName" data-i18n="camp_reg_lastname">Last Name</label>
-                        <input type="text" id="lastName" name="lastName" placeholder="Last name" data-i18n-placeholder="camp_reg_lastname_ph"
-                            required>
+                        <label for="cardCvc" data-i18n="pay_card_cvc">CVC</label>
+                        <input type="text" id="cardCvc" maxlength="4" placeholder="123"
+                            data-i18n-placeholder="pay_card_cvc_ph" required autocomplete="off" inputmode="numeric">
                     </div>
 
-                    <div class="field">
-                        <label for="dob" data-i18n="camp_reg_dob">Date of Birth</label>
-                        <input type="date" id="dob" name="dob" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="phone" data-i18n="camp_reg_phone">Phone</label>
-                        <input type="tel" id="phone" name="phone" placeholder="+1 234 567 890" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="email" data-i18n="camp_reg_email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="name@email.com" required>
+                    <div class="field full-width">
+                        <label for="cardName" data-i18n="pay_card_name">Name on Card</label>
+                        <input type="text" id="cardName" placeholder="Full name" data-i18n-placeholder="pay_card_name_ph" required autocomplete="off">
                     </div>
                 </div>
 
-                <!-- Payment method selection -->
-                <div class="payment-section">
-                    <h4 data-i18n="reg_payment_title">Payment Method</h4>
-                    <div class="payment-options">
-                        <label class="payment-option">
-                            <input type="radio" name="paymentMethod" value="cash" checked>
-                            <span class="payment-card">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span data-i18n="reg_pay_cash">Cash</span>
-                                <small data-i18n="reg_pay_cash_sub">Pay on arrival</small>
-                            </span>
-                        </label>
-                        <label class="payment-option">
-                            <input type="radio" name="paymentMethod" value="card">
-                            <span class="payment-card">
-                                <i class="fas fa-credit-card"></i>
-                                <span data-i18n="reg_pay_card">Card</span>
-                                <small data-i18n="reg_pay_card_sub">Pay now online</small>
-                            </span>
-                        </label>
-                    </div>
-                </div>
+                <p class="mock-notice">
+                    <i class="fas fa-info-circle"></i>
+                    <span data-i18n="pay_mock_notice">This is a demo payment system. No real charges will be made.</span>
+                </p>
 
-                <div class="form-actions">
-                    <button type="submit" data-i18n="camp_reg_submit">Submit Registration</button>
-                    <p class="form-note" data-i18n="camp_reg_note">We will contact you within 2 business days.</p>
+                <div class="form-actions payment-actions">
+                    <button type="submit" id="payNowBtn" class="pay-btn">
+                        <i class="fas fa-lock"></i>
+                        <span data-i18n="pay_now_btn">Pay Now</span>
+                    </button>
+                    <button type="button" id="cancelPayBtn" class="cancel-btn">
+                        <span data-i18n="pay_cancel_btn">Cancel</span>
+                    </button>
                 </div>
             </form>
+        </section>
+
+        <!-- Success state -->
+        <section id="successSection" class="form-card" style="display:none; text-align:center; padding:3rem 2rem;">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 data-i18n="pay_success_title">Payment Successful!</h3>
+            <p data-i18n="pay_success_sub" style="margin:.75rem 0 1.5rem;">Your registration is confirmed. We'll send you a confirmation email shortly.</p>
+            <a href="../index.html" class="submit-btn" style="display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;padding:.75rem 2rem;background:rgb(41,128,225);color:#fff;border-radius:.75rem;font-weight:600;">
+                <i class="fas fa-home"></i> <span data-i18n="pay_back_home">Back to Home</span>
+            </a>
         </section>
     </main>
 
@@ -195,7 +202,7 @@
     </footer>
 
     <script src="../assets/js/api.js?v=3"></script>
-    <script src="js/camp_register.js?v=3"></script>
+    <script src="js/payment.js"></script>
     <script src="../assets/js/i18n.js"></script>
     <script src="../assets/js/nav.js"></script>
     <script src="https://kit.fontawesome.com/d9e39d51d2.js" crossorigin="anonymous"></script>
