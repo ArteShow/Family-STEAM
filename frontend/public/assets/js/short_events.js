@@ -39,7 +39,8 @@
 		}
 
 		if(upcoming.length === 0){
-			root.innerHTML = '<p style="text-align:center;padding:2rem;color:#333">No short events available at the moment.</p>';
+			const noEventsMsg = window.i18n ? window.i18n.t('events_no_events') : 'No short events available at the moment.'
+			root.innerHTML = `<p style="text-align:center;padding:2rem;color:#333">${noEventsMsg}</p>`;
 			return;
 		}
 
@@ -92,7 +93,7 @@
 			const register = document.createElement('a');
 			register.className = 'register_btn';
 			register.href = ev.registerUrl || '/forms/event_register.html';
-			register.textContent = 'Register';
+			register.textContent = window.i18n ? window.i18n.t('events_register') : 'Register';
 			
 			const title = document.createElement('h4');
 			title.textContent = ev.title + ' — ' + (new Date(ev.date)).toLocaleDateString();
@@ -108,7 +109,7 @@
 
 			const resp = document.createElement('p');
 			resp.className = 'event_responsibility';
-			resp.innerHTML = `<strong>Tags:</strong> ${ev.tags.join(', ') || 'Event'}`;
+			resp.innerHTML = `<strong>${window.i18n ? window.i18n.t('events_tags') : 'Tags:'}</strong> ${ev.tags.join(', ') || 'Event'}`;
 
 			const descContainer = document.createElement('div');
 			descContainer.className = 'event_desc_container';
@@ -131,7 +132,7 @@
 			const viewOnCalendar = document.createElement('a');
 			viewOnCalendar.className = 'see_more_btn';
 			viewOnCalendar.href = `calender.html?date=${encodeURIComponent(ev.date)}`;
-			viewOnCalendar.textContent = 'View on Calendar';
+			viewOnCalendar.textContent = window.i18n ? window.i18n.t('events_view_cal') : 'View on Calendar';
 
 			actions.appendChild(register);
 			actions.appendChild(viewOnCalendar);

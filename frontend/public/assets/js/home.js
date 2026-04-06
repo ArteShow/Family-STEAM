@@ -39,7 +39,8 @@ async function generateIncomingEvents() {
         const events = await window.apiUtils.getUpcomingEvents(30);
 
         if (events.length === 0) {
-            incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #40507a;">No upcoming events. Check back soon!</p>';
+            const noEventsMsg = window.i18n ? window.i18n.t('home_no_events') : 'No upcoming events. Check back soon!'
+            incomingRoot.innerHTML = `<p style="text-align: center; padding: 2rem; color: #40507a;">${noEventsMsg}</p>`;
             return;
         }
 
@@ -52,7 +53,8 @@ async function generateIncomingEvents() {
         const validEvents = formattedEvents.filter(event => !!event);
 
         if (validEvents.length === 0) {
-            incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #40507a;">No upcoming events. Check back soon!</p>';
+            const noEventsMsg = window.i18n ? window.i18n.t('home_no_events') : 'No upcoming events. Check back soon!'
+            incomingRoot.innerHTML = `<p style="text-align: center; padding: 2rem; color: #40507a;">${noEventsMsg}</p>`;
             return;
         }
 
@@ -71,7 +73,7 @@ async function generateIncomingEvents() {
                         <h5>${event.title}</h5>
                         <p class="event_description">${event.shortDesc}</p>
                         <div class="event_footer single">
-                            <a href="assets/html/calender.html" class="see_details_btn">See More Details</a>
+                            <a href="assets/html/calender.html" class="see_details_btn">${window.i18n ? window.i18n.t('home_see_more') : 'See More Details'}</a>
                         </div>
                     </div>
                 </div>
@@ -92,7 +94,8 @@ async function generateIncomingEvents() {
         incomingRoot.innerHTML = html;
     } catch (error) {
         console.error('Error loading events:', error);
-        incomingRoot.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ff6b6b;">Failed to load events</p>';
+        const errMsg = window.i18n ? window.i18n.t('home_loading_error') : 'Failed to load events'
+        incomingRoot.innerHTML = `<p style="text-align: center; padding: 2rem; color: #ff6b6b;">${errMsg}</p>`;
     }
 }
 

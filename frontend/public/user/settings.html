@@ -20,19 +20,19 @@
             <span></span>
         </button>
         <nav id="navMenu">
-            <a href="../index.html">Home</a>
-            <a href="../assets/html/about_us.html">About Us</a>
-            <a href="../assets/html/calender.html">Calender</a>
-            <a href="../assets/html/short_events.html">Short events</a>
-            <a href="../assets/html/camps.html">Camps</a>
-            <a href="../assets/html/tickets.html">Support Tickets</a>
+            <a href="../index.html" data-i18n="nav_home">Home</a>
+            <a href="../assets/html/about_us.html" data-i18n="nav_about">About Us</a>
+            <a href="../assets/html/calender.html" data-i18n="nav_calendar">Calender</a>
+            <a href="../assets/html/short_events.html" data-i18n="nav_events">Short events</a>
+            <a href="../assets/html/camps.html" data-i18n="nav_camps">Camps</a>
+            <a href="../assets/html/tickets.html" data-i18n="nav_tickets">Support Tickets</a>
         </nav>
     </header>
 
     <main class="settings-page">
         <div class="settings-header">
-            <h2><i class="fas fa-cog"></i> Account Settings</h2>
-            <p>Manage your profile and preferences</p>
+            <h2><i class="fas fa-cog"></i> <span data-i18n="settings_title">Account Settings</span></h2>
+            <p data-i18n="settings_subtitle">Manage your profile and preferences</p>
         </div>
 
         <div class="settings-body">
@@ -40,7 +40,7 @@
             <!-- Profile Section -->
             <div class="settings-card">
                 <div class="settings-card-title">
-                    <i class="fas fa-user-circle"></i> Profile
+                    <i class="fas fa-user-circle"></i> <span data-i18n="settings_profile">Profile</span>
                 </div>
 
                 <div class="profile-section">
@@ -53,9 +53,9 @@
                     </div>
                     <div class="profile-info">
                         <div class="profile-username" id="profileUsername">—</div>
-                        <div class="profile-sub">Registered user</div>
+                        <div class="profile-sub" data-i18n="settings_registered">Registered user</div>
                         <button class="btn-outline-danger" onclick="handleLogout()">
-                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                            <i class="fas fa-sign-out-alt"></i> <span data-i18n="settings_signout">Sign Out</span>
                         </button>
                     </div>
                 </div>
@@ -64,9 +64,9 @@
             <!-- Language Section -->
             <div class="settings-card">
                 <div class="settings-card-title">
-                    <i class="fas fa-globe"></i> Language
+                    <i class="fas fa-globe"></i> <span data-i18n="settings_language">Language</span>
                 </div>
-                <p class="settings-desc">Choose the language for the website interface.</p>
+                <p class="settings-desc" data-i18n="settings_lang_desc">Choose the language for the website interface.</p>
                 <div class="lang-options">
                     <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">
                         <span class="lang-flag">🇬🇧</span> English
@@ -83,11 +83,12 @@
             <!-- WhatsApp Toggle Section -->
             <div class="settings-card">
                 <div class="settings-card-title">
-                    <i class="fab fa-whatsapp"></i> WhatsApp Support Button
+                    <i class="fab fa-whatsapp"></i> <span data-i18n="settings_wa">WhatsApp Support Button</span>
                 </div>
-                <p class="settings-desc">Show or hide the floating WhatsApp support button across the site.</p>
+                <p class="settings-desc" data-i18n="settings_wa_desc">Show or hide the floating WhatsApp support button across the site.
+                </p>
                 <div class="toggle-row">
-                    <span id="waToggleLabel">Enabled</span>
+                    <span id="waToggleLabel" data-i18n="settings_wa_enabled">Enabled</span>
                     <label class="toggle-switch">
                         <input type="checkbox" id="waToggle" onchange="handleWaToggle(this.checked)">
                         <span class="toggle-slider"></span>
@@ -102,33 +103,34 @@
     <footer>
         <div class="footer_content">
             <div class="footer_section">
-                <h4>About Us</h4>
-                <p>Family STEAM is dedicated to providing innovative, engaging, and educational programs for families of all ages.</p>
+                <h4 data-i18n="footer_about_title">About Us</h4>
+                <p data-i18n="settings_footer_about">Family STEAM is dedicated to providing innovative, engaging, and educational
+                    programs for families of all ages.</p>
             </div>
             <div class="footer_section">
-                <h4>Quick Links</h4>
+                <h4 data-i18n="footer_links_title">Quick Links</h4>
                 <ul>
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="../assets/html/calender.html">Events Calendar</a></li>
-                    <li><a href="../assets/html/camps.html">Camps</a></li>
-                    <li><a href="../assets/html/tickets.html">Support Tickets</a></li>
+                    <li><a href="../index.html" data-i18n="nav_home">Home</a></li>
+                    <li><a href="../assets/html/calender.html" data-i18n="footer_events_calendar">Events Calendar</a></li>
+                    <li><a href="../assets/html/camps.html" data-i18n="nav_camps">Camps</a></li>
+                    <li><a href="../assets/html/tickets.html" data-i18n="nav_tickets">Support Tickets</a></li>
                 </ul>
             </div>
             <div class="footer_section">
-                <h4>Programs</h4>
+                <h4 data-i18n="footer_programs_title">Programs</h4>
                 <ul>
-                    <li><a href="#science">Science Programs</a></li>
-                    <li><a href="#technology">Tech Labs</a></li>
-                    <li><a href="#arts">Art Workshops</a></li>
-                    <li><a href="#math">Math Camp</a></li>
+                    <li><a href="#science" data-i18n="footer_prog_science">Science Programs</a></li>
+                    <li><a href="#technology" data-i18n="footer_prog_tech">Tech Labs</a></li>
+                    <li><a href="#arts" data-i18n="footer_prog_arts">Art Workshops</a></li>
+                    <li><a href="#math" data-i18n="footer_prog_math">Math Camp</a></li>
                 </ul>
             </div>
             <div class="footer_section">
-                <h4>Newsletter</h4>
-                <p>Subscribe to get updates about our latest programs and events.</p>
+                <h4 data-i18n="footer_newsletter_title">Newsletter</h4>
+                <p data-i18n="footer_newsletter_text">Subscribe to get updates about our latest programs and events.</p>
                 <form class="newsletter_form">
-                    <input type="email" placeholder="Your email" required>
-                    <button type="submit">Subscribe</button>
+                    <input type="email" placeholder="Your email" data-i18n-placeholder="footer_email_ph" required>
+                    <button type="submit" data-i18n="footer_subscribe">Subscribe</button>
                 </form>
             </div>
         </div>
@@ -153,10 +155,11 @@
             </div>
         </div>
         <div class="legal">
-            <p>© 2026 Family STEAM | All Rights Reserved</p>
+            <p data-i18n="footer_copyright">© 2026 Family STEAM | All Rights Reserved</p>
         </div>
     </footer>
 
+    <script src="../assets/js/i18n.js"></script>
     <script src="../assets/js/nav.js"></script>
     <script src="js/settings.js"></script>
     <script src="../assets/js/whatsapp.js"></script>

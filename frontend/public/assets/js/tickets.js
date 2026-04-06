@@ -52,34 +52,36 @@ function renderCreateSection() {
     const wrap = document.getElementById('createFormWrap');
     if (!wrap) return;
 
+    const _t = window.i18n ? window.i18n.t.bind(window.i18n) : k => k;
+
     if (!isLoggedIn()) {
         wrap.innerHTML = `
-            <h4>Submit a Support Ticket</h4>
-            <p class="form_subtitle">You need to be signed in to create a support ticket.</p>
+            <h4>${_t('tickets_create_title')}</h4>
+            <p class="form_subtitle">${_t('tickets_must_signin')}</p>
             <a href="/user/auth.html" class="submit_btn" style="display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;">
-                <i class="fas fa-sign-in-alt"></i> Sign In / Register
+                <i class="fas fa-sign-in-alt"></i> ${_t('tickets_signin_btn')}
             </a>
         `;
         return;
     }
 
     wrap.innerHTML = `
-        <h4>Submit a Support Ticket</h4>
-        <p class="form_subtitle">Signed in as <strong>${escapeHtml(getCurrentUser())}</strong>. Tell us how we can help.</p>
+        <h4>${_t('tickets_create_title')}</h4>
+        <p class="form_subtitle">${_t('tickets_signed_as')} <strong>${escapeHtml(getCurrentUser())}</strong>. ${_t('tickets_help_text')}</p>
 
         <form class="ticket_form" id="ticketForm">
             <div class="form_group">
-                <input type="text" id="ticketSubject" placeholder="Subject" required>
+                <input type="text" id="ticketSubject" placeholder="${_t('tickets_subject_ph')}" required>
             </div>
             <div class="form_group">
-                <textarea id="ticketMessage" placeholder="Describe your issue…" rows="6" required></textarea>
+                <textarea id="ticketMessage" placeholder="${_t('tickets_message_ph')}" rows="6" required></textarea>
             </div>
             <div class="form_group">
-                <input type="email" id="ticketEmail" placeholder="Contact email (optional)">
+                <input type="email" id="ticketEmail" placeholder="${_t('tickets_email_ph')}">
             </div>
             <div id="createMsg" class="form_message" style="display:none;"></div>
             <button type="submit" class="submit_btn">
-                <i class="fas fa-paper-plane"></i> Submit Ticket
+                <i class="fas fa-paper-plane"></i> ${_t('tickets_submit')}
             </button>
         </form>
     `;
@@ -117,10 +119,10 @@ async function handleCreateTicket(e) {
             throw new Error(text || `Error ${res.status}`);
         }
 
-        showMsg('createMsg', 'Your ticket has been submitted! We will get back to you soon.', 'success');
+        showMsg('createMsg', window.i18n ? window.i18n.t('tickets_success') : 'Your ticket has been submitted! We will get back to you soon.', 'success');
         document.getElementById('ticketForm').reset();
     } catch (err) {
-        showMsg('createMsg', err.message || 'Failed to submit ticket. Please try again.', 'error');
+        showMsg('createMsg', err.message || (window.i18n ? window.i18n.t('tickets_fail_submit') : 'Failed to submit ticket. Please try again.'), 'error');
     } finally {
         if (btn) btn.disabled = false;
     }
@@ -132,20 +134,22 @@ function renderMyTicketsHeader() {
     const header = document.getElementById('myTicketsHeader');
     if (!header) return;
 
+    const _t = window.i18n ? window.i18n.t.bind(window.i18n) : k => k;
+
     if (!isLoggedIn()) {
         header.innerHTML = `
-            <h4>My Tickets</h4>
-            <p class="form_subtitle">Please sign in to view your support tickets.</p>
+            <h4>${_t('tickets_my_title')}</h4>
+            <p class="form_subtitle">${_t('tickets_signin_view')}</p>
             <a href="/user/auth.html" class="submit_btn" style="display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;">
-                <i class="fas fa-sign-in-alt"></i> Sign In / Register
+                <i class="fas fa-sign-in-alt"></i> ${_t('tickets_signin_btn')}
             </a>
         `;
         return;
     }
 
     header.innerHTML = `
-        <h4>My Tickets</h4>
-        <p class="form_subtitle">Showing your last 5 tickets or tickets from the past month.</p>
+        <h4>${_t('tickets_my_title')}</h4>
+        <p class="form_subtitle">${_t('tickets_showing')}</p>
         <div id="lookupMsg" class="form_message" style="display:none;"></div>
     `;
 }
@@ -172,7 +176,7 @@ async function loadMyTickets() {
         const tickets = data.tickets || [];
 
         if (tickets.length === 0) {
-            showMsg('lookupMsg', 'You have no support tickets yet.', 'error');
+            showMsg('lookupMsg', window.i18n ? window.i18n.t('tickets_no_tickets') : 'You have no support tickets yet.', 'error');
             return;
         }
 
@@ -181,7 +185,7 @@ async function loadMyTickets() {
             listEl.style.display = 'flex';
         }
     } catch (err) {
-        showMsg('lookupMsg', err.message || 'Failed to load tickets. Please try again.', 'error');
+        showMsg('lookupMsg', err.message || (window.i18n ? window.i18n.t('tickets_fail_load') : 'Failed to load tickets. Please try again.'), 'error');
     }
 }
 
@@ -193,16 +197,18 @@ function renderTicketCard(ticket) {
         day: '2-digit', month: 'short', year: 'numeric'
     });
 
+    const _t = window.i18n ? window.i18n.t.bind(window.i18n) : k => k;
+
     const responseHtml = ticket.admin_response
         ? `<div class="ticket_response">
-               <div class="ticket_response_label"><i class="fas fa-headset"></i> Admin Response</div>
+               <div class="ticket_response_label"><i class="fas fa-headset"></i> ${_t('tickets_admin_response')}</div>
                <div class="ticket_response_text">${escapeHtml(ticket.admin_response)}</div>
            </div>`
         : '';
 
     const closeBtn = !isClosed
         ? `<button class="ticket_close_btn" onclick="closeMyTicket('${ticket.id}')">
-               <i class="fas fa-times-circle"></i> Close Ticket
+               <i class="fas fa-times-circle"></i> ${_t('tickets_close')}
            </button>`
         : '';
 
@@ -211,7 +217,7 @@ function renderTicketCard(ticket) {
             <div class="ticket_card_header">
                 <span class="ticket_subject">${escapeHtml(ticket.subject)}</span>
                 <span class="ticket_status ${ticket.status}">
-                    <i class="fas fa-circle" style="font-size:0.5rem;"></i> ${ticket.status}
+                    <i class="fas fa-circle" style="font-size:0.5rem;"></i> ${isClosed ? _t('tickets_status_closed') : _t('tickets_status_open')}
                 </span>
             </div>
             <div class="ticket_meta">${date}</div>
@@ -239,7 +245,7 @@ async function closeMyTicket(id) {
 
         await loadMyTickets();
     } catch (err) {
-        showMsg('lookupMsg', err.message || 'Failed to close ticket.', 'error');
+        showMsg('lookupMsg', err.message || (window.i18n ? window.i18n.t('tickets_fail_close') : 'Failed to close ticket.'), 'error');
     }
 }
 

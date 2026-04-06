@@ -40,6 +40,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !GrpcRes.GetSuccess() || GrpcRes.GetId() == "" {
+		http.Error(w, "invalid username or password", http.StatusUnauthorized)
+		return
+	}
+
 	token, err := jwt.GenerateToken(GrpcRes.GetId(), req.Username, time.Hour*24)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

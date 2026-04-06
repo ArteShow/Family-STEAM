@@ -50,6 +50,8 @@ function applyTranslations(lang) {
     if (waLabel) waLabel.textContent = t.waLabel;
     if (waDesc) waDesc.textContent = t.waDesc;
     if (logoutBtn) logoutBtn.childNodes[logoutBtn.childNodes.length - 1].nodeValue = ' ' + t.logout;
+
+    if (window.i18n) window.i18n.apply(lang);
 }
 
 // --- Avatar ---

@@ -28,7 +28,6 @@ func Create(userID, username, name, email, subject, message string) (string, err
 	if err != nil {
 		return "", err
 	}
-	defer db.Close()
 
 	_, err = db.Exec(`
 		INSERT INTO tickets (id, user_id, username, name, email, subject, message, status)
@@ -42,7 +41,6 @@ func GetAll() ([]Ticket, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 
 	rows, err := db.Query(`
 		SELECT id, user_id, username, name, email, subject, message, status, admin_response, created_at, updated_at
@@ -72,7 +70,6 @@ func GetByUserID(userID string) ([]Ticket, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 
 	rows, err := db.Query(`
 		SELECT id, user_id, username, name, email, subject, message, status, admin_response, created_at, updated_at
@@ -107,7 +104,6 @@ func GetByEmail(email string) ([]Ticket, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 
 	rows, err := db.Query(`
 		SELECT id, user_id, username, name, email, subject, message, status, admin_response, created_at, updated_at
@@ -136,7 +132,6 @@ func Respond(id, response string) error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
 
 	_, err = db.Exec(`
 		UPDATE tickets SET admin_response = $1, updated_at = now() WHERE id = $2
@@ -149,7 +144,6 @@ func Close(id string) error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
 
 	_, err = db.Exec(`
 		UPDATE tickets SET status = 'closed', updated_at = now() WHERE id = $1
@@ -162,7 +156,6 @@ func Delete(id string) error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
 
 	_, err = db.Exec(`DELETE FROM tickets WHERE id = $1`, id)
 	return err
@@ -174,7 +167,6 @@ func GetTicketOwner(id string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer db.Close()
 
 	var userID string
 	err = db.QueryRow(`SELECT user_id FROM tickets WHERE id = $1`, id).Scan(&userID)

@@ -85,10 +85,10 @@ function renderCalendar(date) {
     const firstDayIndex = (firstDay.getDay() + 6) % 7
     const totalDays = lastDay.getDate()
 
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ]
+    const monthNames = (window.i18n ? window.i18n.t('cal_months') : [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ])
 
     monthYear.textContent = monthNames[month] + " " + year
 
@@ -165,10 +165,10 @@ todayBtn.addEventListener("click", () => {
 })
 
 function showEvents(day, month, year) {
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ]
+    const monthNames = (window.i18n ? window.i18n.t('cal_months') : [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ])
 
     const dateStr = `${monthNames[month]} ${day}, ${year}`
     eventDate.textContent = dateStr
@@ -179,7 +179,8 @@ function showEvents(day, month, year) {
     eventsList.innerHTML = ""
 
     if (events.length === 0) {
-        eventsList.innerHTML = '<p style="text-align: center; color: #40507a; padding: 2rem;">No events planned for this day.</p>'
+        const noEventsMsg = window.i18n ? window.i18n.t('cal_no_events') : 'No events planned for this day.'
+        eventsList.innerHTML = `<p style="text-align: center; color: #40507a; padding: 2rem;">${noEventsMsg}</p>`
     } else {
         events.forEach((event) => {
             const eventItem = document.createElement("div")
@@ -206,6 +207,7 @@ function showEvents(day, month, year) {
             const _calDesc  = (['en','de','ru'].includes(_calLang) ? event[`description_${_calLang}`] : null) || event.description_en || event.description || 'No description';
             const _calDescShort = _calDesc.length > 250 ? _calDesc.substring(0, 250) + '...' : _calDesc;
 
+            const seeDetailsText = window.i18n ? window.i18n.t('cal_see_details') : 'See Details'
             eventItem.innerHTML = `
                 <div class="event-card-content">
                     <div class="event-header">
@@ -214,7 +216,7 @@ function showEvents(day, month, year) {
                     </div>
                     <p class="event-description">${_calDescShort}</p>
                 </div>
-                <button class="see_more_btn" onclick="window.location.href='${detailsLink}'">See Details</button>
+                <button class="see_more_btn" onclick="window.location.href='${detailsLink}'">${seeDetailsText}</button>
             `
             eventsList.appendChild(eventItem)
         })
@@ -234,7 +236,8 @@ closeBtn.addEventListener("click", () => {
 async function initializeTags() {
     try {
         const tags = await window.apiUtils.getAllTags()
-        tagFilter.innerHTML = '<option value="">All Events</option>'
+        const allEventsText = window.i18n ? window.i18n.t('cal_all_events') : 'All Events'
+        tagFilter.innerHTML = `<option value="">${allEventsText}</option>`
         tags.forEach(tag => {
             const option = document.createElement('option')
             option.value = tag

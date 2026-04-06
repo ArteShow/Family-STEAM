@@ -1,4 +1,9 @@
-const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1`;
+const API_BASE_URL = (() => {
+    const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+    return isLocalHost
+        ? 'http://localhost:8000/api/v1'
+        : `${window.location.origin}/api/v1`;
+})();
 
 // --- Auth state guard: redirect to settings if already logged in ---
 (function () {

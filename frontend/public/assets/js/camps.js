@@ -32,7 +32,8 @@
 		});
 
 		if(futureEvents.length === 0){
-			root.innerHTML = '<p style="text-align:center;padding:2rem;color:#333">No camps available at the moment.</p>';
+			const noCampsMsg = window.i18n ? window.i18n.t('camps_no_camps') : 'No camps available at the moment.'
+			root.innerHTML = `<p style="text-align:center;padding:2rem;color:#333">${noCampsMsg}</p>`;
 			return;
 		}
 
@@ -111,12 +112,12 @@
 			const viewCalendarBtn = document.createElement('a');
 			viewCalendarBtn.className = 'view_calendar_btn';
 			viewCalendarBtn.href = `calender.html?date=${encodeURIComponent(camp.startDate)}`;
-			viewCalendarBtn.textContent = 'View on Calendar';
+			viewCalendarBtn.textContent = window.i18n ? window.i18n.t('camps_view_cal') : 'View on Calendar';
 
 			const registerBtn = document.createElement('a');
 			registerBtn.className = 'register_btn';
 			registerBtn.href = camp.registerUrl || '/forms/camp_register.html';
-			registerBtn.textContent = camp.registerLabel || 'Register Now';
+			registerBtn.textContent = camp.registerLabel || (window.i18n ? window.i18n.t('camps_register') : 'Register Now');
 
 			actions.appendChild(registerBtn);
 			actions.appendChild(viewCalendarBtn);
