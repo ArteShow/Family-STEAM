@@ -38,6 +38,7 @@ func main() {
 	fileUploadProxy := proxy.NewProxy("http://file-service:8003", "/file-service/upload")
 	fileDownloadProxy := proxy.NewProxy("http://file-service:8003", "/file-service/download")
 	fileDeleteProxy := proxy.NewProxy("http://file-service:8003", "/file-service/delete")
+	fileListProxy := proxy.NewProxy("http://file-service:8003", "/file-service/list")
 
 	clientCreateProxy := proxy.NewProxy("http://client-service:8004", "/client-service/create")
 	clientDeleteProxy := proxy.NewProxy("http://client-service:8004", "/client-service/delete")
@@ -98,6 +99,7 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/file/download", middleware.LoggingMiddleware(fileDownloadProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/file/upload", middleware.LoggingMiddleware(middleware.AdminOnly(fileUploadProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/file/delete", middleware.LoggingMiddleware(middleware.AdminOnly(fileDeleteProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/file/list", middleware.LoggingMiddleware(fileListProxy))
 
 	handler.Handle("/api/"+cfg.APIVersion+"/client/create", middleware.LoggingMiddleware(clientCreateProxy))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/delete", middleware.LoggingMiddleware(middleware.AdminOnly(clientDeleteProxy)))

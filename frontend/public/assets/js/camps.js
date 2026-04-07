@@ -127,6 +127,30 @@
 			info.appendChild(icons);
 			info.appendChild(actions);
 
+			if (camp.attachments && camp.attachments.length > 0) {
+				const filesSection = document.createElement('div');
+				filesSection.className = 'camp_attachments';
+				const filesLabel = window.i18n ? window.i18n.t('files_label') : 'Files';
+				filesSection.innerHTML = `<h5><i class="fa-solid fa-paperclip"></i> ${filesLabel}</h5>`;
+				const fileList = document.createElement('ul');
+				fileList.className = 'camp_files_list';
+				camp.attachments.forEach(att => {
+					const li = document.createElement('li');
+					const link = document.createElement('a');
+					link.href = '#';
+					link.dataset.fileId = att.id;
+					link.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> ${att.name}`;
+					link.addEventListener('click', async (e) => {
+						e.preventDefault();
+						if (window.apiUtils) await window.apiUtils.downloadFileById(att.id, att.name);
+					});
+					li.appendChild(link);
+					fileList.appendChild(li);
+				});
+				filesSection.appendChild(fileList);
+				info.appendChild(filesSection);
+			}
+
 			const descContainer = document.createElement('div');
 			descContainer.className = 'camp_desc_container';
 
@@ -137,7 +161,8 @@
 
 			const descContent = document.createElement('div');
 			descContent.className = 'camp_desc_content';
-			descContent.innerHTML = `<p>${camp.description || 'No description available'}</p>`;
+			const descText = window.apiUtils ? window.apiUtils.linkifyText(camp.description || '') : (camp.description || 'No description available');
+			descContent.innerHTML = `<p>${descText || 'No description available'}</p>`;
 
 			descContainer.appendChild(expandBtn);
 			descContainer.appendChild(descContent);

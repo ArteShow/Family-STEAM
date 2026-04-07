@@ -16,3 +16,16 @@ type DownloadRequest struct {
 type DeleteFileRequest struct {
 	FileID string `json:"file_id"`
 }
+
+type ListRequest struct {
+	ParentID string `json:"parent_id"`
+}
+
+type FileInfo struct {
+	ID       string `json:"id"`
+	FileName string `json:"file_name"`
+}
+
+type ListResponse struct {
+	Files []FileInfo `json:"files"`
+}

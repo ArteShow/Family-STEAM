@@ -42,3 +42,30 @@ func Delete(id string) error {
 
 	return err
 }
+
+func ListByParentID(parentID string) ([]File, error) {
+	db, err := database.Connect()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.Query(
+		`SELECT id, parent_id, file_name, created_at FROM files WHERE parent_id = $1 ORDER BY created_at ASC`,
+		parentID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var files []File
+	for rows.Next() {
+		var f File
+		if err := rows.Scan(&f.ID, &f.ParentID, &f.FileName, &f.CreatedAt); err != nil {
+			return nil, err
+		}
+		files = append(files, f)
+	}
+
+	return files, rows.Err()
+}

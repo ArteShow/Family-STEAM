@@ -121,7 +121,8 @@
 
 			const descContent = document.createElement('div');
 			descContent.className = 'event_desc_content';
-			descContent.innerHTML = `<p>${ev.description || 'No description available'}</p>`;
+			const descText = window.apiUtils ? window.apiUtils.linkifyText(ev.description || '') : (ev.description || 'No description available');
+			descContent.innerHTML = `<p>${descText || 'No description available'}</p>`;
 
 			descContainer.appendChild(expandBtn);
 			descContainer.appendChild(descContent);
@@ -141,6 +142,30 @@
 			info.appendChild(icons);
 			info.appendChild(resp);
 			info.appendChild(actions);
+
+			if (ev.attachments && ev.attachments.length > 0) {
+				const filesSection = document.createElement('div');
+				filesSection.className = 'event_attachments';
+				const filesLabel = window.i18n ? window.i18n.t('files_label') : 'Files';
+				filesSection.innerHTML = `<h5><i class="fa-solid fa-paperclip"></i> ${filesLabel}</h5>`;
+				const fileList = document.createElement('ul');
+				fileList.className = 'event_files_list';
+				ev.attachments.forEach(att => {
+					const li = document.createElement('li');
+					const link = document.createElement('a');
+					link.href = '#';
+					link.dataset.fileId = att.id;
+					link.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> ${att.name}`;
+					link.addEventListener('click', async (e) => {
+						e.preventDefault();
+						if (window.apiUtils) await window.apiUtils.downloadFileById(att.id, att.name);
+					});
+					li.appendChild(link);
+					fileList.appendChild(li);
+				});
+				filesSection.appendChild(fileList);
+				info.appendChild(filesSection);
+			}
 
 			row.appendChild(carousel);
 			row.appendChild(info);

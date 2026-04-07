@@ -263,6 +263,19 @@ async function uploadImagesForEntry(entryId, files) {
     return fileIDs;
 }
 
+async function uploadAttachmentsForEntry(entryId, files) {
+    for (const file of files) {
+        const formData = new FormData();
+        formData.append('parent_id', entryId);
+        formData.append('file_name', file.name);
+        formData.append('file', file);
+        await apiRequest(`${FILE_API_URL}/upload`, {
+            method: 'POST',
+            body: formData
+        });
+    }
+}
+
 function decodeJwtPayload(token) {
     try {
         const tokenParts = token.split('.');
@@ -602,6 +615,7 @@ async function handleShortEventSubmit(event) {
 
     const formData = new FormData(document.getElementById('shortEventForm'));
     const imageFiles = Array.from(document.getElementById('eventImage').files || []);
+    const attachmentFiles = Array.from(document.getElementById('eventFiles')?.files || []);
 
     try {
         if (editingId && editingType === 'short-events') {
@@ -637,6 +651,10 @@ async function handleShortEventSubmit(event) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ calender_entry_id: editingId, image_ids: imageIDs })
                 });
+            }
+
+            if (attachmentFiles.length > 0) {
+                await uploadAttachmentsForEntry(editingId, attachmentFiles);
             }
 
             _doCloseForm('short-events');
@@ -691,6 +709,10 @@ async function handleShortEventSubmit(event) {
             });
         }
 
+        if (attachmentFiles.length > 0) {
+            await uploadAttachmentsForEntry(calenderEntryID, attachmentFiles);
+        }
+
         closeForm('short-events');
         await reloadDashboardData();
         showDashboardMessage('Short event created successfully', 'success');
@@ -705,6 +727,7 @@ async function handleCampsEventSubmit(event) {
 
     const formData = new FormData(document.getElementById('campsEventForm'));
     const imageFiles = Array.from(document.getElementById('campImage').files || []);
+    const attachmentFiles = Array.from(document.getElementById('campFiles')?.files || []);
 
     try {
         if (editingId && editingType === 'camps') {
@@ -740,6 +763,10 @@ async function handleCampsEventSubmit(event) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ calender_entry_id: editingId, image_ids: imageIDs })
                 });
+            }
+
+            if (attachmentFiles.length > 0) {
+                await uploadAttachmentsForEntry(editingId, attachmentFiles);
             }
 
             _doCloseForm('camps');
@@ -792,6 +819,10 @@ async function handleCampsEventSubmit(event) {
                     image_ids: imageIDs
                 })
             });
+        }
+
+        if (attachmentFiles.length > 0) {
+            await uploadAttachmentsForEntry(calenderEntryID, attachmentFiles);
         }
 
         closeForm('camps');
@@ -1027,6 +1058,33 @@ function initializeImageUploads() {
 
     setupImageUpload('eventImage', 'imagePreviewContainer', 'imagePreviewText');
     setupImageUpload('campImage', 'campImagePreviewContainer', 'campImagePreviewText');
+
+    const setupFileAttachmentUpload = (inputId, previewId, textId) => {
+        const fileInput = document.getElementById(inputId);
+        const previewEl = document.getElementById(previewId);
+        const textEl = document.getElementById(textId);
+        const uploadArea = fileInput?.parentElement;
+        if (!fileInput) return;
+
+        uploadArea?.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => {
+            previewEl.innerHTML = '';
+            if (fileInput.files.length > 0) {
+                if (textEl) textEl.style.display = 'none';
+                Array.from(fileInput.files).forEach(file => {
+                    const item = document.createElement('div');
+                    item.className = 'file-preview-item';
+                    item.innerHTML = `<i class="fas fa-file"></i> <span>${file.name}</span>`;
+                    previewEl.appendChild(item);
+                });
+            } else {
+                if (textEl) textEl.style.display = 'block';
+            }
+        });
+    };
+
+    setupFileAttachmentUpload('eventFiles', 'eventFilesPreview', 'eventFilesText');
+    setupFileAttachmentUpload('campFiles', 'campFilesPreview', 'campFilesText');
 }
 
 function handleImagePreview(fileInputId, previewId, previewTextId) {

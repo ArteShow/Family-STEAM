@@ -95,7 +95,7 @@ async function getEventImageUrls(imageIds = []) {
     
     try {
         const results = await Promise.allSettled(
-            imageIds.slice(0, 3).map(async (imageId) => {
+            imageIds.map(async (imageId) => {
                 const response = await fetch(`${FILE_API_URL}/download`, {
                     method: 'POST',
                     headers: {
@@ -153,6 +153,7 @@ async function formatEventFromBackend(event) {
         const isCamp = tag.toLowerCase().includes('camp') || durationDays >= 2;
 
         const imageUrls = await getEventImageUrls(event.image_ids);
+        const attachments = await getEventAttachments(event.id, event.image_ids || []);
         const durationText = durationHours < 24
             ? `${durationHours}h`
             : `${Math.ceil(durationHours / 24)} days`;
@@ -178,6 +179,7 @@ async function formatEventFromBackend(event) {
                 ? description.substring(0, 150) + '...'
                 : description,
             images: imageUrls,
+            attachments,
             registerUrl: isCamp
                 ? `/forms/camp_register.html?eventId=${event.id}`
                 : `/forms/event_register.html?eventId=${event.id}`,
@@ -244,6 +246,62 @@ async function getAllTags() {
     }
 }
 
+// Linkify URLs in plain text (HTML-escaped first to prevent XSS)
+function linkifyText(text) {
+    if (!text) return '';
+    const escaped = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    return escaped.replace(/https?:\/\/[^\s<>"'&]+/g, url =>
+        `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`
+    );
+}
+
+// Trigger browser file download from the file-service
+async function downloadFileById(fileId, fileName) {
+    try {
+        const resp = await fetch(`${FILE_API_URL}/download`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file_id: fileId })
+        });
+        if (!resp.ok) throw new Error('Download failed');
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        console.error('File download failed:', err);
+    }
+}
+
+// Fetch non-image attachments for an event (files in the files table not in imageIds)
+async function getEventAttachments(parentId, imageIds = []) {
+    if (!parentId) return [];
+    try {
+        const resp = await fetch(`${FILE_API_URL}/list`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ parent_id: parentId })
+        });
+        if (!resp.ok) return [];
+        const data = await resp.json();
+        const imageIdSet = new Set(imageIds);
+        return (data.files || [])
+            .filter(f => !imageIdSet.has(f.id))
+            .map(f => ({ id: f.id, name: f.file_name }));
+    } catch {
+        return [];
+    }
+}
+
 // Make API utilities available globally
 window.apiUtils = {
     fetchAllEvents,
@@ -254,5 +312,8 @@ window.apiUtils = {
     getAllFormattedEvents,
     getEventsByTag,
     getAllTags,
-    apiRequest
+    apiRequest,
+    downloadFileById,
+    getEventAttachments,
+    linkifyText
 };

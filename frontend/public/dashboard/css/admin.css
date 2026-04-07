@@ -1846,3 +1846,30 @@ body {
         transform: translateX(40px);
     }
 }
+/* ── Admin file attachment preview ──────────────────────── */
+.files-preview-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.file-preview-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.6rem;
+    background: rgba(41, 128, 225, 0.1);
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    color: #1a2549;
+    word-break: break-all;
+}
+
+.file-preview-item i {
+    color: rgb(41, 128, 225);
+    flex-shrink: 0;
+}

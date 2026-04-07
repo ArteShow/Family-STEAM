@@ -285,3 +285,59 @@ main h3 {
                                                                     margin-top: 1rem;
         }
 }
+
+/* -- File attachments section --------------------------- */
+.event_attachments {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(41, 128, 225, 0.05);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(41, 128, 225, 0.15);
+}
+
+.event_attachments h5 {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1a2549;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.event_files_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.event_files_list a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: rgb(41, 128, 225);
+    font-size: 0.85rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    word-break: break-all;
+}
+
+.event_files_list a:hover {
+    color: rgb(255, 102, 0);
+    text-decoration: underline;
+}
+
+/* Linkified URLs in descriptions */
+.event_desc_content a {
+    color: rgb(41, 128, 225);
+    text-decoration: underline;
+    word-break: break-all;
+}
+
+.event_desc_content a:hover {
+    color: rgb(255, 102, 0);
+}
