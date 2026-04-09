@@ -1,0 +1,664 @@
+/* ─── Archive Page ────────────────────────────────────────────────────────── */
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg,
+            rgb(224, 242, 255),
+            rgb(255, 244, 184));
+    min-height: 100vh;
+}
+
+/* ─── Page Heading ───────────────────────────────────────────────────────────*/
+
+.archive_heading {
+    text-align: center;
+    padding: 4.375rem 1.25rem 0.75rem;
+    font-size: 2.625rem;
+    font-weight: 700;
+    color: rgb(24, 37, 110);
+    letter-spacing: 1px;
+    animation: fadeInUp 1s forwards 0.9s;
+    opacity: 0;
+}
+
+.archive_subtitle {
+    text-align: center;
+    color: #40507a;
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+    animation: fadeInUp 1s forwards 1.05s;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Filter Bar ─────────────────────────────────────────────────────────────*/
+
+.archive_filters {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    padding: 0 1rem;
+    animation: fadeInUp 1s forwards 1.2s;
+    opacity: 0;
+}
+
+.filter_btn {
+    padding: 0.45rem 1.4rem;
+    border: 2px solid rgb(24, 37, 110);
+    border-radius: 999px;
+    background: transparent;
+    color: rgb(24, 37, 110);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.filter_btn:hover {
+    transform: translateY(-2px);
+}
+
+.filter_btn.active,
+.filter_btn:hover {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-color: transparent;
+    color: #fff;
+}
+
+/* ─── Archive Grid ────────────────────────────────────────────────────────────*/
+
+.archive_root {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto 4rem;
+    padding: 0 1.2rem;
+}
+
+/* ─── State messages (loading / empty / error) ────────────────────────────────*/
+
+.archive_msg {
+    text-align: center;
+    padding: 3.5rem 1rem;
+    color: #40507a;
+    font-size: 1rem;
+    grid-column: 1 / -1;
+}
+
+.archive_msg.error {
+    color: #c0392b;
+}
+
+/* ─── Archive Card ────────────────────────────────────────────────────────────*/
+
+.archive_card {
+    background: rgba(255, 255, 255, 0.67);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(20, 20, 60, 0.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: fadeInUp 0.5s ease both;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.archive_card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 32px rgba(20, 20, 60, 0.12);
+}
+
+/* ─── Carousel ────────────────────────────────────────────────────────────────*/
+
+.archive_carousel {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: rgba(200, 220, 240, 0.35);
+}
+
+.archive_carousel_track {
+    display: flex;
+    height: 100%;
+    will-change: transform;
+    transition: transform 420ms cubic-bezier(.22, .9, .3, 1);
+}
+
+.archive_carousel_slide {
+    flex: 0 0 100%;
+    height: 100%;
+}
+
+.archive_carousel_slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.archive_carousel_btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 2;
+    opacity: 0.9;
+    transition: background 0.18s ease, transform 0.12s ease;
+}
+
+.archive_carousel_btn:hover {
+    background: rgba(0, 0, 0, 0.65);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.archive_carousel_btn.left  { left: 10px; }
+.archive_carousel_btn.right { right: 10px; }
+
+/* Hide arrows when only one image */
+.archive_carousel[data-single="true"] .archive_carousel_btn { display: none; }
+
+/* ─── Type Badge ──────────────────────────────────────────────────────────────*/
+
+.archive_type_badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 0.22rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    z-index: 3;
+    backdrop-filter: blur(4px);
+}
+
+.badge_event {
+    background: linear-gradient(90deg, #43e97b, #38f9d7);
+    color: #0d3320;
+}
+
+.badge_camp {
+    background: linear-gradient(90deg, #f7971e, #ffd200);
+    color: #3a2000;
+}
+
+/* ─── Card Body ───────────────────────────────────────────────────────────────*/
+
+.archive_card_body {
+    padding: 1.2rem 1.3rem 0.8rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.archive_card_title {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: rgb(24, 37, 110);
+    margin: 0;
+    line-height: 1.35;
+}
+
+.archive_card_date {
+    font-size: 0.82rem;
+    color: #40507a;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.archive_card_date i {
+    color: #ff6b6b;
+    flex-shrink: 0;
+}
+
+.archive_card_desc {
+    font-size: 0.88rem;
+    color: #40507a;
+    line-height: 1.6;
+    flex: 1;
+}
+
+/* ─── Card Actions ────────────────────────────────────────────────────────────*/
+
+.archive_card_actions {
+    padding: 0 1.3rem 1.1rem;
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+}
+
+.archive_view_cal_btn {
+    display: inline-block;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    color: #fff;
+    padding: 0.45rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    white-space: nowrap;
+}
+
+.archive_view_cal_btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.92;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────────────*/
+
+@media (max-width: 768px) {
+    .archive_heading {
+        font-size: 2rem;
+        padding: 3rem 1rem 0.6rem;
+    }
+
+    .archive_root {
+        grid-template-columns: 1fr;
+        gap: 1.4rem;
+        padding: 0 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .archive_heading {
+        font-size: 1.7rem;
+    }
+
+    .filter_btn {
+        font-size: 0.82rem;
+        padding: 0.38rem 1rem;
+    }
+}
+
+/* ─── Reviews Toggle Button ───────────────────────────────────────────────────*/
+
+.archive_reviews_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: linear-gradient(90deg, #ff7a7a, #ffb199);
+    color: #fff;
+    border: none;
+    padding: 0.45rem 1rem;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 122, 122, 0.22);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    white-space: nowrap;
+}
+
+.archive_reviews_btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.92;
+}
+
+.archive_reviews_btn .rev_count {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    padding: 0.06rem 0.5rem;
+    font-size: 0.78rem;
+}
+
+/* ─── Review Modal ────────────────────────────────────────────────────────────*/
+
+.review_modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 20, 60, 0.45);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    backdrop-filter: blur(3px);
+}
+
+.review_modal.open {
+    display: flex;
+}
+
+.review_modal_box {
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(20, 20, 60, 0.18);
+    width: 100%;
+    max-width: 560px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalSlideIn 0.28s cubic-bezier(.22,.9,.3,1);
+}
+
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+.review_modal_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 1.5rem 1rem;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.12);
+    flex-shrink: 0;
+}
+
+.review_modal_title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: rgb(24, 37, 110);
+    margin: 0;
+}
+
+.review_modal_close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #40507a;
+    cursor: pointer;
+    padding: 0.25rem 0.4rem;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+}
+
+.review_modal_close:hover {
+    background: rgba(102, 126, 234, 0.08);
+    color: rgb(24, 37, 110);
+}
+
+/* ─── Review List ─────────────────────────────────────────────────────────────*/
+
+.review_list {
+    overflow-y: auto;
+    padding: 1rem 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 80px;
+}
+
+.review_list_msg {
+    text-align: center;
+    color: #40507a;
+    font-size: 0.92rem;
+    padding: 1.5rem 0;
+}
+
+.review_list_msg.error {
+    color: #c0392b;
+}
+
+/* ─── Single Review Card ──────────────────────────────────────────────────────*/
+
+.review_card {
+    background: rgba(224, 242, 255, 0.38);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+}
+
+.review_avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.review_avatar_placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.review_card_body {
+    flex: 1;
+    min-width: 0;
+}
+
+.review_card_top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.3rem;
+}
+
+.review_card_username {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: rgb(24, 37, 110);
+}
+
+.review_card_date {
+    font-size: 0.75rem;
+    color: #8090b0;
+}
+
+.review_stars_display {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 0.45rem;
+}
+
+.review_stars_display i {
+    font-size: 0.85rem;
+    color: #ffd200;
+}
+
+.review_stars_display i.empty {
+    color: #d0dae8;
+}
+
+.review_card_text {
+    font-size: 0.88rem;
+    color: #40507a;
+    line-height: 1.6;
+    word-break: break-word;
+}
+
+/* ─── Load More ───────────────────────────────────────────────────────────────*/
+
+.review_load_more_wrap {
+    padding: 0 1.5rem 0.75rem;
+    flex-shrink: 0;
+}
+
+.review_load_more_btn {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid rgb(24, 37, 110);
+    border-radius: 8px;
+    background: transparent;
+    color: rgb(24, 37, 110);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+}
+
+.review_load_more_btn:hover {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-color: transparent;
+    color: #fff;
+}
+
+/* ─── Review Form Area ────────────────────────────────────────────────────────*/
+
+.review_form_area {
+    padding: 0 1.5rem 1.4rem;
+    flex-shrink: 0;
+    border-top: 1px solid rgba(102, 126, 234, 0.12);
+}
+
+.review_form_area:empty {
+    padding: 0;
+    border-top: none;
+}
+
+.review_form_notice {
+    text-align: center;
+    font-size: 0.88rem;
+    color: #40507a;
+    padding: 0.9rem 0 0.2rem;
+}
+
+.review_form_notice a {
+    color: #667eea;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.review_form_notice a:hover {
+    text-decoration: underline;
+}
+
+.review_write_title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgb(24, 37, 110);
+    margin: 0.9rem 0 0.6rem;
+}
+
+/* ─── Star Input (interactive) ───────────────────────────────────────────────*/
+
+.review_star_input {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 0.75rem;
+}
+
+.review_star_input button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.15rem;
+    font-size: 1.45rem;
+    color: #d0dae8;
+    transition: color 0.12s, transform 0.1s;
+    line-height: 1;
+}
+
+.review_star_input button.filled {
+    color: #ffd200;
+}
+
+.review_star_input button:hover {
+    transform: scale(1.18);
+}
+
+.review_textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 0.65rem 0.85rem;
+    border: 1.5px solid rgba(102, 126, 234, 0.28);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    color: #40507a;
+    background: rgba(255, 255, 255, 0.85);
+    resize: vertical;
+    transition: border-color 0.18s;
+    box-sizing: border-box;
+    margin-bottom: 0.75rem;
+}
+
+.review_textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.review_submit_btn {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1.4rem;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+}
+
+.review_submit_btn:hover:not(:disabled) {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.review_submit_btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.review_form_feedback {
+    font-size: 0.84rem;
+    margin-top: 0.5rem;
+}
+
+.review_form_feedback.success {
+    color: #1a7a4a;
+}
+
+.review_form_feedback.error {
+    color: #c0392b;
+}
+
+/* ─── Responsive tweaks ───────────────────────────────────────────────────────*/
+
+@media (max-width: 600px) {
+    .review_modal_box {
+        max-height: 92vh;
+    }
+
+    .review_modal_header,
+    .review_list,
+    .review_load_more_wrap,
+    .review_form_area {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}

@@ -78,6 +78,13 @@ func main() {
 	nlSendProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/send")
 	nlCampaignsProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/campaigns")
 
+	// review-service proxies (port 8009)
+	reviewCreateProxy := proxy.NewProxy("http://review-service:8009", "/review-service/create")
+	reviewAdminCreateProxy := proxy.NewProxy("http://review-service:8009", "/review-service/adminCreate")
+	reviewGetByCalendarProxy := proxy.NewProxy("http://review-service:8009", "/review-service/getByCalendar")
+	reviewDeleteProxy := proxy.NewProxy("http://review-service:8009", "/review-service/delete")
+	reviewCheckEligibleProxy := proxy.NewProxy("http://review-service:8009", "/review-service/checkEligible")
+
 	handler := http.NewServeMux()
 	handler.Handle(
 		"/api/"+cfg.APIVersion+"/api-gateway/health",
@@ -138,6 +145,13 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/newsletter/subscribers", middleware.LoggingMiddleware(middleware.AdminOnly(nlSubscribersProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/newsletter/send", middleware.LoggingMiddleware(middleware.AdminOnly(nlSendProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/newsletter/campaigns", middleware.LoggingMiddleware(middleware.AdminOnly(nlCampaignsProxy)))
+
+	// review-service routes
+	handler.Handle("/api/"+cfg.APIVersion+"/review/create", middleware.LoggingMiddleware(middleware.UserAuth(reviewCreateProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/review/adminCreate", middleware.LoggingMiddleware(middleware.AdminOnly(reviewAdminCreateProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/review/getByCalendar", middleware.LoggingMiddleware(reviewGetByCalendarProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/review/delete", middleware.LoggingMiddleware(middleware.AdminOnly(reviewDeleteProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/review/checkEligible", middleware.LoggingMiddleware(middleware.UserAuth(reviewCheckEligibleProxy)))
 
 	srv := &http.Server{
 		Addr:         cfg.Port,

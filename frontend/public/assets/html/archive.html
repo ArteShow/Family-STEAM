@@ -6,9 +6,9 @@
     <link rel="icon" href="../images/favicon.png" type="image/png">
     <link rel="stylesheet" href="../css/nav.css">
     <link rel="stylesheet" href="../css/footer.css">
-    <link rel="stylesheet" href="../css/calender.css">
+    <link rel="stylesheet" href="../css/archive.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <title>Family STEAM | ArteShow</title>
+    <title>Family STEAM | Archive</title>
 </head>
 <body>
     <header>
@@ -21,52 +21,27 @@
         <nav id="navMenu">
             <a href="../../index.html" data-i18n="nav_home">Home</a>
             <a href="about_us.html" data-i18n="nav_about">About Us</a>
-            <a href="calender.html" data-i18n="nav_calendar">Calender</a>
-            <a href="short_events.html" data-i18n="nav_events">Short events</a>
+            <a href="calender.html" data-i18n="nav_calendar">Calendar</a>
+            <a href="short_events.html" data-i18n="nav_events">Short Events</a>
             <a href="camps.html" data-i18n="nav_camps">Camps</a>
             <a href="archive.html" data-i18n="nav_archive">Archive</a>
             <a href="tickets.html" data-i18n="nav_tickets">Support Tickets</a>
         </nav>
     </header>
 
-    <main class="calendar-container">
-        <h3 data-i18n="cal_title">Calender</h3>
-        <!-- Tag Filter Section -->
-        <div class="tag-filter-container">
-            <label for="tagFilter" data-i18n="cal_filter_label">Filter by Tag:</label>
-            <select id="tagFilter" class="tag-filter-select">
-                <option value="" data-i18n="cal_all_events">All Events</option>
-            </select>
+    <main>
+        <h3 class="archive_heading" data-i18n="archive_title">Past Events &amp; Camps</h3>
+        <p class="archive_subtitle" data-i18n="archive_subtitle">A look back at everything we've done together.</p>
+
+        <div class="archive_filters">
+            <button class="filter_btn active" data-filter="all" data-i18n="archive_filter_all">All</button>
+            <button class="filter_btn" data-filter="event" data-i18n="archive_filter_events">Short Events</button>
+            <button class="filter_btn" data-filter="camp" data-i18n="archive_filter_camps">Camps</button>
         </div>
 
-        <div class="calendar-header">
-            <button id="prevMonth"><i class="fa-solid fa-chevron-left"></i></button>
-            <h1 id="monthYear"></h1>
-            <button id="nextMonth"><i class="fa-solid fa-chevron-right"></i></button>
-            <button id="todayBtn" class="today-btn" data-i18n="cal_today">Today</button>
-        </div>
-
-        <table class="calendar">
-            <thead>
-                <tr>
-                    <th data-i18n="cal_days.0">Mon</th>
-                    <th data-i18n="cal_days.1">Tue</th>
-                    <th data-i18n="cal_days.2">Wed</th>
-                    <th data-i18n="cal_days.3">Thu</th>
-                    <th data-i18n="cal_days.4">Fri</th>
-                    <th data-i18n="cal_days.5">Sat</th>
-                    <th data-i18n="cal_days.6">Sun</th>
-                </tr>
-            </thead>
-            <tbody id="calendarBody"></tbody>
-        </table>
-
-        <div id="eventsCard" class="events-card hidden">
-            <h2 id="eventDate"></h2>
-            <div id="eventsList" class="events-list"></div>
-            <button id="closeBtn" class="close-btn" data-i18n="cal_close">Close</button>
-        </div>
+        <section id="archiveRoot" class="archive_root"></section>
     </main>
+
     <footer>
         <div class="footer_content">
             <div class="footer_section">
@@ -80,7 +55,7 @@
                 <ul>
                     <li><a href="../../index.html" data-i18n="nav_home">Home</a></li>
                     <li><a href="calender.html" data-i18n="footer_events_calendar">Events Calendar</a></li>
-                    <li><a href="#camps" data-i18n="nav_camps">Camps</a></li>
+                    <li><a href="camps.html" data-i18n="nav_camps">Camps</a></li>
                     <li><a href="tickets.html" data-i18n="nav_tickets">Support Tickets</a></li>
                 </ul>
             </div>
@@ -134,11 +109,34 @@
         </div>
     </footer>
 
-    <script src="../js/api.js?v=4"></script>
-    <script src="../js/data.js"></script>
-    <script src="../js/calender.js?v=3"></script>
+    <!-- ── Review Modal ────────────────────────────────────────────────────── -->
+    <div id="reviewModal" class="review_modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+        <div class="review_modal_box">
+            <div class="review_modal_header">
+                <h3 id="reviewModalTitle" class="review_modal_title" data-i18n="review_btn">Reviews</h3>
+                <button class="review_modal_close" id="reviewModalClose" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Review list -->
+            <div id="reviewList" class="review_list"></div>
+
+            <!-- Load more -->
+            <div id="reviewLoadMoreWrap" class="review_load_more_wrap" style="display:none;">
+                <button id="reviewLoadMoreBtn" class="review_load_more_btn" data-i18n="review_load_more">Load more</button>
+            </div>
+
+            <!-- Review form area -->
+            <div id="reviewFormArea" class="review_form_area"></div>
+        </div>
+    </div>
+
     <script src="https://kit.fontawesome.com/d9e39d51d2.js" crossorigin="anonymous"></script>
     <script src="../js/i18n.js"></script>
+    <script src="../js/api.js?v=4"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/archive.js"></script>
     <script src="../js/nav.js"></script>
     <script src="../js/newsletter.js"></script>
     <script src="../js/whatsapp.js"></script>

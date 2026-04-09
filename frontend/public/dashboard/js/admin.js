@@ -463,6 +463,8 @@ function navigateTo(page) {
         loadAdminInbox();
     } else if (page === 'newsletter') {
         loadNewsletterData();
+    } else if (page === 'reviews') {
+        loadReviewsPage();
     }
 }
 

@@ -8,11 +8,24 @@ function getQueryParam(param) {
 }
 
 // ── Auth helpers ──────────────────────────────────────────────────────────────
+function decodeJwtPayload(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(atob(base64));
+    } catch (_) {
+        return null;
+    }
+}
+
 function getAuthInfo() {
     const token = localStorage.getItem('authToken');
-    const userId = localStorage.getItem('currentUser');
-    if (!token || !userId) return null;
-    return { token, userId };
+    const username = localStorage.getItem('currentUser');
+    if (!token || !username) return null;
+    // Decode JWT to get the real user UUID (stored as user_id in claims)
+    const payload = decodeJwtPayload(token);
+    const userId = payload && payload.user_id ? payload.user_id : username;
+    return { token, userId, username };
 }
 
 function initAuthState() {
@@ -30,8 +43,8 @@ function initAuthState() {
     }
 
     if (accountBanner) accountBanner.style.display = 'flex';
-    if (bannerUsername) bannerUsername.textContent = auth.userId;
-    const avatarUrl = localStorage.getItem('userAvatarDataURL_' + auth.userId);
+    if (bannerUsername) bannerUsername.textContent = auth.username;
+    const avatarUrl = localStorage.getItem('userAvatarDataURL_' + auth.username);
     if (bannerAvatar && avatarUrl) {
         bannerAvatar.src = avatarUrl;
         bannerAvatar.style.display = 'block';
@@ -41,7 +54,7 @@ function initAuthState() {
 
     // Pre-fill email if stored
     const emailInput = document.getElementById('email');
-    const savedEmail = localStorage.getItem('userEmail_' + auth.userId);
+    const savedEmail = localStorage.getItem('userEmail_' + auth.username);
     if (emailInput && savedEmail) emailInput.value = savedEmail;
 }
 
@@ -136,7 +149,7 @@ if (eventForm) {
         const ageValue  = document.getElementById('age')?.value;
         const parsedAge = ageValue ? Number(ageValue) : null;
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'cash';
-        const avatar    = localStorage.getItem('userAvatarDataURL_' + auth.userId) || '';
+        const avatar    = localStorage.getItem('userAvatarDataURL_' + auth.username) || '';
 
         const clientPayload = {
             calendar_id:    eventId,
@@ -148,7 +161,7 @@ if (eventForm) {
             birthday:       null,
             age:            Number.isFinite(parsedAge) ? parsedAge : null,
             user_id:        auth.userId,
-            username:       auth.userId,
+            username:       auth.username,
             avatar,
             payment_method: paymentMethod
         };
