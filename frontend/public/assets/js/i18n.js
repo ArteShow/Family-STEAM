@@ -826,6 +826,21 @@
         return (typeof val === 'string' || Array.isArray(val)) ? val : key;
     }
 
+    function apply(lang) {
+        var l = lang || getLang();
+        if (typeof document === 'undefined') return; // SSR check
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+            var key = el.getAttribute('data-i18n');
+            var val = t(key, l);
+            if (typeof val === 'string') el.textContent = val;
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+            var key = el.getAttribute('data-i18n-placeholder');
+            el.placeholder = t(key, l);
+        });
+        document.documentElement.lang = l;
+    }
+
     // Supported languages and metadata
     var SUPPORTED_LANGUAGES = {
         en: { name: 'English', flag: '🇬🇧', nativeName: 'English' },
