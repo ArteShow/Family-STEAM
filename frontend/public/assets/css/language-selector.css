@@ -1,7 +1,5 @@
 /**
- * ─────────────────────────────────────────────────────────────────────────
- * Language Selector Modal Styles - Family STEAM Theme
- * ─────────────────────────────────────────────────────────────────────────
+ * Language Selector Modal - Family STEAM Theme * Primary Blue: rgb(41, 128, 225)
  */
 
 .language-selector-modal {
@@ -17,6 +15,7 @@
     backdrop-filter: blur(4px);
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
+    overflow: auto;
 }
 
 .language-selector-modal.visible {
@@ -29,27 +28,27 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.35);
     z-index: -1;
 }
 
 .language-selector-container {
     position: relative;
     z-index: 10000;
-    width: 90%;
-    max-width: 520px;
+    width: 95%;
+        max-width: 580px;
+        margin: auto;
+        padding: 2rem 0;
 }
 
 .language-selector-content {
-    background: white;
+    background: linear-gradient(135deg, #ffffff 0%, rgb(245, 250, 255) 100%);
     border-radius: 16px;
-    padding: 2.5rem;
-    box-shadow: 
-        0 10px 40px rgba(0, 0, 0, 0.15),
-        0 0 1px rgba(0, 0, 0, 0.1);
+    padding: 3rem 2.5rem;
+        box-shadow: 0 15px 50px rgba(41, 128, 225, 0.15), 0 0 0 1px rgba(41, 128, 225, 0.1);
     text-align: center;
     animation: slideUp 0.3s ease-out;
-    border-top: 4px solid rgb(41, 128, 225);
+    border-top: 5px solid rgb(41, 128, 225);
 }
 
 @keyframes slideUp {
@@ -64,27 +63,28 @@
 }
 
 .language-selector-content h2 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.75rem;
+    margin: 0 0 0.75rem 0;
+        font-size: 2rem;
     font-weight: 700;
-    color: rgb(26, 26, 26);
+    color: rgb(41, 128, 225);
 }
 
 .language-selector-content p {
-    margin: 0 0 2rem 0;
-    font-size: 1rem;
-    color: rgb(102, 102, 102);
-    line-height: 1.5;
+    margin: 0 0 2.5rem 0;
+        font-size: 1.05rem;
+        color: rgb(80, 80, 80);
+        line-height: 1.6;
 }
 
 .language-selector-buttons {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: 1.25rem;
+        margin-bottom: 2.5rem;
+        width: 100%;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 500px) {
     .language-selector-buttons {
         grid-template-columns: 1fr 1fr 1fr;
     }
@@ -95,123 +95,113 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1.5rem;
-    background: #f8fafb;
-        border: 2px solid rgb(224, 242, 255);
+    padding: 2rem 1.25rem;
+        background: white;
+        border: 2.5px solid rgb(200, 225, 255);
     border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.25s ease-in-out;
     font-family: 'Poppins', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     color: rgb(51, 51, 51);
-    min-height: 120px;
+    min-height: 150px;
+        box-sizing: border-box;
+        word-wrap: break-word;
 }
 
 .lang-selector-btn:hover {
-    background: rgb(224, 242, 255);
+    background: rgb(230, 243, 255);
         border-color: rgb(41, 128, 225);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(41, 128, 225, 0.2);
 }
 
 .lang-selector-btn.active {
     background: rgb(41, 128, 225);
-        border-color: rgb(41, 128, 225);
+    border-color: rgb(41, 128, 225);
     color: white;
-    box-shadow: 0 4px 15px rgba(41, 128, 225, 0.3);
+    box-shadow: 0 8px 25px rgba(41, 128, 225, 0.4);
+        transform: translateY(-3px);
 }
 
 .lang-flag {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 3rem;
+        margin-bottom: 0.75rem;
     display: block;
+    line-height: 1;
 }
 
 .lang-name {
     display: block;
+    font-size: 0.95rem;
 }
 
 .lang-selector-confirm-btn {
     width: 100%;
-    padding: 1rem 1.5rem;
+    padding: 1.25rem 2rem;
     background: rgb(41, 128, 225);
     color: white;
     border: none;
     border-radius: 8px;
     font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.25s ease-in-out;
+        box-shadow: 0 4px 15px rgba(41, 128, 225, 0.2);
 }
 
 .lang-selector-confirm-btn:hover:not(:disabled) {
-    background: rgb(30, 100, 180);
-    box-shadow: 0 4px 15px rgba(41, 128, 225, 0.3);
+    background: rgb(30, 110, 190);
+        box-shadow: 0 6px 25px rgba(41, 128, 225, 0.35);
     transform: translateY(-2px);
 }
 
 .lang-selector-confirm-btn:disabled {
-    background: rgb(204, 204, 204);
+    background: rgb(180, 180, 180);
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.7;
 }
 
 /* Mobile responsiveness */
-@media (max-width: 480px) {
+@media (max-width: 499px) {
+    .language-selector-container {
+        width: 96%;
+        padding: 1rem 0;
+    }
     .language-selector-content {
-        padding: 1.5rem;
+        padding: 2rem 1.5rem;
     }
 
     .language-selector-content h2 {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
+            margin-bottom: 0.5rem;
     }
 
     .language-selector-content p {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
+            margin-bottom: 1.75rem;
+    }
+
+        .language-selector-buttons {
+            gap: 1rem;
+            margin-bottom: 2rem;
     }
 
     .lang-selector-btn {
-        padding: 1rem;
-        min-height: 100px;
+        padding: 1.5rem 1rem;
+            min-height: 130px;
+            font-size: 0.9rem;
     }
 
-    .lang-flag {
-        font-size: 2rem;
-    }
-}
-
-/* Dark mode support (optional) */
-@media (prefers-color-scheme: dark) {
-    .language-selector-content {
-        background: rgb(30, 30, 30);
-        box-shadow: 
-            0 10px 40px rgba(0, 0, 0, 0.5),
-            0 0 1px rgba(255, 255, 255, 0.1);
+        .lang-flag {
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
     }
 
-    .language-selector-content h2 {
-        color: #fff;
-    }
-
-    .language-selector-content p {
-        color: rgb(170, 170, 170);
-    }
-
-    .lang-selector-btn {
-        background: rgb(50, 50, 50);
-            border-color: rgb(80, 80, 80);
-            color: rgb(220, 220, 220);
-    }
-
-    .lang-selector-btn:hover {
-        background: rgb(70, 70, 70);
-            border-color: rgb(41, 128, 225);
-    }
-
-    .lang-selector-btn.active {
-        background: rgb(41, 128, 225);
-            border-color: rgb(41, 128, 225);
-        color: white;
+        .lang-selector-confirm-btn {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
     }
 }
