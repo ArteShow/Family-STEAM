@@ -267,6 +267,14 @@
             review_checking: 'Checking eligibility…',
             review_submitting: 'Submitting…',
             review_load_more: 'Load more',
+
+            // ── Language Selection ──────────────────────────────────────────
+            lang_select_title: 'Select Your Language',
+            lang_select_subtitle: 'Please choose your preferred language to continue.',
+            lang_select_english: 'English',
+            lang_select_german: 'Deutsch',
+            lang_select_russian: 'Русский',
+            lang_select_confirm: 'Continue',
         },
 
         de: {
@@ -516,7 +524,13 @@
             review_checking: 'Berechtigung wird geprüft…',
             review_submitting: 'Wird gesendet…',
             review_load_more: 'Mehr laden',
-        },
+            // ── Language Selection ──────────────────────────────────────────
+            lang_select_title: 'Sprache wählen',
+            lang_select_subtitle: 'Bitte wählen Sie Ihre bevorzugte Sprache.',
+            lang_select_english: 'English',
+            lang_select_german: 'Deutsch',
+            lang_select_russian: 'Русский',
+            lang_select_confirm: 'Fortfahren',        },
 
         ru: {
             nav_home: 'Главная',
@@ -765,12 +779,38 @@
             review_checking: 'Проверка правжоительности…',
             review_submitting: 'Отправка…',
             review_load_more: 'Загрузить ещё',
+
+            // ── Language Selection ──────────────────────────────────────────
+            lang_select_title: 'Выберите язык',
+            lang_select_subtitle: 'Пожалуйста, выберите предпочитаемый язык.',
+            lang_select_english: 'English',
+            lang_select_german: 'Deutsch',
+            lang_select_russian: 'Русский',
+            lang_select_confirm: 'Продолжить',
         }
     };
 
+    // Production-ready language detection and persistence
     function getLang() {
-        var lang = (localStorage.getItem('preferredLanguage') || 'en').toLowerCase();
-        return ['en', 'de', 'ru'].includes(lang) ? lang : 'en';
+        // Check cookie first (highest priority)
+        if (typeof CookieManager !== 'undefined') {
+            var cookieLang = CookieManager.get('family-steam-lang');
+            if (cookieLang && ['en', 'de', 'ru'].includes(cookieLang.toLowerCase())) {
+                if (window.__DEV__) console.log('[i18n] Using language from cookie:', cookieLang);
+                return cookieLang.toLowerCase();
+            }
+        }
+        
+        // Check localStorage (fallback for compatibility)
+        var storageLang = localStorage.getItem('preferredLanguage');
+        if (storageLang && ['en', 'de', 'ru'].includes(storageLang.toLowerCase())) {
+            if (window.__DEV__) console.log('[i18n] Using language from localStorage:', storageLang);
+            return storageLang.toLowerCase();
+        }
+        
+        // Final fallback to 'en'
+        if (window.__DEV__) console.log('[i18n] Using default language: en');
+        return 'en';
     }
 
     function t(key, lang) {
@@ -786,19 +826,78 @@
         return (typeof val === 'string' || Array.isArray(val)) ? val : key;
     }
 
-    function apply(lang) {
-        var l = lang || getLang();
-        document.querySelectorAll('[data-i18n]').forEach(function (el) {
-            var key = el.getAttribute('data-i18n');
-            var val = t(key, l);
-            if (typeof val === 'string') el.textContent = val;
-        });
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
-            var key = el.getAttribute('data-i18n-placeholder');
-            el.placeholder = t(key, l);
-        });
-        document.documentElement.lang = l;
+    // Supported languages and metadata
+    var SUPPORTED_LANGUAGES = {
+        en: { name: 'English', flag: '🇬🇧', nativeName: 'English' },
+        de: { name: 'Deutsch', flag: '🇦🇹', nativeName: 'Deutsch' },
+        ru: { name: 'Русский', flag: '🇷🇺', nativeName: 'Русский' }
+    };
+
+    var onLanguageChangeCallbacks = [];
+
+    // Change language and persist to both cookie and localStorage
+    function changeLanguage(lang) {
+        var validLang = ['en', 'de', 'ru'].includes(lang) ? lang.toLowerCase() : 'en';
+        
+        if (window.__DEV__) {
+            console.log('[i18n] Changing language to:', validLang);
+        }
+
+        // Save to cookie (30-365 days, 90 is good middle ground for most cases)
+        if (typeof CookieManager !== 'undefined') {
+            CookieManager.set('family-steam-lang', validLang, 365, '/');
+        }
+
+        // Also save to localStorage for fallback + legacy support
+        localStorage.setItem('preferredLanguage', validLang);
+
+        // Apply translations immediately
+        apply(validLang);
+
+        // Trigger callbacks
+        if (onLanguageChangeCallbacks.length > 0) {
+            onLanguageChangeCallbacks.forEach(function (callback) {
+                try {
+                    callback(validLang);
+                } catch (e) {
+                    console.error('[i18n] Error in language change callback:', e);
+                }
+            });
+        }
+
+        if (window.__DEV__) {
+            console.log('[i18n] Language changed successfully to:', validLang);
+        }
+
+        return validLang;
     }
 
-    window.i18n = { t: t, getLang: getLang, apply: apply };
+    // Get list of supported languages
+    function getSupportedLanguages() {
+        return Object.keys(SUPPORTED_LANGUAGES).map(function (code) {
+            return {
+                code: code,
+                name: SUPPORTED_LANGUAGES[code].name,
+                flag: SUPPORTED_LANGUAGES[code].flag,
+                nativeName: SUPPORTED_LANGUAGES[code].nativeName
+            };
+        });
+    }
+
+    // Register callback for language changes
+    function onLanguageChange(callback) {
+        if (typeof callback === 'function') {
+            onLanguageChangeCallbacks.push(callback);
+        }
+    }
+
+    window.i18n = {
+        t: t,
+        getLang: getLang,
+        apply: apply,
+        changeLanguage: changeLanguage,
+        getSupportedLanguages: getSupportedLanguages,
+        onLanguageChange: onLanguageChange,
+        SUPPORTED_LANGUAGES: SUPPORTED_LANGUAGES
+    };
 })();

@@ -85,7 +85,16 @@ function handleAvatarUpload(event) {
 
 // --- Language ---
 function setLanguage(lang) {
-    localStorage.setItem('preferredLanguage', lang);
+    // Use the new i18n system that handles cookies + localStorage
+    if (window.i18n && typeof window.i18n.changeLanguage === 'function') {
+        window.i18n.changeLanguage(lang);
+    } else {
+        // Fallback for backwards compatibility
+        localStorage.setItem('preferredLanguage', lang);
+        if (typeof CookieManager !== 'undefined') {
+            CookieManager.set('family-steam-lang', lang, 365, '/');
+        }
+    }
 
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);
@@ -140,7 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (avatarInput) avatarInput.addEventListener('change', handleAvatarUpload);
 
     // Set language
-    const lang = localStorage.getItem('preferredLanguage') || 'en';
+    const lang = (window.i18n && typeof window.i18n.getLang === 'function') 
+        ? window.i18n.getLang() 
+        : (localStorage.getItem('preferredLanguage') || 'en');
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);
         btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
