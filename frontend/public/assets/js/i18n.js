@@ -915,4 +915,13 @@
         onLanguageChange: onLanguageChange,
         SUPPORTED_LANGUAGES: SUPPORTED_LANGUAGES
     };
+
+    // Auto-apply translations on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+            apply();
+        });
+    } else {
+        apply();
+    }
 })();

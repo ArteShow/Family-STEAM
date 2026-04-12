@@ -139,7 +139,21 @@ window.LanguageSelector = {
                     if (window.__DEV__) {
                         console.log('[LanguageSelector] Confirming language:', selectedLang);
                     }
-                    window.i18n.changeLanguage(selectedLang);
+                    
+                    // Use changeLanguage if available, otherwise fallback to storage + apply
+                    if (window.i18n && typeof window.i18n.changeLanguage === 'function') {
+                        window.i18n.changeLanguage(selectedLang);
+                    } else if (window.i18n && typeof window.i18n.apply === 'function') {
+                        // Fallback: manually save to storage and apply
+                        if (typeof CookieManager !== 'undefined') {
+                            CookieManager.set('family-steam-lang', selectedLang, 365, '/');
+                        }
+                        localStorage.setItem('preferredLanguage', selectedLang);
+                        window.i18n.apply(selectedLang);
+                    } else {
+                        console.error('[LanguageSelector] i18n module not ready');
+                    }
+                    
                     self.hide();
                 }
             });
@@ -195,13 +209,18 @@ window.LanguageSelector = {
 // Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
-        if (window.LanguageSelector) {
-            window.LanguageSelector.init();
-        }
+        // Wait a tick to ensure i18n is loaded
+        setTimeout(function () {
+            if (window.LanguageSelector) {
+                window.LanguageSelector.init();
+            }
+        }, 10);
     });
 } else {
     // DOM already loaded
-    if (window.LanguageSelector) {
-        window.LanguageSelector.init();
-    }
+    setTimeout(function () {
+        if (window.LanguageSelector) {
+            window.LanguageSelector.init();
+        }
+    }, 10);
 }
