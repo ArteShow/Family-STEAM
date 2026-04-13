@@ -19,6 +19,12 @@ function resolveAuthApiBaseUrl() {
 const API_BASE_URL = resolveAuthApiBaseUrl();
 
 async function postAuth(path, payload) {
+    const host = window.location.hostname;
+    const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(host);
+    const isPrivateIPv4 = /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(host);
+    const isDevLikeHost = isLocalHost || isPrivateIPv4 || host.endsWith('.local');
+    const canUseDirectHttpFallback = window.location.protocol === 'http:' && isDevLikeHost;
+
     const request = function (baseUrl) {
         return fetch(`${baseUrl}${path}`, {
             method: 'POST',
@@ -28,12 +34,12 @@ async function postAuth(path, payload) {
     };
 
     const firstRes = await request(API_BASE_URL);
-    if (firstRes.status !== 405 || /:8000\//.test(API_BASE_URL)) {
+    if (firstRes.status !== 405 || /:8000\//.test(API_BASE_URL) || !canUseDirectHttpFallback) {
         return firstRes;
     }
 
     // Fallback for dev servers that serve static pages on a non-API port.
-    const fallbackBase = `http://${window.location.hostname}:8000/api/v1`;
+    const fallbackBase = `http://${host}:8000/api/v1`;
     return request(fallbackBase);
 }
 
