@@ -37,6 +37,17 @@ func AdminOnly(next http.Handler) http.Handler {
 
 		claims := token.Claims.(jwt.MapClaims)
 
+		username, ok := claims["username"].(string)
+		if !ok || strings.TrimSpace(username) == "" {
+			http.Error(w, "Invalid username", http.StatusUnauthorized)
+			return
+		}
+
+		if !strings.EqualFold(username, "admin") {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+
 		userID, ok := claims["user_id"].(string)
 		if !ok {
 			http.Error(w, "Invalid user_id", http.StatusUnauthorized)
