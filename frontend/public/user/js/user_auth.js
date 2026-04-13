@@ -13,6 +13,10 @@ function resolveAuthApiBaseUrl() {
         return `http://${host}:8000/api/v1`;
     }
 
+    if (window.location.protocol === 'https:' && host.startsWith('www.')) {
+        return `${window.location.protocol}//${host.slice(4)}/api/v1`;
+    }
+
     return `${window.location.origin}/api/v1`;
 }
 
@@ -34,6 +38,13 @@ async function postAuth(path, payload) {
     };
 
     const firstRes = await request(API_BASE_URL);
+    if (firstRes.status === 405 && window.location.protocol === 'https:' && host.startsWith('www.')) {
+        const apexBase = `${window.location.protocol}//${host.slice(4)}/api/v1`;
+        if (apexBase !== API_BASE_URL) {
+            return request(apexBase);
+        }
+    }
+
     if (firstRes.status !== 405 || /:8000\//.test(API_BASE_URL) || !canUseDirectHttpFallback) {
         return firstRes;
     }
