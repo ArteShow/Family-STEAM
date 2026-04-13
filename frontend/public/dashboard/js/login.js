@@ -28,6 +28,7 @@ function switchForm(formType) {
 }
 
 const API_BASE_URL = `${window.location.origin}/api/v1/auth`;
+const ADMIN_CHECK_URL = `${window.location.origin}/api/v1/ticket/getAll`;
 
 function showMessage(message, type = 'error') {
     let container = document.getElementById('toastContainer');
@@ -91,6 +92,17 @@ async function requestJSON(url, options) {
     return JSON.parse(text);
 }
 
+async function verifyAdminAccess(token) {
+    const response = await fetch(ADMIN_CHECK_URL, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    return response.ok;
+}
+
 // Handle login form submission
 async function handleLogin(event) {
     event.preventDefault();
@@ -117,6 +129,12 @@ async function handleLogin(event) {
 
         if (!data || !data.token) {
             throw new Error('Missing token in login response');
+        }
+
+        const hasAdminAccess = await verifyAdminAccess(data.token);
+        if (!hasAdminAccess) {
+            showMessage('Admin access denied for this account.');
+            return;
         }
 
         localStorage.setItem('authToken', data.token);

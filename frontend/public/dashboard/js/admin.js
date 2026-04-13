@@ -335,8 +335,30 @@ async function enforceAuthGuard() {
         return false;
     }
 
+    if (!tokenPayload.username || String(tokenPayload.username).toLowerCase() !== 'admin') {
+        redirectToLogin();
+        return false;
+    }
+
     const isValid = await verifyTokenWithBackend(tokenPayload, token);
     if (!isValid) {
+        redirectToLogin();
+        return false;
+    }
+
+    try {
+        const adminCheck = await fetch(`${TICKET_API_URL}/getAll`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!adminCheck.ok) {
+            redirectToLogin();
+            return false;
+        }
+    } catch (_) {
         redirectToLogin();
         return false;
     }
