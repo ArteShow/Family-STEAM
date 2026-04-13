@@ -5,6 +5,8 @@ const API_BASE_URL = (() => {
         : `${window.location.origin}/api/v1`;
 })();
 
+let isRegisterSubmitting = false;
+
 // --- Auth state guard: redirect to settings if already logged in ---
 (function () {
     const token = localStorage.getItem('authToken');
@@ -96,6 +98,8 @@ async function handleLogin(event) {
 // --- Register ---
 async function handleRegister(event) {
     event.preventDefault();
+    if (isRegisterSubmitting) return;
+
     clearMsg();
     const username = document.getElementById('registerUsername').value.trim();
     const password = document.getElementById('registerPassword').value;
@@ -116,6 +120,8 @@ async function handleRegister(event) {
         return;
     }
 
+    isRegisterSubmitting = true;
+
     try {
         const res = await fetch(`${API_BASE_URL}/auth/user-register`, {
             method: 'POST',
@@ -134,6 +140,8 @@ async function handleRegister(event) {
         setTimeout(() => switchTab('login'), 1500);
     } catch {
         showMsg('Network error. Please try again.', 'error');
+    } finally {
+        isRegisterSubmitting = false;
     }
 }
 
@@ -145,10 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => switchTab(btn.dataset.tab));
         }
     });
-    // Forms use inline onsubmit, so no extra listeners needed here.
-    // Guard against missing elements for safety.
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) loginForm.querySelector('form')?.addEventListener('submit', handleLogin);
-    const registerForm = document.getElementById('registerForm');
-    if (registerForm) registerForm.querySelector('form')?.addEventListener('submit', handleRegister);
+    // Forms use inline onsubmit handlers in auth.html, so we intentionally
+    // avoid adding extra submit listeners here to prevent duplicate requests.
 });

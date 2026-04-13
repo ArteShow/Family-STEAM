@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/ArteShow/Family-STEAM/services/auth-service/internal/client"
 	"github.com/ArteShow/Family-STEAM/services/auth-service/internal/proto"
@@ -19,9 +20,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var req RegisterRequest
 	err = json.Unmarshal(bytes, &req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	req.Username = strings.TrimSpace(req.Username)
 
 	if req.Password == "" || req.Username == "" {
 		http.Error(w, "invalid username, email or password", http.StatusBadRequest)
@@ -46,6 +49,16 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
+		errMsg := strings.ToLower(err.Error())
+		if strings.Contains(errMsg, "duplicate key") || strings.Contains(errMsg, "unique constraint") {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusConflict)
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"message": "username already exists",
+			})
+			return
+		}
+
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if !saveUserRes.GetSuccess() {
