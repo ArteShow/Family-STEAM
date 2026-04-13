@@ -335,11 +335,6 @@ async function enforceAuthGuard() {
         return false;
     }
 
-    if (!tokenPayload.username || String(tokenPayload.username).toLowerCase() !== 'admin') {
-        redirectToLogin();
-        return false;
-    }
-
     const isValid = await verifyTokenWithBackend(tokenPayload, token);
     if (!isValid) {
         redirectToLogin();

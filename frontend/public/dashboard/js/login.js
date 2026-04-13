@@ -110,11 +110,6 @@ async function handleLogin(event) {
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
 
-    if (!username || username.trim().toLowerCase() !== 'admin') {
-        showMessage('Admin access only. Please use an admin account.');
-        return;
-    }
-
     try {
         const data = await requestJSON(`${API_BASE_URL}/login`, {
             method: 'POST',
