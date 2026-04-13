@@ -1,8 +1,5 @@
 const TICKET_API_URL = (() => {
-    const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
-    const base = isLocalHost
-        ? 'http://localhost:8000/api/v1'
-        : `${window.location.origin}/api/v1`;
+    const base = `${window.location.origin}/api/v1`;
     return `${base}/ticket`;
 })();
 

@@ -1,6 +1,6 @@
 const eventForm = document.getElementById('eventRegisterForm');
 const eventSelect = document.getElementById('eventSelect');
-const CLIENT_CREATE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/client/create`;
+const CLIENT_CREATE_URL = `${window.location.origin}/api/v1/client/create`;
 
 function getQueryParam(param) {
     const params = new URLSearchParams(window.location.search);

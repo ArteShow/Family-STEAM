@@ -21,8 +21,8 @@ let detailsContext = {
     snapshot: ''
 };
 
-const AUTH_VERIFY_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/auth/verify`;
-const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1`;
+const AUTH_VERIFY_URL = `${window.location.origin}/api/v1/auth/verify`;
+const API_BASE_URL = `${window.location.origin}/api/v1`;
 const CALENDER_API_URL = `${API_BASE_URL}/calender`;
 const FILE_API_URL = `${API_BASE_URL}/file`;
 const CLIENT_API_URL = `${API_BASE_URL}/client`;

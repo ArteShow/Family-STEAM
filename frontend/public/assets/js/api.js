@@ -5,11 +5,6 @@ function resolveApiBaseUrl() {
         return fromWindow.replace(/\/$/, '');
     }
 
-    const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
-    if (isLocalHost) {
-        return 'http://localhost:8000/api/v1';
-    }
-
     return `${window.location.origin}/api/v1`;
 }
 

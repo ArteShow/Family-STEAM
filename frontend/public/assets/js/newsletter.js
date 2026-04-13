@@ -1,6 +1,6 @@
 // newsletter.js — Auto-wires all .newsletter_form elements to the subscribe endpoint.
 (function () {
-    const SUBSCRIBE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/newsletter/subscribe`;
+    const SUBSCRIBE_URL = `${window.location.origin}/api/v1/newsletter/subscribe`;
 
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.newsletter_form').forEach(function (form) {

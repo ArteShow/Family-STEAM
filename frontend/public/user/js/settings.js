@@ -177,7 +177,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* ─── User Inbox ─────────────────────────────────────────────────────────── */
 
-const _MSG_API = `${window.location.protocol}//${window.location.hostname}:8000/api/v1/message`;
+function _resolveApiBaseUrl() {
+    const fromWindow = window.__API_BASE_URL__;
+    if (typeof fromWindow === 'string' && fromWindow.trim() !== '') {
+        return fromWindow.replace(/\/$/, '');
+    }
+
+    return `${window.location.origin}/api/v1`;
+}
+
+const _MSG_API = `${_resolveApiBaseUrl()}/message`;
 let _userThreads = [];
 let _activeUserThreadId = null;
 
