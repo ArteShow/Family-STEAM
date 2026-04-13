@@ -1,9 +1,41 @@
-const API_BASE_URL = (() => {
-    const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
-    return isLocalHost
-        ? 'http://localhost:8000/api/v1'
-        : `${window.location.origin}/api/v1`;
-})();
+function resolveAuthApiBaseUrl() {
+    const fromWindow = window.__API_BASE_URL__;
+    if (typeof fromWindow === 'string' && fromWindow.trim() !== '') {
+        return fromWindow.replace(/\/$/, '');
+    }
+
+    const host = window.location.hostname;
+    const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(host);
+    const isPrivateIPv4 = /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(host);
+    const isDevLikeHost = isLocalHost || isPrivateIPv4 || host.endsWith('.local');
+
+    if (isDevLikeHost) {
+        return `${window.location.protocol}//${host}:8000/api/v1`;
+    }
+
+    return `${window.location.origin}/api/v1`;
+}
+
+const API_BASE_URL = resolveAuthApiBaseUrl();
+
+async function postAuth(path, payload) {
+    const request = function (baseUrl) {
+        return fetch(`${baseUrl}${path}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    };
+
+    const firstRes = await request(API_BASE_URL);
+    if (firstRes.status !== 405 || /:8000\//.test(API_BASE_URL)) {
+        return firstRes;
+    }
+
+    // Fallback for dev servers that serve static pages on a non-API port.
+    const fallbackBase = `${window.location.protocol}//${window.location.hostname}:8000/api/v1`;
+    return request(fallbackBase);
+}
 
 let isRegisterSubmitting = false;
 
@@ -74,11 +106,7 @@ async function handleLogin(event) {
     }
 
     try {
-        const res = await fetch(`${API_BASE_URL}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
+        const res = await postAuth('/auth/login', { username, password });
 
         const data = await res.json().catch(() => ({}));
 
@@ -123,11 +151,7 @@ async function handleRegister(event) {
     isRegisterSubmitting = true;
 
     try {
-        const res = await fetch(`${API_BASE_URL}/auth/user-register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
+        const res = await postAuth('/auth/user-register', { username, password });
 
         const data = await res.json().catch(() => ({}));
 
