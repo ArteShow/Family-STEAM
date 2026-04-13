@@ -10,7 +10,7 @@ function resolveAuthApiBaseUrl() {
     const isDevLikeHost = isLocalHost || isPrivateIPv4 || host.endsWith('.local');
 
     if (isDevLikeHost) {
-        return `${window.location.protocol}//${host}:8000/api/v1`;
+        return `http://${host}:8000/api/v1`;
     }
 
     return `${window.location.origin}/api/v1`;
@@ -33,7 +33,7 @@ async function postAuth(path, payload) {
     }
 
     // Fallback for dev servers that serve static pages on a non-API port.
-    const fallbackBase = `${window.location.protocol}//${window.location.hostname}:8000/api/v1`;
+    const fallbackBase = `http://${window.location.hostname}:8000/api/v1`;
     return request(fallbackBase);
 }
 
