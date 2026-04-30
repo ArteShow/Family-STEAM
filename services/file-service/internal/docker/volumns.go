@@ -2,30 +2,32 @@ package docker
 
 import (
 	"errors"
-	"os"
-	"path/filepath"
+    "io"
+    "os"
+    "path/filepath"
 
-	"github.com/google/uuid"
+    "github.com/google/uuid"
 )
 
 const DataDir = "/data"
 
-func UploadFile(fileBytes []byte, filename string) (string, error) {
-	id := uuid.New().String()
-	entryDir := filepath.Join(DataDir, id)
+func UploadFile(file io.Reader, filename string) (string, error) {
+    id := uuid.New().String()
+    entryDir := filepath.Join(DataDir, id)
 
-	err := os.MkdirAll(entryDir, 0o755)
-	if err != nil {
-		return "", err
-	}
+    err := os.MkdirAll(entryDir, 0o755)
+    if err != nil {
+        return "", err
+    }
 
-	filePath := filepath.Join(entryDir, filepath.Base(filename))
-	err = os.WriteFile(filePath, fileBytes, 0o644)
-	if err != nil {
-		return "", err
-	}
+    filePath := filepath.Join(entryDir, filepath.Base(filename))
+    out, err := os.Create(filePath)
+    if err != nil {
+        return "", err
+    }
+    defer out.Close()
 
-	return id, nil
+    if _, err := io.Copy(out, file); err != nil {
 }
 
 func DownloadFile(id string) ([]byte, error) {

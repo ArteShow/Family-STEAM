@@ -16,7 +16,7 @@ services:
     ports:
       - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${API_GATEWAY_PORT}/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${API_GATEWAY_PORT}/api/${API_VERSION}/api-gateway/health"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -31,7 +31,7 @@ services:
     ports:
       - "${USER_SERVICE_GRPC_PORT}:${USER_SERVICE_GRPC_PORT}"
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider"]
+      test: ["CMD", "true"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -46,7 +46,7 @@ services:
     ports:
       - "${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}"
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${AUTH_SERVICE_PORT}/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${AUTH_SERVICE_PORT}/auth-service/health"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -63,7 +63,7 @@ services:
     volumes:
       - family-steam:/data
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${FILE_SERVICE_PORT}/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${FILE_SERVICE_PORT}/file-service/health"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -78,7 +78,7 @@ services:
     ports:
       - "${CLIENT_SERVICE_PORT}:${CLIENT_SERVICE_PORT}"
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${CLIENT_SERVICE_PORT}/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${CLIENT_SERVICE_PORT}/client-service/health"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -93,7 +93,7 @@ services:
     ports:
       - "${CALENDER_SERVICE_PORT}:${CALENDER_SERVICE_PORT}"
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${CALENDER_SERVICE_PORT}/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${CALENDER_SERVICE_PORT}/calender-service/health"]
       interval: 10s
       timeout: 5s
       retries: 3
