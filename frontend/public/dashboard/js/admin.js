@@ -13,6 +13,8 @@ let pendingDelete = {
 let editingId = null;
 let editingType = null; // 'short-events' | 'camps'
 let editFormDirty = false;
+let editingExistingImageIDs = [];
+let editingExistingImageIDsOriginal = [];
 
 let detailsContext = {
     type: null,
@@ -67,7 +69,16 @@ async function apiRequest(url, options = {}) {
     });
 
     if (!response.ok) {
-        const errorText = await response.text();
+        let errorText = await response.text();
+        try {
+            const json = JSON.parse(errorText);
+            errorText = json.error || json.message || errorText;
+        } catch {}
+
+        if (response.status === 413) {
+            errorText = 'Upload failed: file is too large for the server. Try a smaller file or use a different network.';
+        }
+
         throw new Error(errorText || `Request failed with status ${response.status}`);
     }
 
@@ -532,6 +543,8 @@ function showForm(type, prefill) {
             modal.querySelector('.btn-primary[type="submit"]').textContent = 'Save Changes';
         }
         editFormDirty = false;
+        setEditingExistingImageIDs(prefill.imageIDs || []);
+        renderExistingImageGallery(type, editingExistingImageIDs);
         modal.addEventListener('input', markEditDirty, { once: false });
         modal.addEventListener('change', markEditDirty, { once: false });
     } else {
@@ -544,9 +557,76 @@ function showForm(type, prefill) {
             modal.querySelector('.btn-primary[type="submit"]').textContent = 'Create Camp';
         }
         editFormDirty = false;
+        setEditingExistingImageIDs([]);
+        renderExistingImageGallery(type, []);
     }
 
     modal.classList.add('active');
+}
+
+function setEditingExistingImageIDs(imageIDs) {
+    editingExistingImageIDs = Array.isArray(imageIDs) ? [...imageIDs] : [];
+    editingExistingImageIDsOriginal = [...editingExistingImageIDs];
+}
+
+function getExistingImageGalleryElement(type) {
+    return document.getElementById(type === 'camps' ? 'campExistingImageGallery' : 'eventExistingImageGallery');
+}
+
+async function renderExistingImageGallery(type, imageIDs) {
+    const gallery = getExistingImageGalleryElement(type);
+    if (!gallery) return;
+
+    gallery.innerHTML = '';
+
+    if (!Array.isArray(imageIDs) || imageIDs.length === 0) {
+        gallery.innerHTML = '<p class="existing-images-empty">No uploaded images yet.</p>';
+        return;
+    }
+
+    const previews = await Promise.all(imageIDs.map(async (fileId) => {
+        const url = await downloadImagePreview(fileId);
+        return { fileId, url };
+    }));
+
+    previews.forEach(({ fileId, url }) => {
+        const item = document.createElement('div');
+        item.className = 'existing-image-item';
+        item.innerHTML = `
+            <img src="${url || 'data:image/svg+xml;charset=UTF-8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"80\"><rect width=\"100%\" height=\"100%\" fill=\"%23dde4f2\"/><text x=\"50%\" y=\"50%\" dominant-baseline=\"middle\" text-anchor=\"middle\" fill=\"%2340507a\" font-size=\"12\">Image unavailable</text></svg>'}" alt="Existing image" loading="lazy" />
+            <button type="button" class="existing-image-delete" onclick="deleteExistingImage('${type}', '${fileId}')" title="Delete image">&times;</button>
+        `;
+        gallery.appendChild(item);
+    });
+}
+
+async function deleteExistingImage(type, fileId) {
+    if (!confirm('Delete this image from the announcement?')) {
+        return;
+    }
+
+    try {
+        await apiRequest(`${FILE_API_URL}/delete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file_id: fileId })
+        });
+
+        editingExistingImageIDs = editingExistingImageIDs.filter(id => id !== fileId);
+        renderExistingImageGallery(type, editingExistingImageIDs);
+
+        if (editingId) {
+            await apiRequest(`${CALENDER_API_URL}/update-images`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ calender_entry_id: editingId, image_ids: editingExistingImageIDs })
+            });
+        }
+
+        showDashboardMessage('Image deleted successfully', 'success');
+    } catch (error) {
+        showDashboardMessage(error.message || 'Failed to delete image');
+    }
 }
 
 function markEditDirty() {
@@ -592,11 +672,13 @@ function _doCloseForm(type) {
         form.reset();
         const previewContainer = document.getElementById(previewContainerId);
         const previewText = document.getElementById(previewTextId);
+        const gallery = getExistingImageGalleryElement(type);
         
         if (previewContainer) {
             previewContainer.innerHTML = '';
         }
         if (previewText) previewText.style.display = 'block';
+        if (gallery) gallery.innerHTML = '';
         
         // Reset file input
         const fileInput = document.getElementById(fileInputId);
@@ -605,6 +687,8 @@ function _doCloseForm(type) {
 
     editingId = null;
     editingType = null;
+    editingExistingImageIDs = [];
+    editingExistingImageIDsOriginal = [];
     editFormDirty = false;
 }
 
@@ -665,10 +749,17 @@ async function handleShortEventSubmit(event) {
 
             if (imageFiles.length > 0) {
                 const imageIDs = await uploadImagesForEntry(editingId, imageFiles);
+                const updatedImageIDs = [...editingExistingImageIDs, ...imageIDs];
                 await apiRequest(`${CALENDER_API_URL}/update-images`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ calender_entry_id: editingId, image_ids: imageIDs })
+                    body: JSON.stringify({ calender_entry_id: editingId, image_ids: updatedImageIDs })
+                });
+            } else if (editingExistingImageIDs.length !== editingExistingImageIDsOriginal.length) {
+                await apiRequest(`${CALENDER_API_URL}/update-images`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ calender_entry_id: editingId, image_ids: editingExistingImageIDs })
                 });
             }
 
@@ -777,10 +868,17 @@ async function handleCampsEventSubmit(event) {
 
             if (imageFiles.length > 0) {
                 const imageIDs = await uploadImagesForEntry(editingId, imageFiles);
+                const updatedImageIDs = [...editingExistingImageIDs, ...imageIDs];
                 await apiRequest(`${CALENDER_API_URL}/update-images`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ calender_entry_id: editingId, image_ids: imageIDs })
+                    body: JSON.stringify({ calender_entry_id: editingId, image_ids: updatedImageIDs })
+                });
+            } else if (editingExistingImageIDs.length !== editingExistingImageIDsOriginal.length) {
+                await apiRequest(`${CALENDER_API_URL}/update-images`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ calender_entry_id: editingId, image_ids: editingExistingImageIDs })
                 });
             }
 

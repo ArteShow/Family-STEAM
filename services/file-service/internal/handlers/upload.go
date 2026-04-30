@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+
 	"fmt"
 	"net/http"
 
@@ -18,6 +19,8 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		ParentID: r.FormValue("parent_id"),
 		FileName: r.FormValue("file_name"),
 	}
+
+	w.Header().Set("Content-Type", "application/json")
 
 	file, header, err := r.FormFile("file")
 	if err != nil {
