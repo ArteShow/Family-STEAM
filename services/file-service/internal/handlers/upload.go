@@ -2,13 +2,14 @@ package handlers
 
 import (
 	"encoding/json"
-    "net/http"
+	"net/http"
 
-    "github.com/ArteShow/Family-STEAM/services/file-service/internal/core"
+	"github.com/ArteShow/Family-STEAM/services/file-service/internal/core"
 )
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
-    err := r.ParseMultipartForm(0)
+	if err := r.ParseMultipartForm(0); err != nil {
+		http.Error(w, "invalid multipart form", http.StatusBadRequest)
 		return
 	}
 
@@ -24,12 +25,19 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	file, _, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, "File error", http.StatusBadRequest)
+		http.Error(w, "file error", http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
 
-    id, err := core.UploadFile(req.FileName, req.ParentID, file)
+	id, err := core.UploadFile(req.FileName, req.ParentID, file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res := UploadResponse{FileID: id}
+	w.WriteHeader(http.StatusOK)
 	if err = json.NewEncoder(w).Encode(res); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
