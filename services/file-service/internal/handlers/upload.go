@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/ArteShow/Family-STEAM/services/file-service/internal/core"
@@ -9,7 +10,7 @@ import (
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseMultipartForm(0); err != nil {
-		http.Error(w, "invalid multipart form", http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("invalid multipart form: %v", err), http.StatusBadRequest)
 		return
 	}
 
@@ -18,21 +19,31 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		FileName: r.FormValue("file_name"),
 	}
 
+	file, header, err := r.FormFile("file")
+	if err != nil {
+		file, header, err = r.FormFile("image")
+	}
+	if err != nil {
+		file, header, err = r.FormFile("files")
+	}
+	if err != nil {
+		http.Error(w, fmt.Sprintf("file upload field not found: %v", err), http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	if req.FileName == "" && header != nil {
+		req.FileName = header.Filename
+	}
+
 	if req.ParentID == "" || req.FileName == "" {
 		http.Error(w, "parent_id and file_name are required", http.StatusBadRequest)
 		return
 	}
 
-	file, _, err := r.FormFile("file")
-	if err != nil {
-		http.Error(w, "file error", http.StatusBadRequest)
-		return
-	}
-	defer file.Close()
-
 	id, err := core.UploadFile(req.FileName, req.ParentID, file)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("upload error: %v", err), http.StatusInternalServerError)
 		return
 	}
 
