@@ -1399,6 +1399,65 @@ body {
         padding: 0.5rem 0.75rem;
     }
 
+.upcoming-events-section {
+    margin-top: 2rem;
+}
+
+.upcoming-events-section h2 {
+    font-size: 1.5rem;
+    color: #374151;
+    margin-bottom: 1rem;
+}
+
+.upcoming-events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.upcoming-event-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.upcoming-event-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.upcoming-event-card h3 {
+    font-size: 1.25rem;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.upcoming-event-card p {
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.upcoming-event-card .event-date {
+    font-weight: 600;
+    color: #059669;
+}
+
+.upcoming-event-card .see-more-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #3b82f6;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: background 0.2s;
+}
+
+.upcoming-event-card .see-more-btn:hover {
+    background: #2563eb;
+}
     .page-header p {
         font-size: 0.85rem;
     }

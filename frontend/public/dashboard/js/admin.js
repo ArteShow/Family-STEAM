@@ -493,6 +493,8 @@ function navigateTo(page) {
         loadNewsletterData();
     } else if (page === 'reviews') {
         loadReviewsPage();
+    } else if (page === 'dashboard') {
+        loadUpcomingEvents();
     }
 }
 
@@ -1812,5 +1814,65 @@ function deleteAdminTicket(id) {
     pendingDelete.type = 'ticket';
     pendingDelete.id = id;
     showDeleteModal('support ticket');
+}
+
+// Initial load
+reloadDashboardData();
+loadUpcomingEvents();
+
+async function loadUpcomingEvents() {
+    try {
+        const res = await apiRequest(`${CALENDER_API_URL}/getAll`, { method: 'GET' });
+        const data = await res.json();
+        const entries = data.calender_entries || [];
+        const now = new Date();
+        const upcoming = entries.filter(e => {
+            const start = new Date(e.starts_at);
+            return start > now;
+        }).sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)).slice(0, 6);
+        renderUpcomingEvents(upcoming);
+    } catch (error) {
+        console.error('Failed to load upcoming events:', error);
+        document.getElementById('upcoming-events-list').innerHTML = '<p>Failed to load upcoming events.</p>';
+    }
+}
+
+function renderUpcomingEvents(events) {
+    const container = document.getElementById('upcoming-events-list');
+    if (events.length === 0) {
+        container.innerHTML = '<p>No upcoming events.</p>';
+        return;
+    }
+    container.innerHTML = events.map(event => {
+        const startDate = new Date(event.starts_at).toLocaleDateString();
+        const type = event.ends_at ? 'camps' : 'short-events';
+        return `
+            <div class="upcoming-event-card">
+                <h3>${event.title_en || event.title}</h3>
+                <p class="event-date">${startDate}</p>
+                <p>${event.location}</p>
+                <a href="#" class="see-more-btn" onclick="viewEvent('${type}', '${event.id}')">See More</a>
+            </div>
+        `;
+    }).join('');
+}
+
+async function viewEvent(type, id) {
+    try {
+        const res = await apiRequest(`${CALENDER_API_URL}/getByID`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ calender_entry_id: id })
+        });
+        const data = await res.json();
+        const event = data.calender_entry;
+        if (!event) return;
+        const prefill = await mapCalendarEntryToDashboardEvent(event);
+        navigateTo(type);
+        setTimeout(() => showForm(type, prefill), 100);
+    } catch (error) {
+        console.error('Failed to fetch event:', error);
+        showDashboardMessage('Failed to load event details');
+    }
 }
 
