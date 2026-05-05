@@ -497,7 +497,7 @@ function navigateTo(page) {
 }
 
 // Form Management
-function showForm(type, prefill) {
+async function showForm(type, prefill) {
     let modalId;
     if (type === 'short-events') {
         modalId = 'short-events-form-modal';
