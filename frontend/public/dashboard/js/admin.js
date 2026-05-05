@@ -15,6 +15,7 @@ let editingType = null; // 'short-events' | 'camps'
 let editFormDirty = false;
 let editingExistingAttachmentIDs = [];
 let editingExistingAttachmentIDsOriginal = [];
+let editingExistingImageIDs = [];
 
 let detailsContext = {
     type: null,
@@ -1819,6 +1820,15 @@ function deleteAdminTicket(id) {
 // Initial load
 reloadDashboardData();
 loadUpcomingEvents();
+
+function setEditingExistingImageIDs(ids) {
+    editingExistingImageIDs = ids;
+}
+
+function setEditingExistingAttachmentIDs(ids) {
+    editingExistingAttachmentIDs = ids;
+    editingExistingAttachmentIDsOriginal = [...ids];
+}
 
 async function loadUpcomingEvents() {
     try {
