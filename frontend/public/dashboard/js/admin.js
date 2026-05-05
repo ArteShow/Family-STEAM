@@ -16,6 +16,7 @@ let editFormDirty = false;
 let editingExistingAttachmentIDs = [];
 let editingExistingAttachmentIDsOriginal = [];
 let editingExistingImageIDs = [];
+let editingExistingImageIDsOriginal = [];
 
 let detailsContext = {
     type: null,
@@ -245,7 +246,7 @@ async function reloadDashboardData() {
         const subRes = await apiRequest(`${NEWSLETTER_API_URL}/subscribers`, { method: 'GET' });
         const subData = await subRes.json();
         const newsletterCountEl = document.getElementById('newsletter-count');
-        if (newsletterCountEl) newsletterCountEl.textContent = (subData.subscribers || []).length + ' subscribers';
+        if (newsletterCountEl) newsletterCountEl.textContent = String((subData.subscribers || []).length);
     } catch (_) { /* ignore */ }
 
     renderContent();
