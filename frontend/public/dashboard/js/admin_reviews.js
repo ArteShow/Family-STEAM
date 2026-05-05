@@ -1,6 +1,13 @@
 // admin_reviews.js — Reviews management for admin dashboard
 // Depends on: API_BASE_URL, CALENDER_API_URL, apiRequest(), showDashboardMessage() from admin.js
 
+if (typeof API_BASE_URL === 'undefined') {
+    var API_BASE_URL = `${window.location.origin}/api/v1`;
+}
+if (typeof CALENDER_API_URL === 'undefined') {
+    var CALENDER_API_URL = `${API_BASE_URL}/calender`;
+}
+
 const REVIEW_ADMIN_API = `${API_BASE_URL}/review`;
 
 let adminReviewSelectedCalendarId = '';
