@@ -1,7 +1,9 @@
 // admin_reviews.js — Reviews management for admin dashboard
-// Depends on: API_BASE_URL, CALENDER_API_URL, apiRequest(), showDashboardMessage() from admin.js
+// Depends on: app-level API URL constants and apiRequest() from admin.js
 
-const REVIEW_ADMIN_API = `${API_BASE_URL}/review`;
+const REVIEW_API_BASE_URL = window.APP_API_BASE_URL || `${window.location.origin}/api/v1`;
+const REVIEW_CALENDER_API_URL = window.APP_CALENDER_API_URL || `${REVIEW_API_BASE_URL}/calender`;
+const REVIEW_ADMIN_API = `${REVIEW_API_BASE_URL}/review`;
 
 let adminReviewSelectedCalendarId = '';
 let adminReviewSelectedRating = 0;
@@ -44,7 +46,7 @@ async function populateEventSelector() {
     select.innerHTML = '<option value="">— Choose an event —</option>';
 
     try {
-        const res = await apiRequest(`${CALENDER_API_URL}/getAll`, { method: 'GET' });
+        const res = await apiRequest(`${REVIEW_CALENDER_API_URL}/getAll`, { method: 'GET' });
         const data = await res.json();
         const entries = data.calender_entries || data.entries || data || [];
 

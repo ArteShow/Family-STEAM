@@ -1,13 +1,15 @@
 // admin_newsletter.js — Admin newsletter functionality
-// Depends on: NEWSLETTER_API_URL and apiRequest() defined in admin.js
+// Depends on: window.APP_NEWSLETTER_API_URL and apiRequest() defined in admin.js
+
+const NEWSLETTER_SERVICE_API_URL = window.APP_NEWSLETTER_API_URL || `${window.location.origin}/api/v1/newsletter`;
 
 /* ---------- Load newsletter data ---------------------------------------- */
 
 async function loadNewsletterData() {
     try {
         const [subRes, campRes] = await Promise.all([
-            apiRequest(`${NEWSLETTER_API_URL}/subscribers`, { method: 'GET' }),
-            apiRequest(`${NEWSLETTER_API_URL}/campaigns`,   { method: 'GET' })
+            apiRequest(`${NEWSLETTER_SERVICE_API_URL}/subscribers`, { method: 'GET' }),
+            apiRequest(`${NEWSLETTER_SERVICE_API_URL}/campaigns`,   { method: 'GET' })
         ]);
 
         const subData  = await subRes.json();
@@ -80,7 +82,7 @@ async function handleSendNewsletter(e) {
     }
 
     try {
-        const res  = await apiRequest(`${NEWSLETTER_API_URL}/send`, {
+        const res  = await apiRequest(`${NEWSLETTER_SERVICE_API_URL}/send`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ subject, heading, body })

@@ -33,6 +33,14 @@ const TICKET_API_URL = `${API_BASE_URL}/ticket`;
 const MESSAGE_API_URL = `${API_BASE_URL}/message`;
 const NEWSLETTER_API_URL = `${API_BASE_URL}/newsletter`;
 
+window.APP_API_BASE_URL = API_BASE_URL;
+window.APP_CALENDER_API_URL = CALENDER_API_URL;
+window.APP_FILE_API_URL = FILE_API_URL;
+window.APP_CLIENT_API_URL = CLIENT_API_URL;
+window.APP_TICKET_API_URL = TICKET_API_URL;
+window.APP_MESSAGE_API_URL = MESSAGE_API_URL;
+window.APP_NEWSLETTER_API_URL = NEWSLETTER_API_URL;
+
 function getAuthToken() {
     return localStorage.getItem('authToken') || '';
 }

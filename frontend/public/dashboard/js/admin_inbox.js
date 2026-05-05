@@ -1,5 +1,7 @@
 // admin_inbox.js — Admin inbox functionality
-// Depends on: MESSAGE_API_URL and apiRequest() defined in admin.js
+// Depends on: window.APP_MESSAGE_API_URL and apiRequest() defined in admin.js
+
+const INBOX_MESSAGE_API_URL = window.APP_MESSAGE_API_URL || `${window.location.origin}/api/v1/message`;
 
 let inboxThreads = [];
 let activeThreadId = null;
@@ -24,7 +26,7 @@ function closeComposeModal() {
 
 async function loadAdminInbox() {
     try {
-        const res = await apiRequest(`${MESSAGE_API_URL}/adminInbox`, { method: 'GET' });
+        const res = await apiRequest(`${INBOX_MESSAGE_API_URL}/adminInbox`, { method: 'GET' });
         const data = await res.json();
         inboxThreads = data.threads || [];
         renderInboxThreadsList();
@@ -69,7 +71,7 @@ async function openAdminThread(threadId) {
     renderInboxThreadsList();
 
     try {
-        const res = await apiRequest(`${MESSAGE_API_URL}/adminThread`, {
+        const res = await apiRequest(`${INBOX_MESSAGE_API_URL}/adminThread`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ thread_id: threadId })
@@ -131,7 +133,7 @@ async function sendAdminMessage() {
     }
 
     try {
-        await apiRequest(`${MESSAGE_API_URL}/adminSend`, {
+        await apiRequest(`${INBOX_MESSAGE_API_URL}/adminSend`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -158,7 +160,7 @@ async function sendAdminReply(threadId, receiverId) {
     const thread = inboxThreads.find(t => t.thread_id === threadId);
 
     try {
-        await apiRequest(`${MESSAGE_API_URL}/adminSend`, {
+        await apiRequest(`${INBOX_MESSAGE_API_URL}/adminSend`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -181,7 +183,7 @@ async function deleteAdminThread(threadId) {
     if (!confirm('Delete this entire conversation? This cannot be undone.')) return;
 
     try {
-        await apiRequest(`${MESSAGE_API_URL}/adminDelete`, {
+        await apiRequest(`${INBOX_MESSAGE_API_URL}/adminDelete`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ thread_id: threadId })
