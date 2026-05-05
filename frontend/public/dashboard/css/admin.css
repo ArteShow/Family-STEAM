@@ -672,10 +672,69 @@ body {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
-.existing-images-empty {
+.existing-attachments-empty {
     margin: 0;
     color: #6b7280;
     font-size: 0.95rem;
+}
+.existing-attachment-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.existing-attachment-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: #f7f9fc;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+
+.attachment-name {
+    font-weight: 500;
+    color: #374151;
+    flex: 1;
+}
+
+.attachment-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.attachment-download,
+.attachment-delete {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.attachment-download {
+    background: #10b981;
+    color: white;
+}
+
+.attachment-download:hover {
+    background: #059669;
+}
+
+.attachment-delete {
+    background: #ef4444;
+    color: white;
+}
+
+.attachment-delete:hover {
+    background: #dc2626;
 }
 .preview-img {
     width: 80px;

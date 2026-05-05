@@ -13,8 +13,8 @@ let pendingDelete = {
 let editingId = null;
 let editingType = null; // 'short-events' | 'camps'
 let editFormDirty = false;
-let editingExistingImageIDs = [];
-let editingExistingImageIDsOriginal = [];
+let editingExistingAttachmentIDs = [];
+let editingExistingAttachmentIDsOriginal = [];
 
 let detailsContext = {
     type: null,
@@ -545,6 +545,9 @@ function showForm(type, prefill) {
         editFormDirty = false;
         setEditingExistingImageIDs(prefill.imageIDs || []);
         renderExistingImageGallery(type, editingExistingImageIDs);
+        const attachments = await fetchAttachmentsForEntry(prefill.id);
+        setEditingExistingAttachmentIDs(attachments.map(a => a.id));
+        renderExistingAttachmentGallery(type, attachments);
         modal.addEventListener('input', markEditDirty, { once: false });
         modal.addEventListener('change', markEditDirty, { once: false });
     } else {
@@ -559,14 +562,16 @@ function showForm(type, prefill) {
         editFormDirty = false;
         setEditingExistingImageIDs([]);
         renderExistingImageGallery(type, []);
+        setEditingExistingAttachmentIDs([]);
+        renderExistingAttachmentGallery(type, []);
     }
 
     modal.classList.add('active');
 }
 
-function setEditingExistingImageIDs(imageIDs) {
-    editingExistingImageIDs = Array.isArray(imageIDs) ? [...imageIDs] : [];
-    editingExistingImageIDsOriginal = [...editingExistingImageIDs];
+function setEditingExistingAttachmentIDs(attachmentIDs) {
+    editingExistingAttachmentIDs = Array.isArray(attachmentIDs) ? [...attachmentIDs] : [];
+    editingExistingAttachmentIDsOriginal = [...editingExistingAttachmentIDs];
 }
 
 function getExistingImageGalleryElement(type) {
@@ -600,8 +605,73 @@ async function renderExistingImageGallery(type, imageIDs) {
     });
 }
 
-async function deleteExistingImage(type, fileId) {
-    if (!confirm('Delete this image from the announcement?')) {
+async function fetchAttachmentsForEntry(entryId) {
+    try {
+        const response = await apiRequest(`${FILE_API_URL}/list`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ parent_id: entryId })
+        });
+        const data = await response.json();
+        return data.files || [];
+    } catch (error) {
+        console.error('Failed to fetch attachments:', error);
+        return [];
+    }
+}
+
+function getExistingAttachmentGalleryElement(type) {
+    return document.getElementById(type === 'camps' ? 'campExistingAttachmentGallery' : 'eventExistingAttachmentGallery');
+}
+
+async function renderExistingAttachmentGallery(type, attachments) {
+    const gallery = getExistingAttachmentGalleryElement(type);
+    if (!gallery) return;
+
+    gallery.innerHTML = '';
+
+    if (!Array.isArray(attachments) || attachments.length === 0) {
+        gallery.innerHTML = '<p class="existing-attachments-empty">No attachments yet.</p>';
+        return;
+    }
+
+    attachments.forEach(attachment => {
+        const item = document.createElement('div');
+        item.className = 'existing-attachment-item';
+        item.innerHTML = `
+            <span class="attachment-name">${attachment.file_name}</span>
+            <div class="attachment-actions">
+                <button type="button" class="attachment-download" onclick="downloadAttachment('${attachment.id}')" title="Download">&darr;</button>
+                <button type="button" class="attachment-delete" onclick="deleteExistingAttachment('${type}', '${attachment.id}')" title="Delete">&times;</button>
+            </div>
+        `;
+        gallery.appendChild(item);
+    });
+}
+
+async function downloadAttachment(fileId) {
+    try {
+        const response = await apiRequest(`${FILE_API_URL}/download`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file_id: fileId })
+        });
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'attachment'; // Could fetch filename, but for now generic
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        showDashboardMessage('Failed to download attachment');
+    }
+}
+
+async function deleteExistingAttachment(type, fileId) {
+    if (!confirm('Delete this attachment from the announcement?')) {
         return;
     }
 
@@ -612,20 +682,12 @@ async function deleteExistingImage(type, fileId) {
             body: JSON.stringify({ file_id: fileId })
         });
 
-        editingExistingImageIDs = editingExistingImageIDs.filter(id => id !== fileId);
-        renderExistingImageGallery(type, editingExistingImageIDs);
-
-        if (editingId) {
-            await apiRequest(`${CALENDER_API_URL}/update-images`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ calender_entry_id: editingId, image_ids: editingExistingImageIDs })
-            });
-        }
-
-        showDashboardMessage('Image deleted successfully', 'success');
+        editingExistingAttachmentIDs = editingExistingAttachmentIDs.filter(id => id !== fileId);
+        const attachments = await fetchAttachmentsForEntry(editingId);
+        renderExistingAttachmentGallery(type, attachments);
+        showDashboardMessage('Attachment deleted successfully', 'success');
     } catch (error) {
-        showDashboardMessage(error.message || 'Failed to delete image');
+        showDashboardMessage(error.message || 'Failed to delete attachment');
     }
 }
 
@@ -670,15 +732,15 @@ function _doCloseForm(type) {
     
     if (form) {
         form.reset();
-        const previewContainer = document.getElementById(previewContainerId);
-        const previewText = document.getElementById(previewTextId);
         const gallery = getExistingImageGalleryElement(type);
+        const attachmentGallery = getExistingAttachmentGalleryElement(type);
         
         if (previewContainer) {
             previewContainer.innerHTML = '';
         }
         if (previewText) previewText.style.display = 'block';
         if (gallery) gallery.innerHTML = '';
+        if (attachmentGallery) attachmentGallery.innerHTML = '';
         
         // Reset file input
         const fileInput = document.getElementById(fileInputId);
@@ -689,6 +751,8 @@ function _doCloseForm(type) {
     editingType = null;
     editingExistingImageIDs = [];
     editingExistingImageIDsOriginal = [];
+    editingExistingAttachmentIDs = [];
+    editingExistingAttachmentIDsOriginal = [];
     editFormDirty = false;
 }
 
