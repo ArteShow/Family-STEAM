@@ -794,7 +794,7 @@ async function handleShortEventSubmit(event) {
                     calender_entry_id: editingId,
                     calender_entry: {
                         location:       formData.get('place'),
-                        price:          parseNumberFromText(formData.get('price'), 0),
+                        price:          formData.get('price'),
                         tag:            formData.get('tag'),
                         amount:         parseNumberFromText(formData.get('persons'), 0),
                         title_en:       formData.get('title_en'),
@@ -845,7 +845,7 @@ async function handleShortEventSubmit(event) {
             body: JSON.stringify({
                 calender_entry: {
                     location: formData.get('place'),
-                    price: parseNumberFromText(formData.get('price'), 0),
+                    price: formData.get('price'),
                     tag: formData.get('tag'),
                     image_ids: [],
                     amount: parseNumberFromText(formData.get('persons'), 0),
@@ -913,7 +913,7 @@ async function handleCampsEventSubmit(event) {
                     calender_entry_id: editingId,
                     calender_entry: {
                         location:       formData.get('place'),
-                        price:          parseNumberFromText(formData.get('price'), 0),
+                        price:          formData.get('price'),
                         tag:            formData.get('tag'),
                         amount:         parseNumberFromText(formData.get('capacity'), 0),
                         title_en:       formData.get('title_en'),
@@ -964,7 +964,7 @@ async function handleCampsEventSubmit(event) {
             body: JSON.stringify({
                 calender_entry: {
                     location: formData.get('place'),
-                    price: parseNumberFromText(formData.get('price'), 0),
+                    price: formData.get('price'),
                     tag: formData.get('tag'),
                     image_ids: [],
                     amount: parseNumberFromText(formData.get('capacity'), 0),

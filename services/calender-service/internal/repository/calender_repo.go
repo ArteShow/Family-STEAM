@@ -11,7 +11,7 @@ import (
 type Calendar struct {
 	ID             string     `json:"id"`
 	Location       string     `json:"location"`
-	Price          int        `json:"price"`
+	Price          string     `json:"price"`
 	Tag            string     `json:"tag"`
 	ImageIDs       []string   `json:"image_ids"`
 	Amount         int        `json:"amount"`
@@ -30,7 +30,7 @@ type Calendar struct {
 
 func Create(
 	location string,
-	price int,
+	price string,
 	tag string,
 	imageIDs []string,
 	amount int,
@@ -252,7 +252,7 @@ func UpdateImageIDs(id string, imageIDs []string) error {
 func Update(
 	id string,
 	location string,
-	price int,
+	price string,
 	tag string,
 	amount int,
 	titleEn string,
