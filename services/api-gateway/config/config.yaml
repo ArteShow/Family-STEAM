@@ -1,0 +1,11 @@
+port: 8080
+---
+swagger: "2.0"
+host: localhost:8080
+basePath: /
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json

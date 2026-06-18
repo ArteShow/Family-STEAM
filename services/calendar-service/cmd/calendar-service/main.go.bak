@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ArteShow/Family-STEAM/services/calender-service/internal/config"
-	"github.com/ArteShow/Family-STEAM/services/calender-service/internal/handlers"
+	"github.com/ArteShow/Family-STEAM/services/calendar-service/internal/config"
+	"github.com/ArteShow/Family-STEAM/services/calendar-service/internal/handlers"
 )
 
 const (
@@ -30,19 +30,19 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/calender-service/health", func(w http.ResponseWriter, _ *http.Request) {
+	mux.HandleFunc("/calendar-service/health", func(w http.ResponseWriter, _ *http.Request) {
 		_, err = w.Write([]byte("ok"))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	})
-	mux.HandleFunc("/calender-service/create", handlers.CreateCalenderEntryHandler)
-	mux.HandleFunc("/calender-service/delete", handlers.DeleteCalenderEntryHandler)
-	mux.HandleFunc("/calender-service/getAll", handlers.GetAllCalenderEntriesHandler)
-	mux.HandleFunc("/calender-service/get", handlers.GetCalenderEntryByIDHandler)
-	mux.HandleFunc("/calender-service/update-images", handlers.UpdateCalenderEntryImagesHandler)
-	mux.HandleFunc("/calender-service/update", handlers.UpdateCalenderEntryHandler)
+	mux.HandleFunc("/calendar-service/create", handlers.CreateCalendarEntryHandler)
+	mux.HandleFunc("/calendar-service/delete", handlers.DeleteCalendarEntryHandler)
+	mux.HandleFunc("/calendar-service/getAll", handlers.GetAllCalendarEntriesHandler)
+	mux.HandleFunc("/calendar-service/get", handlers.GetCalendarEntryByIDHandler)
+	mux.HandleFunc("/calendar-service/update-images", handlers.UpdateCalendarEntryImagesHandler)
+	mux.HandleFunc("/calendar-service/update", handlers.UpdateCalendarEntryHandler)
 
 	srv := &http.Server{
 		Addr:         cfg.Port,

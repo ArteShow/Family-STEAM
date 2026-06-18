@@ -1,82 +1,44 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
-	"github.com/ArteShow/Family-STEAM/services/review-service/internal/config"
-	"github.com/ArteShow/Family-STEAM/services/review-service/internal/handlers"
-)
-
-const (
-	readTimeout  = 10 * time.Second
-	writeTimeout = 10 * time.Second
-	idleTimeou   = 60 * time.Second
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	cfg, err := config.Read()
-	if err != nil {
-		log.Fatal(err)
-	}
+	r := gin.Default()
 
-	if cfg.Port != "" && cfg.Port[0] != ':' {
-		cfg.Port = ":" + cfg.Port
-	}
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/review-service/health", func(w http.ResponseWriter, _ *http.Request) {
-		_, err = w.Write([]byte("ok"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+	// Define routes for review service
+	r.GET("/reviews", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Get all reviews"})
 	})
-	mux.HandleFunc("/review-service/create", handlers.CreateReviewHandler)
-	mux.HandleFunc("/review-service/adminCreate", handlers.AdminCreateReviewHandler)
-	mux.HandleFunc("/review-service/getByCalendar", handlers.GetByCalendarHandler)
-	mux.HandleFunc("/review-service/delete", handlers.DeleteReviewHandler)
-	mux.HandleFunc("/review-service/checkEligible", handlers.CheckEligibleHandler)
 
-	srv := &http.Server{
-		Addr:         cfg.Port,
-		Handler:      mux,
-		ReadTimeout:  readTimeout,
-		WriteTimeout: writeTimeout,
-		IdleTimeout:  idleTimeou,
+	r.POST("/reviews", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Create a new review"})
+	})
+
+	r.GET("/reviews/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Get review by ID"})
+	})
+
+	r.PUT("/reviews/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Update review"})
+	})
+
+	r.DELETE("/reviews/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Delete review"})
+	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
 
-	ctx, stop := signal.NotifyContext(
-		context.Background(),
-		os.Interrupt,
-		syscall.SIGTERM,
-	)
-	defer stop()
-
-	go func() {
-		log.Println("review-service running on " + cfg.Port)
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("server error: %v", err)
-		}
-	}()
-
-	<-ctx.Done()
-
-	log.Println("graceful shutdown started")
-
-	shutdownCtx, cancel := context.WithTimeout(
-		context.Background(),
-		10*time.Second,
-	)
-	defer cancel()
-
-	if err := srv.Shutdown(shutdownCtx); err != nil {
-		log.Printf("shutdown failed: %v", err)
+	log.Printf("Review service running on port %s", port)
+	if err := r.Run(":" + port); err != nil {
+		log.Fatal("Failed to start review service:", err)
 	}
-
-	log.Println("shutdown complete")
 }

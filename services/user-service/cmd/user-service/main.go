@@ -2,43 +2,43 @@ package main
 
 import (
 	"log"
-	"net"
+	"net/http"
 	"os"
-	"os/signal"
 
-	"github.com/ArteShow/Family-STEAM/services/user-service/internal/config"
-	"github.com/ArteShow/Family-STEAM/services/user-service/internal/proto"
-	grpc_server "github.com/ArteShow/Family-STEAM/services/user-service/internal/server"
-	"google.golang.org/grpc"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	cfg, err := config.Read()
-	if err != nil {
-		log.Fatal(err)
+	r := gin.Default()
+
+	// Define routes for user service
+	r.GET("/users", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Get all users"})
+	})
+
+	r.POST("/users", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Create a new user"})
+	})
+
+	r.GET("/users/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Get user by ID"})
+	})
+
+	r.PUT("/users/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Update user"})
+	})
+
+	r.DELETE("/users/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Delete user"})
+	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
 
-	grpcLis, err := net.Listen("tcp", ":"+cfg.GRPCServerPort)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+	log.Printf("User service running on port %s", port)
+	if err := r.Run(":" + port); err != nil {
+		log.Fatal("Failed to start user service:", err)
 	}
-
-	grpcServer := grpc.NewServer()
-	proto.RegisterUserServiceServer(grpcServer, grpc_server.NewServer())
-
-	go func() {
-		log.Println("gRPC server running on :" + cfg.GRPCServerPort)
-		if err := grpcServer.Serve(grpcLis); err != nil {
-			log.Printf("gRPC server stopped: %v", err)
-		}
-	}()
-
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-	log.Println("Shutting down server...")
-
-	grpcServer.GracefulStop()
-
-	log.Println("Server stopped")
 }

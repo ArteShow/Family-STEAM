@@ -17,7 +17,7 @@ import (
 const (
 	readTimeout  = 10 * time.Second
 	writeTimeout = 10 * time.Second
-	idleTimeou   = 60 * time.Second
+	idleTimeout  = 60 * time.Second
 )
 
 func main() {
@@ -46,12 +46,12 @@ func main() {
 	clientUpdateProxy := proxy.NewProxy("http://client-service:8004", "/client-service/update")
 	clientListProxy := proxy.NewProxy("http://client-service:8004", "/client-service/list")
 
-	calenderCreateProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/create")
-	calenderDeleteProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/delete")
-	calenderGetProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/get")
-	calenderGetAllProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/getAll")
-	calenderUpdateImagesProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/update-images")
-	calenderUpdateProxy := proxy.NewProxy("http://calender-service:8005", "/calender-service/update")
+	calendarCreateProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/create")
+	calendarDeleteProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/delete")
+	calendarGetProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/get")
+	calendarGetAllProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/getAll")
+	calendarUpdateImagesProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/update-images")
+	calendarUpdateProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/update")
 
 	ticketCreateProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/create")
 	ticketGetAllProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/getAll")
@@ -114,12 +114,12 @@ func main() {
 	handler.Handle("/api/"+cfg.APIVersion+"/client/update", middleware.LoggingMiddleware(middleware.AdminOnly(clientUpdateProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/client/list", middleware.LoggingMiddleware(middleware.AdminOnly(clientListProxy)))
 
-	handler.Handle("/api/"+cfg.APIVersion+"/calender/create", middleware.LoggingMiddleware(middleware.AdminOnly(calenderCreateProxy)))
-	handler.Handle("/api/"+cfg.APIVersion+"/calender/delete", middleware.LoggingMiddleware(middleware.AdminOnly(calenderDeleteProxy)))
-	handler.Handle("/api/"+cfg.APIVersion+"/calender/update-images", middleware.LoggingMiddleware(middleware.AdminOnly(calenderUpdateImagesProxy)))
-	handler.Handle("/api/"+cfg.APIVersion+"/calender/update", middleware.LoggingMiddleware(middleware.AdminOnly(calenderUpdateProxy)))
-	handler.Handle("/api/"+cfg.APIVersion+"/calender/get", middleware.LoggingMiddleware(calenderGetProxy))
-	handler.Handle("/api/"+cfg.APIVersion+"/calender/getAll", middleware.LoggingMiddleware(calenderGetAllProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/calendar/create", middleware.LoggingMiddleware(middleware.AdminOnly(calendarCreateProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/calendar/delete", middleware.LoggingMiddleware(middleware.AdminOnly(calendarDeleteProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/calendar/update-images", middleware.LoggingMiddleware(middleware.AdminOnly(calendarUpdateImagesProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/calendar/update", middleware.LoggingMiddleware(middleware.AdminOnly(calendarUpdateProxy)))
+	handler.Handle("/api/"+cfg.APIVersion+"/calendar/get", middleware.LoggingMiddleware(calendarGetProxy))
+	handler.Handle("/api/"+cfg.APIVersion+"/calendar/getAll", middleware.LoggingMiddleware(calendarGetAllProxy))
 
 	handler.Handle("/api/"+cfg.APIVersion+"/ticket/create", middleware.LoggingMiddleware(middleware.UserAuth(ticketCreateProxy)))
 	handler.Handle("/api/"+cfg.APIVersion+"/ticket/getByEmail", middleware.LoggingMiddleware(middleware.AdminOnly(ticketGetByEmailProxy)))
@@ -158,7 +158,7 @@ func main() {
 		Handler:      middleware.CORSMiddleware(handler),
 		ReadTimeout:  readTimeout,
 		WriteTimeout: writeTimeout,
-		IdleTimeout:  idleTimeou,
+	IdleTimeout:  idleTimeout,
 	}
 
 	ctx, stop := signal.NotifyContext(

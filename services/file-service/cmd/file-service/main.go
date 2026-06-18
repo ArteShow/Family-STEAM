@@ -1,83 +1,36 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
-	"github.com/ArteShow/Family-STEAM/services/file-service/internal/config"
-	"github.com/ArteShow/Family-STEAM/services/file-service/internal/handlers"
-)
-
-const (
-	readTimeout  = 10 * time.Second
-	writeTimeout = 10 * time.Second
-	idleTimeou   = 60 * time.Second
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	cfg, err := config.Read()
-	if err != nil {
-		log.Fatal(err)
-	}
+	r := gin.Default()
 
-	if cfg.Port != "" && cfg.Port[0] != ':' {
-		cfg.Port = ":" + cfg.Port
-	}
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/file-service/health", func(w http.ResponseWriter, _ *http.Request) {
-		_, err = w.Write([]byte("ok"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	// Define routes for file service
+	r.POST("/files", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Upload a new file"})
 	})
 
-	mux.HandleFunc("/file-service/upload", handlers.UploadHandler)
-	mux.HandleFunc("/file-service/download", handlers.DownloadHandler)
-	mux.HandleFunc("/file-service/delete", handlers.DeleteFileHandler)
-	mux.HandleFunc("/file-service/list", handlers.ListHandler)
+	r.GET("/files/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Get file by ID"})
+	})
 
-	srv := &http.Server{
-		Addr:         cfg.Port,
-		Handler:      mux,
-		ReadTimeout:  readTimeout,
-		WriteTimeout: writeTimeout,
-		IdleTimeout:  idleTimeou,
+	r.DELETE("/files/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Delete file"})
+	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
 
-	ctx, stop := signal.NotifyContext(
-		context.Background(),
-		os.Interrupt,
-		syscall.SIGTERM,
-	)
-	defer stop()
-
-	go func() {
-		log.Println("server running on :8003")
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("server error: %v", err)
-		}
-	}()
-
-	<-ctx.Done()
-
-	log.Println("graceful shutdown started")
-
-	shutdownCtx, cancel := context.WithTimeout(
-		context.Background(),
-		10*time.Second,
-	)
-	defer cancel()
-
-	if err := srv.Shutdown(shutdownCtx); err != nil {
-		log.Printf("shutdown failed: %v", err)
+	log.Printf("File service running on port %s", port)
+	if err := r.Run(":" + port); err != nil {
+		log.Fatal("Failed to start file service:", err)
 	}
-
-	log.Println("shutdown complete")
 }

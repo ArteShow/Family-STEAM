@@ -1,203 +1,253 @@
 services:
+  # PostgreSQL database
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      - family_steam_network
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    container_name: api-gateway
+    environment:
+      API_GATEWAY_PORT: ${API_GATEWAY_PORT}
+      AUTH_SERVICE_URL: http://auth-service:${AUTH_SERVICE_PORT}
+      USER_SERVICE_URL: http://user-service:${USER_SERVICE_GRPC_PORT}
+      FILE_SERVICE_URL: http://file-service:${FILE_SERVICE_PORT}
+      CLIENT_SERVICE_URL: ${CLIENT_SERVICE_URL}
+      CALENDAR_SERVICE_URL: http://calendar-service:${CALENDAR_SERVICE_PORT}
+      TICKET_SERVICE_URL: http://ticket-service:${TICKET_SERVICE_PORT}
+      MESSAGE_SERVICE_URL: http://message-service:${MESSAGE_SERVICE_PORT}
+      NEWSLETTER_SERVICE_URL: http://newsletter-service:${NEWSLETTER_SERVICE_PORT}
+      REVIEW_SERVICE_URL: http://review-service:${REVIEW_SERVICE_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${API_GATEWAY_PORT}:8000"
+    depends_on:
+      - postgres
+    networks:
+      - family_steam_network
+
+  # Authentication Service
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    container_name: auth-service
+    environment:
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${AUTH_SERVICE_PORT}:8001"
+    depends_on:
+      - postgres
+    networks:
+      - family_steam_network
+
+  # User Service (gRPC)
+  user-service:
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
+    container_name: user-service
+    environment:
+      USER_SERVICE_GRPC_PORT: ${USER_SERVICE_GRPC_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${USER_SERVICE_GRPC_PORT}:50002"
+    depends_on:
+      - postgres
+    networks:
+      - family_steam_network
+
+  # File Service
+  file-service:
+    build:
+      context: .
+      dockerfile: services/file-service/Dockerfile
+    container_name: file-service
+    environment:
+      FILE_SERVICE_PORT: ${FILE_SERVICE_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${FILE_SERVICE_PORT}:8003"
+    depends_on:
+      - postgres
+    networks:
+      - family_steam_network
+
+  # Client Service
+  client-service:
+    build:
+      context: .
+      dockerfile: services/client-service/Dockerfile
+    container_name: client-service
+    environment:
+      CLIENT_SERVICE_PORT: ${CLIENT_SERVICE_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${CLIENT_SERVICE_PORT}:8004"
+    depends_on:
+      - postgres
+    networks:
+      - family_steam_network
+
+  # Calendar Service
+  calendar-service:
+    build:
+      context: .
+      dockerfile: services/calendar-service/Dockerfile
+    container_name: calendar-service
+    environment:
+      CALENDAR_SERVICE_PORT: ${CALENDAR_SERVICE_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${CALENDAR_SERVICE_PORT}:8005"
+    depends_on:
+      - postgres
+    networks:
+      - family_steam_network
+
+  # Ticket Service
+  ticket-service:
+    build:
+      context: .
+      dockerfile: services/ticket-service/Dockerfile
+    container_name: ticket-service
+    environment:
+      TICKET_SERVICE_PORT: ${TICKET_SERVICE_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${TICKET_SERVICE_PORT}:8006"
+    depends_on:
+      - postgres
+    networks:
+      - family_steam_network
+
+  # Message Service
+  message-service:
+    build:
+      context: .
+      dockerfile: services/message-service/Dockerfile
+    container_name: message-service
+    environment:
+      MESSAGE_SERVICE_PORT: ${MESSAGE_SERVICE_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${MESSAGE_SERVICE_PORT}:8007"
+    depends_on:
+      - postgres
+    networks:
+      - family_steam_network
+
+  # Newsletter Service
+  newsletter-service:
+    build:
+      context: .
+      dockerfile: services/newsletter-service/Dockerfile
+    container_name: newsletter-service
+    environment:
+      NEWSLETTER_SERVICE_PORT: ${NEWSLETTER_SERVICE_PORT}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${NEWSLETTER_SERVICE_PORT}:8008"
+    depends_on:
+      - postgres
+    networks:
+      - family_steam_network
+
+  # Review Service
+  review-service:
+    build:
+      context: .
+      dockerfile: services/review-service/Dockerfile
+    container_name: review-service
+    environment:
+      REVIEW_SERVICE_PORT: ${REVIEW_SERVICE_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    ports:
+      - "${REVIEW_SERVICE_PORT}:8009"
+    depends_on:
+      - postgres
+    networks:
+      - family_steam_network
+
+  # Frontend (Nginx)
   frontend:
-    build: ./frontend
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
     container_name: frontend
     ports:
-      - "3000:80"
+      - "80:80"
     depends_on:
       - api-gateway
     networks:
-      - disknet
-  api-gateway:
-    build: ./services/api-gateway
-    container_name: api-gateway
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${API_GATEWAY_PORT}/api/${API_VERSION}/api-gateway/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - disknet
-  user-service:
-    build: ./services/user-service
-    container_name: user-service
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${USER_SERVICE_GRPC_PORT}:${USER_SERVICE_GRPC_PORT}"
-    healthcheck:
-      test: ["CMD", "true"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - disknet
-  auth-service:
-    build: ./services/auth-service
-    container_name: auth-service
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}"
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${AUTH_SERVICE_PORT}/auth-service/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - disknet
-  file-service:
-    build: ./services/file-service
-    container_name: file-service
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${FILE_SERVICE_PORT}:${FILE_SERVICE_PORT}"
-    volumes:
-      - family-steam:/data
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${FILE_SERVICE_PORT}/file-service/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - disknet
-  client-service:
-    build: ./services/client-service
-    container_name: client-service
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${CLIENT_SERVICE_PORT}:${CLIENT_SERVICE_PORT}"
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${CLIENT_SERVICE_PORT}/client-service/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - disknet
-  calender-service:
-    build: ./services/calender-service
-    container_name: calender-service
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${CALENDER_SERVICE_PORT}:${CALENDER_SERVICE_PORT}"
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${CALENDER_SERVICE_PORT}/calender-service/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - disknet
-  ticket-service:
-    build: ./services/ticket-service
-    container_name: ticket-service
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${TICKET_SERVICE_PORT}:${TICKET_SERVICE_PORT}"
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${TICKET_SERVICE_PORT}/ticket-service/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - disknet
-  message-service:
-    build: ./services/message-service
-    container_name: message-service
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${MESSAGE_SERVICE_PORT}:${MESSAGE_SERVICE_PORT}"
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${MESSAGE_SERVICE_PORT}/message-service/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - disknet
-  newsletter-service:
-    build: ./services/newsletter-service
-    container_name: newsletter-service
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${NEWSLETTER_SERVICE_PORT}:${NEWSLETTER_SERVICE_PORT}"
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${NEWSLETTER_SERVICE_PORT}/newsletter-service/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - disknet
-  review-service:
-    build: ./services/review-service
-    container_name: review-service
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${REVIEW_SERVICE_PORT}:${REVIEW_SERVICE_PORT}"
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${REVIEW_SERVICE_PORT}/review-service/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - disknet
-  postgres:
-    image: postgres:16
-    container_name: postgres
-    restart: unless-stopped
-    env_file:
-      - ./config/docker.env
-    ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - disknet
-  migrate:
-    image: migrate/migrate
-    container_name: migrate
-    depends_on:
-      postgres:
-        condition: service_healthy
-    volumes:
-      - ./migrations:/migrations
-    entrypoint: >
-      migrate
-      -path /migrations
-      -database postgres://postgres:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
-      up
-    networks:
-      - disknet
+      - family_steam_network
 
 volumes:
   postgres_data:
-  family-steam:
-    name: family-steam
 
 networks:
-  disknet:
+  family_steam_network:
     driver: bridge

@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ArteShow/Family-STEAM/services/calender-service/internal/config"
+	"github.com/ArteShow/Family-STEAM/services/calendar-service/internal/config"
 	_ "github.com/lib/pq"
 )
 

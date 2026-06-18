@@ -1,47 +1,44 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"os"
 
-	"github.com/ArteShow/Family-STEAM/services/message-service/internal/config"
-	"github.com/ArteShow/Family-STEAM/services/message-service/internal/handlers"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	cfg, err := config.Read()
-	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
-	}
+	r := gin.Default()
 
-	if cfg.Port != "" && cfg.Port[0] != ':' {
-		cfg.Port = ":" + cfg.Port
-	}
-
-	mux := http.NewServeMux()
-
-	// Admin endpoints (protected by AdminOnly middleware at the gateway level)
-	mux.HandleFunc("/message-service/adminSend", handlers.AdminSendHandler)
-	mux.HandleFunc("/message-service/adminInbox", handlers.AdminInboxHandler)
-	mux.HandleFunc("/message-service/adminThread", handlers.AdminThreadHandler)
-	mux.HandleFunc("/message-service/adminDelete", handlers.AdminDeleteHandler)
-
-	// User endpoints (protected by UserAuth middleware at the gateway level)
-	mux.HandleFunc("/message-service/userReply", handlers.UserReplyHandler)
-	mux.HandleFunc("/message-service/userInbox", handlers.UserInboxHandler)
-	mux.HandleFunc("/message-service/userThread", handlers.UserThreadHandler)
-	mux.HandleFunc("/message-service/markRead", handlers.MarkReadHandler)
-
-	// Health check
-	mux.HandleFunc("/message-service/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		if _, err = w.Write([]byte(`{"status":"ok"}`)); err != nil {
-			log.Printf("health write error: %v", err)
-		}
+	// Define routes for message service
+	r.GET("/messages", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Get all messages"})
 	})
 
-	addr := cfg.Port
-	fmt.Printf("message-service listening on %s\n", addr)
-	log.Fatal(http.ListenAndServe(addr, mux))
+	r.POST("/messages", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Create a new message"})
+	})
+
+	r.GET("/messages/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Get message by ID"})
+	})
+
+	r.PUT("/messages/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Update message"})
+	})
+
+	r.DELETE("/messages/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Delete message"})
+	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Message service running on port %s", port)
+	if err := r.Run(":" + port); err != nil {
+		log.Fatal("Failed to start message service:", err)
+	}
 }

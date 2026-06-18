@@ -1,83 +1,44 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
-	"github.com/ArteShow/Family-STEAM/services/client-service/internal/config"
-	"github.com/ArteShow/Family-STEAM/services/client-service/internal/handlers"
-)
-
-const (
-	readTimeout  = 10 * time.Second
-	writeTimeout = 10 * time.Second
-	idleTimeou   = 60 * time.Second
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	cfg, err := config.Read()
-	if err != nil {
-		log.Fatal(err)
-	}
+	r := gin.Default()
 
-	if cfg.Port != "" && cfg.Port[0] != ':' {
-		cfg.Port = ":" + cfg.Port
-	}
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/client-service/health", func(w http.ResponseWriter, _ *http.Request) {
-		_, err = w.Write([]byte("ok"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	// Define routes for client service
+	r.GET("/clients", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Get all clients"})
 	})
-	mux.HandleFunc("/client-service/create", handlers.CreateClientHandler)
-	mux.HandleFunc("/client-service/delete", handlers.DeleteClientHandler)
-	mux.HandleFunc("/client-service/get", handlers.GetClientHandler)
-	mux.HandleFunc("/client-service/update", handlers.UpdateClientHandler)
-	mux.HandleFunc("/client-service/list", handlers.ListClientsHandler)
 
-	srv := &http.Server{
-		Addr:         cfg.Port,
-		Handler:      mux,
-		ReadTimeout:  readTimeout,
-		WriteTimeout: writeTimeout,
-		IdleTimeout:  idleTimeou,
+	r.POST("/clients", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Create a new client"})
+	})
+
+	r.GET("/clients/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Get client by ID"})
+	})
+
+	r.PUT("/clients/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Update client"})
+	})
+
+	r.DELETE("/clients/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Delete client"})
+	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
 
-	ctx, stop := signal.NotifyContext(
-		context.Background(),
-		os.Interrupt,
-		syscall.SIGTERM,
-	)
-	defer stop()
-
-	go func() {
-		log.Println("server running on :8004")
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("server error: %v", err)
-		}
-	}()
-
-	<-ctx.Done()
-
-	log.Println("graceful shutdown started")
-
-	shutdownCtx, cancel := context.WithTimeout(
-		context.Background(),
-		10*time.Second,
-	)
-	defer cancel()
-
-	if err := srv.Shutdown(shutdownCtx); err != nil {
-		log.Printf("shutdown failed: %v", err)
+	log.Printf("Client service running on port %s", port)
+	if err := r.Run(":" + port); err != nil {
+		log.Fatal("Failed to start client service:", err)
 	}
-
-	log.Println("shutdown complete")
 }

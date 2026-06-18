@@ -1,83 +1,36 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
-	"github.com/ArteShow/Family-STEAM/services/auth-service/internal/config"
-	"github.com/ArteShow/Family-STEAM/services/auth-service/internal/handlers"
-	"github.com/ArteShow/Family-STEAM/services/auth-service/internal/middleware"
-)
-
-const (
-	readTimeout  = 10 * time.Second
-	writeTimeout = 10 * time.Second
-	idleTimeou   = 60 * time.Second
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	cfg, err := config.Read()
-	if err != nil {
-		log.Fatal(err)
-	}
+	r := gin.Default()
 
-	if cfg.Port != "" && cfg.Port[0] != ':' {
-		cfg.Port = ":" + cfg.Port
-	}
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/auth-service/health", func(w http.ResponseWriter, _ *http.Request) {
-		_, err = w.Write([]byte("ok"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	// Define routes for auth service
+	r.POST("/auth/register", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "User registered"})
 	})
-	mux.Handle("/auth-service/register", middleware.JWTKeyMiddleware(http.HandlerFunc(handlers.RegisterHandler)))
-	mux.HandleFunc("/auth-service/user-register", handlers.RegisterHandler)
-	mux.HandleFunc("/auth-service/login", handlers.LoginHandler)
-	mux.HandleFunc("/auth-service/verify", handlers.VerifyHandler)
 
-	srv := &http.Server{
-		Addr:         cfg.Port,
-		Handler:      mux,
-		ReadTimeout:  readTimeout,
-		WriteTimeout: writeTimeout,
-		IdleTimeout:  idleTimeou,
+	r.POST("/auth/login", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "User logged in"})
+	})
+
+	r.GET("/auth/profile", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Get user profile"})
+	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
 
-	ctx, stop := signal.NotifyContext(
-		context.Background(),
-		os.Interrupt,
-		syscall.SIGTERM,
-	)
-	defer stop()
-
-	go func() {
-		log.Println("server running on :8001")
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("server error: %v", err)
-		}
-	}()
-
-	<-ctx.Done()
-
-	log.Println("graceful shutdown started")
-
-	shutdownCtx, cancel := context.WithTimeout(
-		context.Background(),
-		10*time.Second,
-	)
-	defer cancel()
-
-	if err := srv.Shutdown(shutdownCtx); err != nil {
-		log.Printf("shutdown failed: %v", err)
+	log.Printf("Auth service running on port %s", port)
+	if err := r.Run(":" + port); err != nil {
+		log.Fatal("Failed to start auth service:", err)
 	}
-
-	log.Println("shutdown complete")
 }

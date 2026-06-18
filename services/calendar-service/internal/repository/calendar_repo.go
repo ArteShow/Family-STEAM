@@ -3,7 +3,7 @@ package repository
 import (
 	"time"
 
-	"github.com/ArteShow/Family-STEAM/services/calender-service/internal/database"
+	"github.com/ArteShow/Family-STEAM/services/calendar-service/internal/database"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 )

@@ -5,11 +5,11 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/ArteShow/Family-STEAM/services/calender-service/internal/repository"
+	"github.com/ArteShow/Family-STEAM/services/calendar-service/internal/repository"
 )
 
-func GetCalenderEntryByIDHandler(w http.ResponseWriter, r *http.Request) {
-	var req GetCalenderEntryByIDRequest
+func GetCalendarEntryByIDHandler(w http.ResponseWriter, r *http.Request) {
+	var req GetCalendarEntryByIDRequest
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -23,13 +23,13 @@ func GetCalenderEntryByIDHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entry, err := repository.GetByID(req.CalenderEntryID)
+	entry, err := repository.GetByID(req.CalendarEntryID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	res := GetCalenderEntryByIDResponse{CalenderEntry: *entry}
+	res := GetCalendarEntryByIDResponse{CalendarEntry: *entry}
 	w.WriteHeader(http.StatusOK)
 	if err = json.NewEncoder(w).Encode(res); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

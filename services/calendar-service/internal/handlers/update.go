@@ -5,11 +5,11 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/ArteShow/Family-STEAM/services/calender-service/internal/repository"
+	"github.com/ArteShow/Family-STEAM/services/calendar-service/internal/repository"
 )
 
-func UpdateCalenderEntryImagesHandler(w http.ResponseWriter, r *http.Request) {
-	var req UpdateCalenderEntryImagesRequest
+func UpdateCalendarEntryHandler(w http.ResponseWriter, r *http.Request) {
+	var req UpdateCalendarEntryRequest
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -23,12 +23,30 @@ func UpdateCalenderEntryImagesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.CalenderEntryID == "" {
+	if req.CalendarEntryID == "" {
 		http.Error(w, "calender_entry_id is required", http.StatusBadRequest)
 		return
 	}
 
-	if err = repository.UpdateImageIDs(req.CalenderEntryID, req.ImageIDs); err != nil {
+	e := req.CalendarEntry
+	err = repository.Update(
+		req.CalendarEntryID,
+		e.Location,
+		e.Price,
+		e.Tag,
+		e.Amount,
+		e.TitleEn,
+		e.TitleDe,
+		e.TitleRu,
+		e.DescriptionEn,
+		e.DescriptionDe,
+		e.DescriptionRu,
+		e.Responsibility,
+		e.StartsAt,
+		e.EndsAt,
+		e.Duration,
+	)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

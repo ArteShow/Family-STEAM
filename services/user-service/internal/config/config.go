@@ -8,7 +8,7 @@ type Config struct {
 	DBPort         string `env:"POSTGRES_PORT" env-default:"5432"`
 	DBUser         string `env:"POSTGRES_USER" env-default:"postgres"`
 	DBPassword     string `env:"POSTGRES_PASSWORD" env-default:"dev_only"`
-	DBName         string `env:"POSTGRES_DB" env-default:"minecraft_server_creator_db"`
+	DBName         string `env:"POSTGRES_DB" env-default:"family_steam_db"`
 }
 
 func Read() (*Config, error) {
