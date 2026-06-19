@@ -5,40 +5,33 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/ArteShow/Family-STEAM/services/calendar-service/internal/handlers"
 )
 
 func main() {
-	r := gin.Default()
-
-	// Define routes for calendar service
-	r.GET("/events", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get all events"})
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
-
-	r.POST("/events", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Create a new event"})
+	mux.HandleFunc("/calendar-service/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
+	mux.HandleFunc("/calendar-service/create", handlers.CreateCalendarEntryHandler)
+	mux.HandleFunc("/calendar-service/delete", handlers.DeleteCalendarEntryHandler)
+	mux.HandleFunc("/calendar-service/get", handlers.GetCalendarEntryHandler)
+	mux.HandleFunc("/calendar-service/getAll", handlers.GetAllCalendarEntriesHandler)
+	mux.HandleFunc("/calendar-service/update-images", handlers.UpdateCalendarEntryImagesHandler)
+	mux.HandleFunc("/calendar-service/update", handlers.UpdateCalendarEntryHandler)
 
-	r.GET("/events/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get event by ID"})
-	})
-
-	r.PUT("/events/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Update event"})
-	})
-
-	r.DELETE("/events/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Delete event"})
-	})
-
-	port := os.Getenv("PORT")
+	port := os.Getenv("CALENDAR_SERVICE_PORT")
 	if port == "" {
-		port = "8080"
+		port = "8005"
 	}
 
 	log.Printf("Calendar service running on port %s", port)
-	if err := r.Run(":" + port); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal("Failed to start calendar service:", err)
 	}
 }

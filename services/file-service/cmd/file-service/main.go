@@ -5,32 +5,31 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/ArteShow/Family-STEAM/services/file-service/internal/handlers"
 )
 
 func main() {
-	r := gin.Default()
-
-	// Define routes for file service
-	r.POST("/files", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Upload a new file"})
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
-
-	r.GET("/files/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get file by ID"})
+	mux.HandleFunc("/file-service/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
+	mux.HandleFunc("/file-service/upload", handlers.UploadHandler)
+	mux.HandleFunc("/file-service/download", handlers.DownloadHandler)
+	mux.HandleFunc("/file-service/delete", handlers.DeleteHandler)
+	mux.HandleFunc("/file-service/list", handlers.ListHandler)
 
-	r.DELETE("/files/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Delete file"})
-	})
-
-	port := os.Getenv("PORT")
+	port := os.Getenv("FILE_SERVICE_PORT")
 	if port == "" {
-		port = "8080"
+		port = "8003"
 	}
 
 	log.Printf("File service running on port %s", port)
-	if err := r.Run(":" + port); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal("Failed to start file service:", err)
 	}
 }

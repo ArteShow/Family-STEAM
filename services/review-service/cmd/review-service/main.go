@@ -5,40 +5,32 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/ArteShow/Family-STEAM/services/review-service/internal/handlers"
 )
 
 func main() {
-	r := gin.Default()
-
-	// Define routes for review service
-	r.GET("/reviews", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get all reviews"})
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
-
-	r.POST("/reviews", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Create a new review"})
+	mux.HandleFunc("/review-service/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
+	mux.HandleFunc("/review-service/create", handlers.CreateReviewHandler)
+	mux.HandleFunc("/review-service/adminCreate", handlers.AdminCreateReviewHandler)
+	mux.HandleFunc("/review-service/getByCalendar", handlers.GetByCalendarHandler)
+	mux.HandleFunc("/review-service/delete", handlers.DeleteReviewHandler)
+	mux.HandleFunc("/review-service/checkEligible", handlers.CheckEligibleHandler)
 
-	r.GET("/reviews/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get review by ID"})
-	})
-
-	r.PUT("/reviews/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Update review"})
-	})
-
-	r.DELETE("/reviews/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Delete review"})
-	})
-
-	port := os.Getenv("PORT")
+	port := os.Getenv("REVIEW_SERVICE_PORT")
 	if port == "" {
-		port = "8080"
+		port = "8009"
 	}
 
 	log.Printf("Review service running on port %s", port)
-	if err := r.Run(":" + port); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal("Failed to start review service:", err)
 	}
 }

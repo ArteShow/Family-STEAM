@@ -5,40 +5,35 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/ArteShow/Family-STEAM/services/message-service/internal/handlers"
 )
 
 func main() {
-	r := gin.Default()
-
-	// Define routes for message service
-	r.GET("/messages", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get all messages"})
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
-
-	r.POST("/messages", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Create a new message"})
+	mux.HandleFunc("/message-service/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
+	mux.HandleFunc("/message-service/adminSend", handlers.AdminSendHandler)
+	mux.HandleFunc("/message-service/adminInbox", handlers.AdminInboxHandler)
+	mux.HandleFunc("/message-service/adminThread", handlers.AdminThreadHandler)
+	mux.HandleFunc("/message-service/adminDelete", handlers.AdminDeleteHandler)
+	mux.HandleFunc("/message-service/userReply", handlers.UserReplyHandler)
+	mux.HandleFunc("/message-service/userInbox", handlers.UserInboxHandler)
+	mux.HandleFunc("/message-service/userThread", handlers.UserThreadHandler)
+	mux.HandleFunc("/message-service/markRead", handlers.MarkReadHandler)
 
-	r.GET("/messages/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get message by ID"})
-	})
-
-	r.PUT("/messages/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Update message"})
-	})
-
-	r.DELETE("/messages/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Delete message"})
-	})
-
-	port := os.Getenv("PORT")
+	port := os.Getenv("MESSAGE_SERVICE_PORT")
 	if port == "" {
-		port = "8080"
+		port = "8007"
 	}
 
 	log.Printf("Message service running on port %s", port)
-	if err := r.Run(":" + port); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal("Failed to start message service:", err)
 	}
 }

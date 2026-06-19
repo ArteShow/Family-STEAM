@@ -5,32 +5,38 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/ArteShow/Family-STEAM/services/newsletter-service/internal/config"
+	"github.com/ArteShow/Family-STEAM/services/newsletter-service/internal/handlers"
 )
 
 func main() {
-	r := gin.Default()
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// Define routes for newsletter service
-	r.POST("/newsletter/subscribe", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "User subscribed to newsletter"})
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
-
-	r.POST("/newsletter/unsubscribe", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "User unsubscribed from newsletter"})
+	mux.HandleFunc("/newsletter-service/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
+	mux.HandleFunc("/newsletter-service/subscribe", handlers.SubscribeHandler)
+	mux.HandleFunc("/newsletter-service/unsubscribe", handlers.UnsubscribeHandler)
+	mux.HandleFunc("/newsletter-service/subscribers", handlers.SubscribersHandler)
+	mux.HandleFunc("/newsletter-service/send", handlers.SendHandler(cfg))
+	mux.HandleFunc("/newsletter-service/campaigns", handlers.CampaignsHandler)
 
-	r.POST("/newsletter/send", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Newsletter sent"})
-	})
-
-	port := os.Getenv("PORT")
+	port := os.Getenv("NEWSLETTER_SERVICE_PORT")
 	if port == "" {
-		port = "8080"
+		port = "8008"
 	}
 
 	log.Printf("Newsletter service running on port %s", port)
-	if err := r.Run(":" + port); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal("Failed to start newsletter service:", err)
 	}
 }

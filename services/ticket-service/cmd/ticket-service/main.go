@@ -5,40 +5,34 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/ArteShow/Family-STEAM/services/ticket-service/internal/handlers"
 )
 
 func main() {
-	r := gin.Default()
-
-	// Define routes for ticket service
-	r.GET("/tickets", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get all tickets"})
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
-
-	r.POST("/tickets", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Create a new ticket"})
+	mux.HandleFunc("/ticket-service/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
+	mux.HandleFunc("/ticket-service/create", handlers.CreateTicketHandler)
+	mux.HandleFunc("/ticket-service/getAll", handlers.GetAllTicketsHandler)
+	mux.HandleFunc("/ticket-service/getByEmail", handlers.GetByEmailHandler)
+	mux.HandleFunc("/ticket-service/getByUser", handlers.GetByUserHandler)
+	mux.HandleFunc("/ticket-service/respond", handlers.RespondHandler)
+	mux.HandleFunc("/ticket-service/close", handlers.CloseTicketHandler)
+	mux.HandleFunc("/ticket-service/delete", handlers.DeleteTicketHandler)
 
-	r.GET("/tickets/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get ticket by ID"})
-	})
-
-	r.PUT("/tickets/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Update ticket"})
-	})
-
-	r.DELETE("/tickets/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Delete ticket"})
-	})
-
-	port := os.Getenv("PORT")
+	port := os.Getenv("TICKET_SERVICE_PORT")
 	if port == "" {
-		port = "8080"
+		port = "8006"
 	}
 
 	log.Printf("Ticket service running on port %s", port)
-	if err := r.Run(":" + port); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal("Failed to start ticket service:", err)
 	}
 }

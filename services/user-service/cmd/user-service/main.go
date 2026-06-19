@@ -1,44 +1,44 @@
 package main
 
 import (
+	"context"
 	"log"
-	"net/http"
+	"net"
 	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/gin-gonic/gin"
+	"github.com/ArteShow/Family-STEAM/services/user-service/internal/config"
+	userpb "github.com/ArteShow/Family-STEAM/services/user-service/internal/proto"
+	grpcserver "github.com/ArteShow/Family-STEAM/services/user-service/internal/server"
+	"google.golang.org/grpc"
 )
 
 func main() {
-	r := gin.Default()
-
-	// Define routes for user service
-	r.GET("/users", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get all users"})
-	})
-
-	r.POST("/users", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Create a new user"})
-	})
-
-	r.GET("/users/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get user by ID"})
-	})
-
-	r.PUT("/users/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Update user"})
-	})
-
-	r.DELETE("/users/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Delete user"})
-	})
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	cfg, err := config.Read()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	log.Printf("User service running on port %s", port)
-	if err := r.Run(":" + port); err != nil {
-		log.Fatal("Failed to start user service:", err)
+	listener, err := net.Listen("tcp", ":"+cfg.GRPCServerPort)
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	srv := grpc.NewServer()
+	userpb.RegisterUserServiceServer(srv, grpcserver.NewServer())
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	go func() {
+		log.Printf("User service gRPC running on port %s", cfg.GRPCServerPort)
+		if err := srv.Serve(listener); err != nil {
+			log.Printf("User service stopped: %v", err)
+		}
+	}()
+
+	<-ctx.Done()
+	srv.GracefulStop()
+	log.Println("User service shutdown complete")
 }

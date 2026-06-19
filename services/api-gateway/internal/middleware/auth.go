@@ -3,9 +3,11 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -14,7 +16,15 @@ type CheckUserIdRequest struct {
 	Id string `json:"user_id"`
 }
 
-var jwtSecret = []byte("9f4d7c2a6e3b1a8f5c9d0e4b7a2f6c1d8e3b5a9f0c7d2e6b4a1f8c3d5e9b7a2")
+func jwtSecretBytes() []byte {
+	secret := strings.TrimSpace(os.Getenv("JWT_SECRET"))
+	if secret == "" {
+		secret = "9f4d7c2a6e3b1a8f5c9d0e4b7a2f6c1d8e3b5a9f0c7d2e6b4a1f8c3d5e9b7a2"
+	}
+	return []byte(secret)
+}
+
+var authHTTPClient = &http.Client{Timeout: 10 * time.Second}
 
 func isAllowedAdminUsername(username string) bool {
 	allowList := strings.TrimSpace(os.Getenv("ADMIN_USERNAMES"))
@@ -43,7 +53,10 @@ func AdminOnly(next http.Handler) http.Handler {
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return jwtSecret, nil
+			if token.Method == nil || token.Method.Alg() != jwt.SigningMethodHS256.Alg() {
+				return nil, errors.New("unexpected signing method")
+			}
+			return jwtSecretBytes(), nil
 		})
 
 		if err != nil || !token.Valid {
@@ -76,11 +89,14 @@ func AdminOnly(next http.Handler) http.Handler {
 
 		bodyBytes, _ := json.Marshal(reqBody)
 
-		verifyResp, err := http.Post(
-			"http://auth-service:8001/auth-service/verify",
-			"application/json",
-			bytes.NewBuffer(bodyBytes),
-		)
+		req, err := http.NewRequest(http.MethodPost, "http://auth-service:8001/auth-service/verify", bytes.NewBuffer(bodyBytes))
+		if err != nil {
+			http.Error(w, "Auth service request error", http.StatusInternalServerError)
+			return
+		}
+		req.Header.Set("Content-Type", "application/json")
+
+		verifyResp, err := authHTTPClient.Do(req)
 		if err != nil {
 			http.Error(w, "Auth service error", http.StatusInternalServerError)
 			return
@@ -109,7 +125,10 @@ func UserAuth(next http.Handler) http.Handler {
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return jwtSecret, nil
+			if token.Method == nil || token.Method.Alg() != jwt.SigningMethodHS256.Alg() {
+				return nil, errors.New("unexpected signing method")
+			}
+			return jwtSecretBytes(), nil
 		})
 
 		if err != nil || !token.Valid {

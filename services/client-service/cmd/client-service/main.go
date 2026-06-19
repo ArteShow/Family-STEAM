@@ -5,40 +5,32 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/ArteShow/Family-STEAM/services/client-service/internal/handlers"
 )
 
 func main() {
-	r := gin.Default()
-
-	// Define routes for client service
-	r.GET("/clients", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get all clients"})
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
-
-	r.POST("/clients", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Create a new client"})
+	mux.HandleFunc("/client-service/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
 	})
+	mux.HandleFunc("/client-service/create", handlers.CreateClientHandler)
+	mux.HandleFunc("/client-service/delete", handlers.DeleteClientHandler)
+	mux.HandleFunc("/client-service/get", handlers.GetClientHandler)
+	mux.HandleFunc("/client-service/update", handlers.UpdateClientHandler)
+	mux.HandleFunc("/client-service/list", handlers.ListClientHandler)
 
-	r.GET("/clients/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Get client by ID"})
-	})
-
-	r.PUT("/clients/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Update client"})
-	})
-
-	r.DELETE("/clients/:id", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Delete client"})
-	})
-
-	port := os.Getenv("PORT")
+	port := os.Getenv("CLIENT_SERVICE_PORT")
 	if port == "" {
-		port = "8080"
+		port = "8004"
 	}
 
 	log.Printf("Client service running on port %s", port)
-	if err := r.Run(":" + port); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal("Failed to start client service:", err)
 	}
 }

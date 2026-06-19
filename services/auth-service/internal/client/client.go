@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"errors"
+	"os"
 
 	pb "github.com/ArteShow/Family-STEAM/services/auth-service/internal/proto"
 	"google.golang.org/grpc"
@@ -15,7 +16,12 @@ type UserClient struct {
 }
 
 func NewUserClient() (*UserClient, error) {
-	conn, err := grpc.Dial("user-service:50002", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	addr := os.Getenv("USER_SERVICE_URL")
+	if addr == "" {
+		addr = "user-service:50002"
+	}
+
+	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}

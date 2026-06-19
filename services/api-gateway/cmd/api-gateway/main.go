@@ -30,60 +30,60 @@ func main() {
 		cfg.Port = ":" + cfg.Port
 	}
 
-	authRegisterProxy := proxy.NewProxy("http://auth-service:8001", "/auth-service/register")
-	authLoginProxy := proxy.NewProxy("http://auth-service:8001", "/auth-service/login")
-	authVerifyProxy := proxy.NewProxy("http://auth-service:8001", "/auth-service/verify")
-	authUserRegisterProxy := proxy.NewProxy("http://auth-service:8001", "/auth-service/user-register")
+	authRegisterProxy := proxy.NewProxy(cfg.AuthServiceURL, "/auth-service/register")
+	authLoginProxy := proxy.NewProxy(cfg.AuthServiceURL, "/auth-service/login")
+	authVerifyProxy := proxy.NewProxy(cfg.AuthServiceURL, "/auth-service/verify")
+	authUserRegisterProxy := proxy.NewProxy(cfg.AuthServiceURL, "/auth-service/user-register")
 
-	fileUploadProxy := proxy.NewProxy("http://file-service:8003", "/file-service/upload")
-	fileDownloadProxy := proxy.NewProxy("http://file-service:8003", "/file-service/download")
-	fileDeleteProxy := proxy.NewProxy("http://file-service:8003", "/file-service/delete")
-	fileListProxy := proxy.NewProxy("http://file-service:8003", "/file-service/list")
+	fileUploadProxy := proxy.NewProxy(cfg.FileServiceURL, "/file-service/upload")
+	fileDownloadProxy := proxy.NewProxy(cfg.FileServiceURL, "/file-service/download")
+	fileDeleteProxy := proxy.NewProxy(cfg.FileServiceURL, "/file-service/delete")
+	fileListProxy := proxy.NewProxy(cfg.FileServiceURL, "/file-service/list")
 
-	clientCreateProxy := proxy.NewProxy("http://client-service:8004", "/client-service/create")
-	clientDeleteProxy := proxy.NewProxy("http://client-service:8004", "/client-service/delete")
-	clientGetProxy := proxy.NewProxy("http://client-service:8004", "/client-service/get")
-	clientUpdateProxy := proxy.NewProxy("http://client-service:8004", "/client-service/update")
-	clientListProxy := proxy.NewProxy("http://client-service:8004", "/client-service/list")
+	clientCreateProxy := proxy.NewProxy(cfg.ClientServiceURL, "/client-service/create")
+	clientDeleteProxy := proxy.NewProxy(cfg.ClientServiceURL, "/client-service/delete")
+	clientGetProxy := proxy.NewProxy(cfg.ClientServiceURL, "/client-service/get")
+	clientUpdateProxy := proxy.NewProxy(cfg.ClientServiceURL, "/client-service/update")
+	clientListProxy := proxy.NewProxy(cfg.ClientServiceURL, "/client-service/list")
 
-	calendarCreateProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/create")
-	calendarDeleteProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/delete")
-	calendarGetProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/get")
-	calendarGetAllProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/getAll")
-	calendarUpdateImagesProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/update-images")
-	calendarUpdateProxy := proxy.NewProxy("http://calendar-service:8005", "/calendar-service/update")
+	calendarCreateProxy := proxy.NewProxy(cfg.CalendarServiceURL, "/calendar-service/create")
+	calendarDeleteProxy := proxy.NewProxy(cfg.CalendarServiceURL, "/calendar-service/delete")
+	calendarGetProxy := proxy.NewProxy(cfg.CalendarServiceURL, "/calendar-service/get")
+	calendarGetAllProxy := proxy.NewProxy(cfg.CalendarServiceURL, "/calendar-service/getAll")
+	calendarUpdateImagesProxy := proxy.NewProxy(cfg.CalendarServiceURL, "/calendar-service/update-images")
+	calendarUpdateProxy := proxy.NewProxy(cfg.CalendarServiceURL, "/calendar-service/update")
 
-	ticketCreateProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/create")
-	ticketGetAllProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/getAll")
-	ticketGetByEmailProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/getByEmail")
-	ticketGetByUserProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/getByUser")
-	ticketRespondProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/respond")
-	ticketCloseProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/close")
-	ticketDeleteProxy := proxy.NewProxy("http://ticket-service:8006", "/ticket-service/delete")
+	ticketCreateProxy := proxy.NewProxy(cfg.TicketServiceURL, "/ticket-service/create")
+	ticketGetAllProxy := proxy.NewProxy(cfg.TicketServiceURL, "/ticket-service/getAll")
+	ticketGetByEmailProxy := proxy.NewProxy(cfg.TicketServiceURL, "/ticket-service/getByEmail")
+	ticketGetByUserProxy := proxy.NewProxy(cfg.TicketServiceURL, "/ticket-service/getByUser")
+	ticketRespondProxy := proxy.NewProxy(cfg.TicketServiceURL, "/ticket-service/respond")
+	ticketCloseProxy := proxy.NewProxy(cfg.TicketServiceURL, "/ticket-service/close")
+	ticketDeleteProxy := proxy.NewProxy(cfg.TicketServiceURL, "/ticket-service/delete")
 
 	// message-service proxies (port 8007)
-	msgAdminSendProxy := proxy.NewProxy("http://message-service:8007", "/message-service/adminSend")
-	msgAdminInboxProxy := proxy.NewProxy("http://message-service:8007", "/message-service/adminInbox")
-	msgAdminThreadProxy := proxy.NewProxy("http://message-service:8007", "/message-service/adminThread")
-	msgAdminDeleteProxy := proxy.NewProxy("http://message-service:8007", "/message-service/adminDelete")
-	msgUserReplyProxy := proxy.NewProxy("http://message-service:8007", "/message-service/userReply")
-	msgUserInboxProxy := proxy.NewProxy("http://message-service:8007", "/message-service/userInbox")
-	msgUserThreadProxy := proxy.NewProxy("http://message-service:8007", "/message-service/userThread")
-	msgMarkReadProxy := proxy.NewProxy("http://message-service:8007", "/message-service/markRead")
+	msgAdminSendProxy := proxy.NewProxy(cfg.MessageServiceURL, "/message-service/adminSend")
+	msgAdminInboxProxy := proxy.NewProxy(cfg.MessageServiceURL, "/message-service/adminInbox")
+	msgAdminThreadProxy := proxy.NewProxy(cfg.MessageServiceURL, "/message-service/adminThread")
+	msgAdminDeleteProxy := proxy.NewProxy(cfg.MessageServiceURL, "/message-service/adminDelete")
+	msgUserReplyProxy := proxy.NewProxy(cfg.MessageServiceURL, "/message-service/userReply")
+	msgUserInboxProxy := proxy.NewProxy(cfg.MessageServiceURL, "/message-service/userInbox")
+	msgUserThreadProxy := proxy.NewProxy(cfg.MessageServiceURL, "/message-service/userThread")
+	msgMarkReadProxy := proxy.NewProxy(cfg.MessageServiceURL, "/message-service/markRead")
 
 	// newsletter-service proxies (port 8008)
-	nlSubscribeProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/subscribe")
-	nlUnsubscribeProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/unsubscribe")
-	nlSubscribersProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/subscribers")
-	nlSendProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/send")
-	nlCampaignsProxy := proxy.NewProxy("http://newsletter-service:8008", "/newsletter-service/campaigns")
+	nlSubscribeProxy := proxy.NewProxy(cfg.NewsletterServiceURL, "/newsletter-service/subscribe")
+	nlUnsubscribeProxy := proxy.NewProxy(cfg.NewsletterServiceURL, "/newsletter-service/unsubscribe")
+	nlSubscribersProxy := proxy.NewProxy(cfg.NewsletterServiceURL, "/newsletter-service/subscribers")
+	nlSendProxy := proxy.NewProxy(cfg.NewsletterServiceURL, "/newsletter-service/send")
+	nlCampaignsProxy := proxy.NewProxy(cfg.NewsletterServiceURL, "/newsletter-service/campaigns")
 
 	// review-service proxies (port 8009)
-	reviewCreateProxy := proxy.NewProxy("http://review-service:8009", "/review-service/create")
-	reviewAdminCreateProxy := proxy.NewProxy("http://review-service:8009", "/review-service/adminCreate")
-	reviewGetByCalendarProxy := proxy.NewProxy("http://review-service:8009", "/review-service/getByCalendar")
-	reviewDeleteProxy := proxy.NewProxy("http://review-service:8009", "/review-service/delete")
-	reviewCheckEligibleProxy := proxy.NewProxy("http://review-service:8009", "/review-service/checkEligible")
+	reviewCreateProxy := proxy.NewProxy(cfg.ReviewServiceURL, "/review-service/create")
+	reviewAdminCreateProxy := proxy.NewProxy(cfg.ReviewServiceURL, "/review-service/adminCreate")
+	reviewGetByCalendarProxy := proxy.NewProxy(cfg.ReviewServiceURL, "/review-service/getByCalendar")
+	reviewDeleteProxy := proxy.NewProxy(cfg.ReviewServiceURL, "/review-service/delete")
+	reviewCheckEligibleProxy := proxy.NewProxy(cfg.ReviewServiceURL, "/review-service/checkEligible")
 
 	handler := http.NewServeMux()
 	handler.Handle(
@@ -158,7 +158,7 @@ func main() {
 		Handler:      middleware.CORSMiddleware(handler),
 		ReadTimeout:  readTimeout,
 		WriteTimeout: writeTimeout,
-	IdleTimeout:  idleTimeout,
+		IdleTimeout:  idleTimeout,
 	}
 
 	ctx, stop := signal.NotifyContext(
